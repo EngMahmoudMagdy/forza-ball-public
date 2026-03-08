@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>ForzaBall - Football Feed</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#29a847",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#131f16",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 border-b border-primary/10 justify-between">
+    <div class="flex items-center gap-3">
+        <div class="size-10 overflow-hidden rounded-lg bg-primary/20 flex items-center justify-center">
+            <img alt="ForzaBall Logo" class="size-8 object-contain" data-alt="ForzaBall app logo with green theme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkAL2u94GltH0gb0jToC4o5aOD9YxRPw9NwKb1flAI-bCwrMMoOkHeV26eLvKLGFYBmnedNJCHIH2iaP2-YM6Jks4PM85oZZ-psd7wrCudFSy8o1zkCok8ETtOnWEb-PVq-jeayk33qCePTvmz8sOm_5_UiZZgBAQnSUD25LexPnQJhFN4saDpwL8f_27y4z6jELXkmQ-K6gx5cMcrEYXCF1e9LAn6GQQulXGX272kE055COHIQYvXBVy1y_xDcXIl67bEce_ztKId"/>
+        </div>
+        <h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">ForzaBall</h2>
+    </div>
+    <div class="flex gap-2">
+        <button class="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 text-slate-900 dark:text-slate-100 transition-colors">
+            <span class="material-symbols-outlined">search</span>
+        </button>
+        <button class="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 text-slate-900 dark:text-slate-100 transition-colors">
+            <span class="material-symbols-outlined">notifications</span>
+        </button>
+    </div>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+    <!-- Favorite Club Highlight -->
+    <section class="p-4">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-primary">Your Favorite Club</h3>
+            <span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/20">FOLLOWING</span>
+        </div>
+        <div class="relative overflow-hidden rounded-xl bg-slate-900 dark:bg-slate-800 shadow-xl group">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/40 to-transparent opacity-50"></div>
+            <div class="relative z-10 p-5 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-2 w-2 rounded-full bg-red-500"></span>
+                        <p class="text-slate-200 text-xs font-bold uppercase tracking-widest">LIVE - 65'</p>
+                    </div>
+                    <p class="text-slate-300 text-xs">Premier League</p>
+                </div>
+                <div class="flex items-center justify-around py-2">
+                    <div class="flex flex-col items-center gap-2 text-center w-1/3">
+                        <div class="size-14 rounded-full bg-white/10 p-2 border border-white/5 flex items-center justify-center">
+                            <img alt="Man City Logo" class="size-10" data-alt="Manchester City club crest logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY_vhZFUym6tmkLVh4Zv1HQ0bq8-zW8dO464IY1dgz8fc4pG4b2isaE_apGlaUys_70JsiXIc5zUVD_OyAKN4P69zu5qc6ziqThZlXKkJPNysOwU539gL64JAhRwVAF5XBIEMMcWn8C1Xdeq8GBUZhrS87wl_wyPQFvurdxiH5w2b1UcE4cibnJIkVTOV-MBkps0RxCu7WlVbSRTaEtlcSA0vBq0SoLHAeZF64DVVnf04glWqO6w7TteRiavcZCpTFunQbg7mW41qY"/>
+                        </div>
+                        <span class="text-white text-sm font-bold">Man City</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 w-1/3">
+                        <span class="text-4xl font-black text-white tracking-tighter italic">2 - 1</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Etihad Stadium</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2 text-center w-1/3">
+                        <div class="size-14 rounded-full bg-white/10 p-2 border border-white/5 flex items-center justify-center">
+                            <img alt="Arsenal Logo" class="size-10" data-alt="Arsenal club crest logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBchBwczUh8qb05IRIUrHQTiSHxVR1SY0MEGFhpJIAg-x3w0tFpWn65uxHdTNHCCHR1oTT0aoz8Efm2F-Gk0jUNmg6DPlc9-iXgawyIuuIts5IrnpKSc1PXt4S9LGYx8T-DePaWxp6baK29XektQ-QK4OmXIdI812DyJ23ODZ7JxCd4xmquoyOSD_cjOx5wptM4AApokuxuFJ7yVY5xbXygdtr2Zje974rw3cUr_c_ajBcUDtZ6uFLAPzrfrOD0P40A2jKoV303rz0p"/>
+                        </div>
+                        <span class="text-white text-sm font-bold">Arsenal</span>
+                    </div>
+                </div>
+                <button class="w-full py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20">
+                    View Match Center
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- Live Scores Horizontal Scroll -->
+    <section class="mt-4">
+        <div class="px-4 flex items-center justify-between mb-3">
+            <h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Live Scores</h3>
+            <button class="text-primary text-sm font-semibold">View All</button>
+        </div>
+        <div class="flex overflow-x-auto gap-3 px-4 pb-4 no-scrollbar">
+            <!-- Score Card 1 -->
+            <div class="flex-shrink-0 w-44 bg-white dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-primary/10 shadow-sm">
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                        <span>LA LIGA</span>
+                        <span class="text-red-500">82'</span>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">Real Madrid</span>
+                            <span class="text-sm font-bold">2</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">Barcelona</span>
+                            <span class="text-sm font-bold">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Score Card 2 -->
+            <div class="flex-shrink-0 w-44 bg-white dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-primary/10 shadow-sm">
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                        <span>SERIE A</span>
+                        <span class="text-slate-500">HT</span>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">AC Milan</span>
+                            <span class="text-sm font-bold">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">Inter Milan</span>
+                            <span class="text-sm font-bold">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Score Card 3 -->
+            <div class="flex-shrink-0 w-44 bg-white dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-primary/10 shadow-sm">
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                        <span>PREMIER LEAGUE</span>
+                        <span class="text-red-500">15'</span>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">Liverpool</span>
+                            <span class="text-sm font-bold">1</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold">Chelsea</span>
+                            <span class="text-sm font-bold">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Latest News -->
+    <section class="p-4 mt-2">
+        <h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4">Latest News for You</h3>
+        <div class="grid grid-cols-1 gap-4">
+            <!-- News Card 1 -->
+            <div class="flex flex-col rounded-xl overflow-hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-primary/5 shadow-sm">
+                <div class="h-48 w-full bg-center bg-no-repeat bg-cover" data-alt="Football players celebrating on the pitch" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDL-PnyVtyjR7AlO5YpRJTMlj58edtLe59GqYWhtBR8EvYRBEFuaOFABvIFNSqir8QjHfEbBfOgvuNxXqLXpBsBG4levW70VdtWF_zw4ZsCaNw1Skzo2IDsYjxxiolYaS-E3pktk-RTqXhQ2x8m67-Pi52Un3SpbkPIhMR1XlKZeXsnh9SGeuQAROskpvRc2AVWr5VjmGqUuRjFS1K_90MqBQjM5hpRcngqhrLd56AZgG4twzvOl5dSR492E6Sx0xOiCi8cC2jLkf6Y');"></div>
+                <div class="p-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">MAN CITY</span>
+                        <span class="text-[10px] text-slate-500">2 hours ago</span>
+                    </div>
+                    <h4 class="text-base font-bold leading-tight">Pep Guardiola discusses tactical shift after Arsenal victory</h4>
+                    <p class="text-sm text-slate-500 line-clamp-2">In an exclusive interview, the City manager explains how Foden's positioning changed the dynamic of the second half...</p>
+                </div>
+            </div>
+            <!-- News Card 2 (Horizontal Style) -->
+            <div class="flex gap-4 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-primary/5 shadow-sm">
+                <div class="size-24 flex-shrink-0 rounded-lg bg-center bg-no-repeat bg-cover" data-alt="Football transfer news concept image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbJbuKDg77DRkFRdl7ug9Xp_7kuJgiWUf9XN3GgF6grdOsIxeSCMgNhiufo0lsrElQk_ERMVAku2TwN_kLWALLPBuTXKODxShgPTPlQyez8F832pyhM0tDWVnKioukItaGB_pmIGF9B1WIyj-5AWUb-PKpIkas2GSaZlFmND1o9ZlROrUwHwQedmuLWzWHx9uYH_pZ0UgKsGBoHE18bOT-0g5uV0Xxv5Y5OoxqmrbAyOAGyPtoxnJOlRlQFfJwBLi_QVraC4_ao96j');"></div>
+                <div class="flex flex-col justify-between py-0.5">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[10px] font-bold text-primary">TRANSFERS</span>
+                        <h4 class="text-sm font-bold leading-snug">Arsenal scout Brazilian wonderkid for January window</h4>
+                    </div>
+                    <span class="text-[10px] text-slate-500">4 hours ago</span>
+                </div>
+            </div>
+            <!-- News Card 3 (Horizontal Style) -->
+            <div class="flex gap-4 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-primary/5 shadow-sm">
+                <div class="size-24 flex-shrink-0 rounded-lg bg-center bg-no-repeat bg-cover" data-alt="Training ground football action shot" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDik6ig0eMT4CrKYVMKOmlfD2zB_CRmQgNUgZBM6fRSZWlzgzvQXBb3ERImEtNRCcuOfRAB5yppwl7QThOrQdpKW7QMdUJv6wVarjJXDKMXYhvOo696WGKeeY4fjgo3OONZBTZlGOiCkxHkvVzNU698rdqTzii8pzCEimC8bk3haceeLu51sHEoxxUY7mE1XP_9RdSMKZ_vsuNQXlQGJyN2MPjL_abzgejtD1Sbho-O-xJ_vPew45XPmOamGBGrIUsshxBXqn0Sh-ka');"></div>
+                <div class="flex flex-col justify-between py-0.5">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[10px] font-bold text-primary">PREMIER LEAGUE</span>
+                        <h4 class="text-sm font-bold leading-snug">Injury update: Key defenders set to return for City</h4>
+                    </div>
+                    <span class="text-[10px] text-slate-500">6 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-slate-200 dark:border-primary/20 px-6 py-3 pb-6 flex justify-between items-center z-50">
+    <a class="flex flex-col items-center gap-1 text-primary" href="#">
+        <span class="material-symbols-outlined fill-[1] text-2xl">home</span>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Home</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+        <span class="material-symbols-outlined text-2xl">newspaper</span>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">News</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+        <span class="material-symbols-outlined text-2xl">rss_feed</span>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Feeds</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+        <span class="material-symbols-outlined text-2xl">sports_soccer</span>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Scores</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Profile</span>
+    </a>
+</nav>
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+</body></html>

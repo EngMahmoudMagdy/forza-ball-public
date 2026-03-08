@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>ForzaBall - Guest Access</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#29a847",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#131f16",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden">
+    <header class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <img alt="ForzaBall Logo" class="h-10 w-10 rounded-lg" data-alt="ForzaBall minimalist green sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnAMf2WJf5JZfqnPKqmmwyA--sggemUodIkYEY4L81swcoeK6W4Yi7Omw1ebFbvlV_52S0x9XXNpJ-tdTz-Kqihpd-9cIErkNKiGn1GOX7Qur8kzpAIFGMrt8P8vKYOJZ1RJVmvg7bvBPG9SDJtpCoV5z8vAUSuD8HwdFrqU7Up9vCguxIXW18nRqQIe9b6gGmRJiDUufpvhL8dDXYHpOvgqHVF-3K3NzJCTMvQhtf4U849q9-EOiJTQkrWlotV86RciNoaW39CXU3"/>
+            <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">ForzaBall</span>
+        </div>
+        <div class="flex gap-2">
+            <button class="px-4 py-2 text-sm font-semibold rounded-lg text-primary hover:bg-primary/10 transition-colors">
+                Log In
+            </button>
+            <button class="px-4 py-2 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                Sign Up
+            </button>
+        </div>
+    </header>
+    <main class="flex-1 flex flex-col px-4 pb-24">
+        <section class="py-8 text-center">
+            <div class="mb-6 inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-4xl">location_on</span>
+            </div>
+            <h1 class="text-3xl font-bold leading-tight mb-2">Welcome to ForzaBall</h1>
+            <p class="text-slate-600 dark:text-slate-400 max-w-xs mx-auto">Discover the most competitive local football leagues and join the action today.</p>
+        </section>
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">Recommended Near You</h2>
+                <span class="text-xs font-medium px-2 py-1 rounded bg-primary/20 text-primary uppercase tracking-wider">Live Now</span>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 transition-all hover:border-primary/50">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-lg">Premier District League</h3>
+                            <p class="text-sm text-slate-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">map</span> London, UK
+                            </p>
+                        </div>
+                        <div class="bg-primary/10 text-primary p-2 rounded-lg">
+                            <span class="material-symbols-outlined">sports_soccer</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">groups</span> 12 Teams</span>
+                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Starts Oct 12</span>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 transition-all hover:border-primary/50">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-lg">City Amateur Cup</h3>
+                            <p class="text-sm text-slate-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">map</span> Manchester, UK
+                            </p>
+                        </div>
+                        <div class="bg-primary/10 text-primary p-2 rounded-lg">
+                            <span class="material-symbols-outlined">emoji_events</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">groups</span> 8 Teams</span>
+                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Ongoing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mb-8">
+            <div class="p-6 rounded-2xl bg-primary/5 border border-dashed border-primary/30 text-center">
+                <h3 class="font-bold mb-2">Not in these areas?</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Choose your country manually to find leagues in your region.</p>
+                <button class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <span class="material-symbols-outlined text-primary">public</span>
+                    Choose a Country
+                </button>
+            </div>
+        </section>
+        <section class="mt-auto pt-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex flex-col gap-3">
+                <h4 class="text-center font-bold text-lg">Ready to play?</h4>
+                <p class="text-center text-sm text-slate-500 dark:text-slate-400 mb-2">Create an account to join teams, track stats, and win trophies.</p>
+                <button class="w-full py-4 rounded-xl bg-primary text-white font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    Get Started Now
+                </button>
+            </div>
+        </section>
+    </main>
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-4 pb-6 pt-2">
+        <div class="flex justify-around items-center max-w-md mx-auto">
+            <a class="flex flex-col items-center gap-1 text-primary" href="#">
+                <span class="material-symbols-outlined fill-1">home</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">trophy</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Leagues</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">sports_soccer</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Scores</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">person</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
+            </a>
+        </div>
+    </nav>
+</div>
+</body></html>

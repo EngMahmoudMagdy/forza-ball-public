@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>ForzaBall - League Selection</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#29a847",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#131f16",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-checkbox:checked {
+            background-image: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27white%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e');
+        }
+    </style>
+    <style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+    <div class="flex items-center p-4 pb-2 justify-between">
+        <button aria-label="Go back" class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center justify-start focus:outline-none">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Personalization</h2>
+    </div>
+    <!-- Progress Indicator -->
+    <div class="flex flex-col gap-3 p-4">
+        <div class="flex gap-6 justify-between">
+            <p class="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal">Step 1 of 3</p>
+            <p class="text-primary text-sm font-bold leading-normal">33%</p>
+        </div>
+        <div class="rounded-full bg-primary/20 h-2 w-full overflow-hidden">
+            <div class="h-full rounded-full bg-primary transition-all duration-300" style="width: 33%;"></div>
+        </div>
+    </div>
+</header>
+<main class="flex-1 overflow-y-auto pb-32">
+    <div class="px-4 pt-5">
+        <h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-2xl font-bold leading-tight pb-2">Select Your Favorite Leagues</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal pb-6">Choose at least one league to customize your feed and live scores.</p>
+    </div>
+    <!-- Leagues List -->
+    <div class="flex flex-col">
+        <!-- Premier League -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="Premier League official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmtStcogjmWj7G6BNMpp5J3kaAnIMQkDGe8cSSsqnOfIy1cEur2AsNNyXtXcRzNvAj8QEIYIY0ZkeuE9VDc0laCh4g6nmQZgmjCkviNSILHHn7UI7QNzetiyUS4jWRJxkJ_qzjcDnBh7OcS7oANNRRTwmpMtqnjMq2kbjHmfMp7jDTDWPsSoe8HuT69cOcbS3HSsHVcbThQYe8wPpeuBssoGExOL-z7uMNc3TN58GQDnnbH5iRp6Wtq16d8yzBpFR2kqTNSCSeECNF");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Premier League</p>
+                <p class="text-slate-500 text-sm">England</p>
+            </div>
+            <div class="shrink-0">
+                <input checked="" class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- La Liga -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="La Liga official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAweHhkW24OeMUsePMDdFtGvWINOkMrLPtjzl8ZlIu2wdLQX4c26hMYiyN2Swu46RDBO3oyS2RlpCM5UPfVcq5ghX9mFSXPAE1-4GGqJQCzdvB90DB9_OtOzFikZ08Xidm52n9EcVJ55zg5po-MuGl_bZNsb_eq6t_BiWUmBDdqD-laziXa_dHRzNlcw96Lq1pczgUexBoNtaKHAmZDlhILoqOzZi0JoMT39jJDXYdzi5EEifYixqJ53yr6n-fknFY0SKQ5mDHQwAYV");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">La Liga</p>
+                <p class="text-slate-500 text-sm">Spain</p>
+            </div>
+            <div class="shrink-0">
+                <input class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- Serie A -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="Serie A official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBfbh6H1_lFMFVLVfv5WKwIPE_0BqN603SJa061iT6gx8XnBeuIexAMUZokhyvVXrvGtw3_nUtJ639gb4oQMoZuP8P_xcMyxAeo1y5A52mhggV94q-m32TS4sk2PpJa0BAXNSShzLTnDe2ZR4FMzy34N5sBP8tsdUWJH38d4cEDPzIoMx77D0M_zLC1wsuqoXndodlih_qiIUW-QJAgDW6-T9eWnahQWu6YNeSrs6v7tFjHd0xoKDwX24RhZc7temUxhCoiNhfMRa9I");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Serie A</p>
+                <p class="text-slate-500 text-sm">Italy</p>
+            </div>
+            <div class="shrink-0">
+                <input class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- Bundesliga -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="Bundesliga official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBu0QHSZMsiKnJMLGxSmyz_mWMfjmkTlnYE8qYIS_cZ0kNbaIC7gRBI9CwRRtsX3EZ2AQnKqj3jCfxDwRFPBb8GCt--QR0ZeKxQ3MiOwTuJ7DoLzOMMcc95l6htIDXMJgkcl2SVCttJVJvXXipHCQtcrk2hUrH0fgDpNGVda-69et1VgKLI-A-sI-Kug1Gtr-9uUxUq7t3WARvdKRcGeWHn1g8kmNSMmpROgA5k8Ah0vFUXlwD1AOariNj94vJ11iqe34bFt4Mufox6");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Bundesliga</p>
+                <p class="text-slate-500 text-sm">Germany</p>
+            </div>
+            <div class="shrink-0">
+                <input checked="" class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- Ligue 1 -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="Ligue 1 official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCPvKe7Cdwez2dxfgr1rvuIxipFU7c6LcC1QSCm-92QTCMgtuP64D4F4gJz3gqRsd1-m4onwVXP2G1BhFRKaeqjivaUU8B4YiIRm-P-op_KoJG05zll7wP2gkDZE7Qe2rXVY6a2viV5cGXmCUOfCfO94JvJ6xd4Nk7W9RavdJME945P2k4LdvmSH8-aapjjBCigl9PgE39yPojfdt97aeI01bMRBra9NhIolyr9eFEdyZotZFDL6qxT-VIGhV4g08HBWzQ2GJ1IQk-4");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Ligue 1</p>
+                <p class="text-slate-500 text-sm">France</p>
+            </div>
+            <div class="shrink-0">
+                <input class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- Champions League -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="Champions League official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdyAyZA3UE128IeCqYAcpYG2oSQpYibi8pI9Nv-f5xIa0YqORjm9l0eGbPi2zRjIan8OlDzM1ifciwgxeUJFRVar9F8v_QjUKoIvtnMDA8tRbghS6ieFNav5i9jQWf_Oe0t2-TzqjvrQRnjZOhbVuVr9OR9S3gfmOLOQJgrufN3-ZikvxYcZ5pPSdilg1XG9MGI6Q8AaHmd5UJPApgjpV5a0mubS1OjcXqCzrgAEkflg-ShJiqlyDGfoQM18hAy5CcTeNCav-9foe8");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Champions League</p>
+                <p class="text-slate-500 text-sm">International</p>
+            </div>
+            <div class="shrink-0">
+                <input checked="" class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+        <!-- MLS -->
+        <label class="flex items-center gap-4 px-4 py-4 hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer border-b border-primary/10">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-12 bg-white flex items-center justify-center p-1" data-alt="MLS official logo on white background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAWsx4BPN-juP83y46UwFpTB69VlRKf9vWNt8G2O0gJnzJx_GdE9cgk5iC6h7AVfDhIGWcYHHbI6ujOQHvzzPuqKNDi7XKbLoDExGDb3eLCJFr9YVjKvcrPh_aeRBFJwZtWGLs171Yc7HAjZAFRAOmPudyYVQzO-5GOdJ1UsOE9qJaanGbTvQcFKYT1AOUgpYA_SmhZiuHFH1LagzA5dGUCZtVvYwmKQqy5pjTk3T7rb47El4w6wAr3SC0aF0UnZBmSYNbUoM7UTWh8");'>
+            </div>
+            <div class="flex flex-col flex-1 truncate">
+                <p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">MLS</p>
+                <p class="text-slate-500 text-sm">USA</p>
+            </div>
+            <div class="shrink-0">
+                <input class="custom-checkbox h-6 w-6 rounded-full border-primary/30 border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none transition-all cursor-pointer" type="checkbox"/>
+            </div>
+        </label>
+    </div>
+</main>
+<!-- Sticky Bottom Button -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark border-t border-primary/10 z-30">
+    <button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+        Next
+        <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+</div>
+</body></html>

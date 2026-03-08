@@ -1,5 +1,6 @@
 package com.forzaball.app.feature.home
 
+import androidx.lifecycle.viewModelScope
 import com.forzaball.app.core.mvi.MviViewModel
 import com.forzaball.domain.usecase.ObserveFavoriteClubMatchUseCase
 import com.forzaball.domain.usecase.ObserveFavoriteClubsNewsUseCase

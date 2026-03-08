@@ -2,6 +2,11 @@ package com.forzaball.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// ForzaBall design system (from HTML)
+val ForzaBallPrimary = Color(0xFF29a847)
+val ForzaBallBackgroundLight = Color(0xFFf6f8f6)
+val ForzaBallBackgroundDark = Color(0xFF131f16)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

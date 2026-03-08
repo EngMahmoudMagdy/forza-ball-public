@@ -9,6 +9,7 @@ java {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.coroutines.core)
 }
 

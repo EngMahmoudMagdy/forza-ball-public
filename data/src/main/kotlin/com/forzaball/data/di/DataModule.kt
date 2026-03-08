@@ -12,8 +12,8 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
-    single<NewsRepository> { NewsRepositoryImpl(get()) }
-    single<MatchRepository> { MatchRepositoryImpl(get()) }
-    single<FeedRepository> { FeedRepositoryImpl(get()) }
+    single<NewsRepository> { NewsRepositoryImpl() }
+    single<MatchRepository> { MatchRepositoryImpl() }
+    single<FeedRepository> { FeedRepositoryImpl() }
 }
 

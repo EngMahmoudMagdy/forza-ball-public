@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class FeedRepositoryImpl(
     // Inject network / database dependencies here when implemented.
-    private val placeholder: Any? = null,
+//    private val placeholder: Any? = null,
 ) : FeedRepository {
 
     private val feed = MutableStateFlow<List<FeedPost>>(emptyList())

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "438978112225",
+    "project_id": "forza-ball",
+    "storage_bucket": "forza-ball.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438978112225:android:2632067f93443655d965a0",
+        "android_client_info": {
+          "package_name": "com.forzaball.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqT2xpitcSQY2qHkzVPua15j29xfR_UEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

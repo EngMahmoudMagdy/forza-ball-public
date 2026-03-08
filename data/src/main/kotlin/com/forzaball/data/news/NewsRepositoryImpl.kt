@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class NewsRepositoryImpl(
     // Inject network / database dependencies here when implemented.
-    private val placeholder: Any? = null,
+//    private val placeholder: Any? = null,
 ) : NewsRepository {
 
     private val inMemoryNews = MutableStateFlow<List<NewsArticle>>(emptyList())

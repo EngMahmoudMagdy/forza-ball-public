@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.ForzaBall" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Shown when app icon is clicked until Compose draws -->
+    <style name="Theme.ForzaBall.Splash" parent="Theme.ForzaBall">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 </resources>

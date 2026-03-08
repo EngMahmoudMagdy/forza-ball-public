@@ -35,5 +35,7 @@ data class UserPreferences(
     val countryCode: String?,
     val favoriteLeagues: List<String>,
     val favoriteClubs: List<String>,
+    val nickname: String? = null,
+    val profilePhotoUrl: String? = null,
 )
 
