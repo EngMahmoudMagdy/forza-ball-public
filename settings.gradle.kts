@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "ForzaBall"
 include(":app")
+include(":domain")
+include(":data")
