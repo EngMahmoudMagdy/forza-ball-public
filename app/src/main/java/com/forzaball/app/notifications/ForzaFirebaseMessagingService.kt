@@ -1,21 +1,174 @@
 package com.forzaball.app.notifications
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.forzaball.app.MainActivity
+import com.forzaball.app.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import timber.log.Timber
 
 class ForzaFirebaseMessagingService : FirebaseMessagingService() {
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.i("FCM new token: $token")
-        // TODO: send token to backend when available.
+        Timber.i("FCM new token received")
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid == null) {
+            Timber.d("FCM token skipped save (not signed in yet)")
+            return
+        }
+        FirebaseFirestore.getInstance().collection("users").document(uid).set(
+            mapOf("fcmToken" to token),
+            SetOptions.merge(),
+        ).addOnSuccessListener { Timber.d("fcmToken saved to Firestore") }
+            .addOnFailureListener { e -> Timber.w(e, "save fcmToken") }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.i("FCM message received from ${message.from}")
-        // TODO: build and show a user-facing notification.
+        val merged = mergedPayload(message)
+        Timber.d(
+            "FCM onMessageReceived keys=%s foreground=%s",
+            merged.keys,
+            AppForegroundTracker.isInForeground,
+        )
+        if (merged.isEmpty()) {
+            Timber.w("FCM message has no data and no notification body; nothing to show")
+            return
+        }
+        val payload = parsePayload(merged) ?: run {
+            Timber.w("FCM could not parse payload: $merged")
+            return
+        }
+
+        val myUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (payload.type == FeedPushType.NewPost && payload.actorId != null && payload.actorId == myUid) {
+            return
+        }
+
+        if (AppForegroundTracker.isInForeground) {
+            deliverInApp(payload)
+            return
+        }
+
+        showSystemNotification(payload)
+    }
+
+    private fun deliverInApp(payload: FeedPushPayload) {
+        mainHandler.post { FeedNotificationBus.post(payload) }
+    }
+
+    /**
+     * Combines `data` with [RemoteMessage.getNotification] so Console/tests that only set the
+     * notification block still produce a preview; production Cloud Functions should send **data-only**
+     * with `type`, `postId`, etc.
+     */
+    private fun mergedPayload(message: RemoteMessage): Map<String, String> {
+        val out = message.data.toMutableMap()
+        val n = message.notification
+        if (n != null) {
+            if (out["actorName"].isNullOrBlank()) {
+                out["actorName"] = n.title?.trim().orEmpty().ifBlank { "ForzaBall" }
+            }
+            if (out["preview"].isNullOrBlank()) {
+                out["preview"] = n.body?.trim().orEmpty()
+            }
+        }
+        return out
+    }
+
+    private fun showSystemNotification(payload: FeedPushPayload) {
+        FeedNotificationChannels.ensureFeedChannel(this)
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            val granted = ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.POST_NOTIFICATIONS,
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                Timber.w("POST_NOTIFICATIONS denied; tray notification skipped (grant in system settings)")
+                return
+            }
+        }
+
+        val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !nm.areNotificationsEnabled()) {
+            Timber.w("Notifications disabled at OS level")
+            return
+        }
+
+        val title = notificationTitle(payload)
+        val text = payload.preview.ifBlank { "Tap to open" }
+
+        val open = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(FeedPushConstants.EXTRA_OPEN_FEED_POST_ID, payload.postId)
+        }
+        val pending = PendingIntent.getActivity(
+            this,
+            payload.postId.hashCode(),
+            open,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+        val notification = NotificationCompat.Builder(this, FeedPushConstants.NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_stat_forza)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setAutoCancel(true)
+            .setContentIntent(pending)
+            .build()
+
+        nm.notify(payload.postId.hashCode(), notification)
+    }
+
+    private fun notificationTitle(payload: FeedPushPayload): String = when (payload.type) {
+        FeedPushType.NewPost -> payload.actorName
+        FeedPushType.Comment -> "${payload.actorName} commented"
+        FeedPushType.Like -> "${payload.actorName} liked your post"
+        FeedPushType.Dislike -> "${payload.actorName} disliked your post"
+    }
+
+    private fun parsePayload(data: Map<String, String>): FeedPushPayload? {
+        val typeStr = data["type"] ?: return null
+        val postId = data["postId"] ?: return null
+        val type = when (typeStr) {
+            "new_post" -> FeedPushType.NewPost
+            "comment" -> FeedPushType.Comment
+            "like" -> FeedPushType.Like
+            "dislike" -> FeedPushType.Dislike
+            else -> return null
+        }
+        val reaction = when (typeStr) {
+            "like" -> FeedReactionKind.Like
+            "dislike" -> FeedReactionKind.Dislike
+            else -> null
+        }
+        val name = data["actorName"]?.trim().orEmpty().ifBlank { "Someone" }
+        return FeedPushPayload(
+            type = type,
+            postId = postId,
+            actorId = data["actorId"]?.takeIf { it.isNotBlank() },
+            actorName = name,
+            actorPhotoUrl = data["actorPhotoUrl"]?.takeIf { it.isNotBlank() },
+            preview = data["preview"].orEmpty(),
+            reaction = reaction,
+        )
     }
 }
-

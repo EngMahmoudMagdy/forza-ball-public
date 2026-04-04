@@ -1,0 +1,5 @@
+# Copy into the project root local.properties (same folder as settings.gradle.kts).
+# :data module build reads these in data/build.gradle.kts → native obfuscated_secrets.h
+# Get a key from https://www.api-football.com/
+API_FOOTBALL_KEY=
+API_FOOTBALL_BASE_URL=https://v3.football.api-sports.io/

@@ -14,6 +14,7 @@ sealed class HomeIntent : UiIntent {
 data class HomeState(
     val isLoading: Boolean = false,
     val favoriteClubMatch: Match? = null,
+    val liveMatches: List<Match> = emptyList(),
     val news: List<NewsArticle> = emptyList(),
     val errorMessage: String? = null,
 ) : UiState
@@ -21,4 +22,3 @@ data class HomeState(
 sealed class HomeEffect : UiEffect {
     data class ShowMessage(val message: String) : HomeEffect()
 }
-

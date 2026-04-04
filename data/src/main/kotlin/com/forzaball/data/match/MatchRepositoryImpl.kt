@@ -1,33 +1,49 @@
 package com.forzaball.data.match
 
-import com.forzaball.domain.model.Club
-import com.forzaball.domain.model.Match
+import com.forzaball.data.network.ApiFootballService
+import com.forzaball.data.network.toMatch
+import com.forzaball.data.secrets.FootballSecrets
+import com.forzaball.domain.model.HomeMatchContent
 import com.forzaball.domain.repository.MatchRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.concurrent.TimeUnit
+import timber.log.Timber
 
 class MatchRepositoryImpl(
-    // Inject network / database dependencies here when implemented.
-//    private val placeholder: Any? = null,
+    private val api: ApiFootballService,
+    private val secrets: FootballSecrets,
 ) : MatchRepository {
 
-    private val currentMatch = MutableStateFlow<Match?>(null)
+    override suspend fun loadFavoriteHighlightAndLive(clubIds: List<String>): HomeMatchContent {
+        if (secrets.apiKey().isBlank()) {
+            Timber.w("API_FOOTBALL_KEY missing in local.properties — native key is empty")
+            return HomeMatchContent(highlightMatch = null, liveMatches = emptyList())
+        }
+        val ids = clubIds.mapNotNull { it.toIntOrNull() }
+        if (ids.isEmpty()) {
+            return HomeMatchContent(highlightMatch = null, liveMatches = emptyList())
+        }
+        return runCatching {
+            val liveDtos = api.fixtures(live = "all").response.orEmpty()
+            val idSet = ids.toSet()
+            val myLive = liveDtos
+                .filter { f ->
+                    f.teams.home.id in idSet || f.teams.away.id in idSet
+                }
+                .map { it.toMatch() }
+                .distinctBy { it.id }
 
-    init {
-        // Stubbed match so the home screen can render something.
-        val now = System.currentTimeMillis()
-        val home = Club(id = "1", name = "Forza FC", leagueId = "league_1", crestUrl = null)
-        val away = Club(id = "2", name = "Rivals FC", leagueId = "league_1", crestUrl = null)
-        currentMatch.value = Match(
-            id = "match_1",
-            homeClub = home,
-            awayClub = away,
-            startTimeMillis = now + TimeUnit.HOURS.toMillis(2),
-            isLive = false,
-        )
+            val primary = ids.first()
+            val nextFixture = api.fixtures(team = primary, next = 1).response?.firstOrNull()
+
+            val highlight = myLive.firstOrNull()
+                ?: nextFixture?.toMatch()
+
+            HomeMatchContent(
+                highlightMatch = highlight,
+                liveMatches = myLive.take(20),
+            )
+        }.getOrElse { e ->
+            Timber.e(e, "loadFavoriteHighlightAndLive failed")
+            HomeMatchContent(highlightMatch = null, liveMatches = emptyList())
+        }
     }
-
-    override fun observeNextOrLiveMatchForFavoriteClub(): Flow<Match?> = currentMatch
 }
-

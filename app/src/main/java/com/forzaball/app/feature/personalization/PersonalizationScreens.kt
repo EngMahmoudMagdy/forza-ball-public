@@ -49,26 +49,28 @@ import com.forzaball.app.ui.theme.ForzaBallPrimary
 data class LeagueItem(val id: String, val name: String, val country: String, val logoUrl: String?)
 data class ClubItem(val id: String, val name: String, val leagueId: String, val crestUrl: String?)
 
+/** League ids match [API-Football](https://www.api-football.com/documentation-v3) `league` resource. */
 val defaultLeagues = listOf(
-    LeagueItem("pl", "Premier League", "England", "https://lh3.googleusercontent.com/aida-public/AB6AXuAmtStcogjmWj7G6BNMpp5J3kaAnIMQkDGe8cSSsqnOfIy1cEur2AsNNyXtXcRzNvAj8QEIYIY0ZkeuE9VDc0laCh4g6nmQZgmjCkviNSILHHn7UI7QNzetiyUS4jWRJxkJ_qzjcDnBh7OcS7oANNRRTwmpMtqnjMq2kbjHmfMp7jDTDWPsSoe8HuT69cOcbS3HSsHVcbThQYe8wPpeuBssoGExOL-z7uMNc3TN58GQDnnbH5iRp6Wtq16d8yzBpFR2kqTNSCSeECNF"),
-    LeagueItem("laliga", "La Liga", "Spain", null),
-    LeagueItem("seriea", "Serie A", "Italy", null),
-    LeagueItem("bundesliga", "Bundesliga", "Germany", null),
-    LeagueItem("ligue1", "Ligue 1", "France", null),
-    LeagueItem("ucl", "Champions League", "International", null),
-    LeagueItem("mls", "MLS", "USA", null),
+    LeagueItem("39", "Premier League", "England", "https://lh3.googleusercontent.com/aida-public/AB6AXuAmtStcogjmWj7G6BNMpp5J3kaAnIMQkDGe8cSSsqnOfIy1cEur2AsNNyXtXcRzNvAj8QEIYIY0ZkeuE9VDc0laCh4g6nmQZgmjCkviNSILHHn7UI7QNzetiyUS4jWRJxkJ_qzjcDnBh7OcS7oANNRRTwmpMtqnjMq2kbjHmfMp7jDTDWPsSoe8HuT69cOcbS3HSsHVcbThQYe8wPpeuBssoGExOL-z7uMNc3TN58GQDnnbH5iRp6Wtq16d8yzBpFR2kqTNSCSeECNF"),
+    LeagueItem("140", "La Liga", "Spain", null),
+    LeagueItem("135", "Serie A", "Italy", null),
+    LeagueItem("78", "Bundesliga", "Germany", null),
+    LeagueItem("61", "Ligue 1", "France", null),
+    LeagueItem("2", "Champions League", "International", null),
+    LeagueItem("253", "MLS", "USA", null),
 )
 
+/** Team ids match API-Football `teams` resource (used for fixtures, live scores, injuries). */
 val defaultClubs = listOf(
-    ClubItem("mancity", "Man City", "pl", null),
-    ClubItem("realmadrid", "Real Madrid", "laliga", null),
-    ClubItem("acmilan", "AC Milan", "seriea", null),
-    ClubItem("liverpool", "Liverpool", "pl", null),
-    ClubItem("bayern", "FC Bayern", "bundesliga", null),
-    ClubItem("juventus", "Juventus", "seriea", null),
-    ClubItem("arsenal", "Arsenal FC", "pl", null),
-    ClubItem("psg", "Paris Saint-Germain", "ligue1", null),
-    ClubItem("barcelona", "Barcelona", "laliga", null),
+    ClubItem("50", "Man City", "39", "https://media.api-sports.io/football/teams/50.png"),
+    ClubItem("40", "Liverpool", "39", "https://media.api-sports.io/football/teams/40.png"),
+    ClubItem("42", "Arsenal", "39", "https://media.api-sports.io/football/teams/42.png"),
+    ClubItem("541", "Real Madrid", "140", "https://media.api-sports.io/football/teams/541.png"),
+    ClubItem("529", "Barcelona", "140", "https://media.api-sports.io/football/teams/529.png"),
+    ClubItem("489", "AC Milan", "135", "https://media.api-sports.io/football/teams/489.png"),
+    ClubItem("496", "Juventus", "135", "https://media.api-sports.io/football/teams/496.png"),
+    ClubItem("157", "FC Bayern", "78", "https://media.api-sports.io/football/teams/157.png"),
+    ClubItem("85", "Paris Saint-Germain", "61", "https://media.api-sports.io/football/teams/85.png"),
 )
 
 @Composable

@@ -1,5 +1,6 @@
 package com.forzaball.domain.repository
 
+import com.forzaball.domain.model.HomeMatchContent
 import com.forzaball.domain.model.Match
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.UserPreferences
@@ -43,26 +44,72 @@ interface PreferencesRepository {
 }
 
 interface NewsRepository {
-    fun observeClubNews(clubIds: List<String>): Flow<List<NewsArticle>>
+    suspend fun loadNewsForClubs(clubIds: List<String>): List<NewsArticle>
 }
 
 interface MatchRepository {
-    fun observeNextOrLiveMatchForFavoriteClub(): Flow<Match?>
+    suspend fun loadFavoriteHighlightAndLive(clubIds: List<String>): HomeMatchContent
 }
 
-interface FeedRepository {
-    fun observeFeed(): Flow<List<FeedPost>>
-}
-
+/** Social feed post (text-only). */
 data class FeedPost(
     val id: String,
+    val userId: String,
+    /** Display name (e.g. “Marcus Sterling”). */
+    val authorName: String,
+    /** Handle without “@” (e.g. “MarcusV_9”), shown on the line below the name. */
+    val authorUsername: String,
+    val authorAvatarUrl: String?,
+    val text: String,
+    val likeCount: Int,
+    val dislikeCount: Int,
+    val commentCount: Int,
+    val isLikedByUser: Boolean,
+    val isDislikedByUser: Boolean,
+    val createdAtMillis: Long,
+)
+
+data class FeedComment(
+    val id: String,
+    val userId: String,
     val authorName: String,
     val authorAvatarUrl: String?,
-    val content: String,
+    val text: String,
     val likeCount: Int,
-    val commentCount: Int,
-    val repostCount: Int,
     val isLikedByUser: Boolean,
     val createdAtMillis: Long,
 )
+
+interface FeedRepository {
+    fun observeFeedPosts(): Flow<List<FeedPost>>
+
+    /** Single post for detail / deep links; emits null if missing or signed out. */
+    fun observePost(postId: String): Flow<FeedPost?>
+
+    suspend fun refreshFeed()
+
+    suspend fun createPost(text: String): Result<Unit>
+
+    suspend fun likePost(postId: String)
+
+    suspend fun unlikePost(postId: String)
+
+    suspend fun dislikePost(postId: String)
+
+    suspend fun undislikePost(postId: String)
+
+    fun observeComments(postId: String): Flow<List<FeedComment>>
+
+    suspend fun addComment(postId: String, text: String): Result<Unit>
+
+    suspend fun likeComment(postId: String, commentId: String)
+
+    suspend fun unlikeComment(postId: String, commentId: String)
+
+    /** Ensures `users/{uid}` exists for Firestore rules and profile display. */
+    suspend fun ensureUserProfile()
+
+    /** Stores FCM registration token on `users/{uid}` for Cloud Messaging (server-triggered pushes). */
+    suspend fun saveMessagingToken(token: String)
+}
 
