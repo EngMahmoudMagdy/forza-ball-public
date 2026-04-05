@@ -372,9 +372,11 @@ class FeedRepositoryImpl(
                             ?: u.getString(FIELD_EMAIL)?.substringBefore("@")?.ifBlank { null }
                     } ?: "User"
                     val avatar = profile?.takeIf { it.exists() }?.getString(FIELD_AVATAR_URL)
-                    val likeSnap = firestore.collection(COL_POSTS).document(postId)
+                    val commentBase = firestore.collection(COL_POSTS).document(postId)
                         .collection(SUB_COMMENTS).document(doc.id)
-                        .collection(SUB_COMMENT_LIKES).document(uid)
+                    val likeSnap = commentBase.collection(SUB_COMMENT_LIKES).document(uid)
+                        .get(Source.DEFAULT).await()
+                    val dislikeSnap = commentBase.collection(SUB_COMMENT_DISLIKES).document(uid)
                         .get(Source.DEFAULT).await()
                     FeedComment(
                         id = doc.id,
@@ -383,7 +385,9 @@ class FeedRepositoryImpl(
                         authorAvatarUrl = avatar,
                         text = doc.getString(FIELD_TEXT).orEmpty(),
                         likeCount = (doc.getLong(FIELD_LIKE_COUNT) ?: 0L).toInt(),
+                        dislikeCount = (doc.getLong(FIELD_DISLIKE_COUNT) ?: 0L).toInt(),
                         isLikedByUser = likeSnap.exists(),
+                        isDislikedByUser = dislikeSnap.exists(),
                         createdAtMillis = doc.getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
                     )
                 }
@@ -410,6 +414,7 @@ class FeedRepositoryImpl(
                     FIELD_TEXT to trimmed,
                     FIELD_TIMESTAMP to FieldValue.serverTimestamp(),
                     FIELD_LIKE_COUNT to 0,
+                    FIELD_DISLIKE_COUNT to 0,
                 ),
             )
             tx.update(postRef, FIELD_COMMENT_COUNT, count + 1)
@@ -421,14 +426,28 @@ class FeedRepositoryImpl(
         val postRef = firestore.collection(COL_POSTS).document(postId)
         val commentRef = postRef.collection(SUB_COMMENTS).document(commentId)
         val likeRef = commentRef.collection(SUB_COMMENT_LIKES).document(uid)
+        val dislikeRef = commentRef.collection(SUB_COMMENT_DISLIKES).document(uid)
         firestore.runTransaction { tx ->
             val comment = tx.get(commentRef)
             if (!comment.exists()) return@runTransaction
             val like = tx.get(likeRef)
             if (like.exists()) return@runTransaction
-            val current = comment.getLong(FIELD_LIKE_COUNT) ?: 0L
+            var likeCount = comment.getLong(FIELD_LIKE_COUNT) ?: 0L
+            var dislikeCount = comment.getLong(FIELD_DISLIKE_COUNT) ?: 0L
+            val dislike = tx.get(dislikeRef)
+            if (dislike.exists()) {
+                tx.delete(dislikeRef)
+                dislikeCount = max(0L, dislikeCount - 1)
+            }
             tx.set(likeRef, mapOf(FIELD_TIMESTAMP to FieldValue.serverTimestamp()))
-            tx.update(commentRef, FIELD_LIKE_COUNT, current + 1)
+            likeCount += 1
+            tx.update(
+                commentRef,
+                mapOf(
+                    FIELD_LIKE_COUNT to likeCount,
+                    FIELD_DISLIKE_COUNT to dislikeCount,
+                ),
+            )
         }.await()
     }
 
@@ -445,6 +464,52 @@ class FeedRepositoryImpl(
             val current = comment.getLong(FIELD_LIKE_COUNT) ?: 0L
             tx.delete(likeRef)
             tx.update(commentRef, FIELD_LIKE_COUNT, max(0L, current - 1))
+        }.await()
+    }
+
+    override suspend fun dislikeComment(postId: String, commentId: String) {
+        val uid = auth.currentUser?.uid ?: return
+        val postRef = firestore.collection(COL_POSTS).document(postId)
+        val commentRef = postRef.collection(SUB_COMMENTS).document(commentId)
+        val dislikeRef = commentRef.collection(SUB_COMMENT_DISLIKES).document(uid)
+        val likeRef = commentRef.collection(SUB_COMMENT_LIKES).document(uid)
+        firestore.runTransaction { tx ->
+            val comment = tx.get(commentRef)
+            if (!comment.exists()) return@runTransaction
+            val dislike = tx.get(dislikeRef)
+            if (dislike.exists()) return@runTransaction
+            var likeCount = comment.getLong(FIELD_LIKE_COUNT) ?: 0L
+            var dislikeCount = comment.getLong(FIELD_DISLIKE_COUNT) ?: 0L
+            val like = tx.get(likeRef)
+            if (like.exists()) {
+                tx.delete(likeRef)
+                likeCount = max(0L, likeCount - 1)
+            }
+            tx.set(dislikeRef, mapOf(FIELD_TIMESTAMP to FieldValue.serverTimestamp()))
+            dislikeCount += 1
+            tx.update(
+                commentRef,
+                mapOf(
+                    FIELD_LIKE_COUNT to likeCount,
+                    FIELD_DISLIKE_COUNT to dislikeCount,
+                ),
+            )
+        }.await()
+    }
+
+    override suspend fun undislikeComment(postId: String, commentId: String) {
+        val uid = auth.currentUser?.uid ?: return
+        val postRef = firestore.collection(COL_POSTS).document(postId)
+        val commentRef = postRef.collection(SUB_COMMENTS).document(commentId)
+        val dislikeRef = commentRef.collection(SUB_COMMENT_DISLIKES).document(uid)
+        firestore.runTransaction { tx ->
+            val comment = tx.get(commentRef)
+            if (!comment.exists()) return@runTransaction
+            val dislike = tx.get(dislikeRef)
+            if (!dislike.exists()) return@runTransaction
+            val current = comment.getLong(FIELD_DISLIKE_COUNT) ?: 0L
+            tx.delete(dislikeRef)
+            tx.update(commentRef, FIELD_DISLIKE_COUNT, max(0L, current - 1))
         }.await()
     }
 
@@ -500,6 +565,7 @@ class FeedRepositoryImpl(
         private const val SUB_DISLIKES = "dislikes"
         private const val SUB_COMMENTS = "comments"
         private const val SUB_COMMENT_LIKES = "commentLikes"
+        private const val SUB_COMMENT_DISLIKES = "commentDislikes"
         /** Global feed: recent posts visible to all signed-in users (`posts` read is public). */
         private const val GLOBAL_FEED_LIMIT = 80L
         private const val MAX_POST_CHARS = 500

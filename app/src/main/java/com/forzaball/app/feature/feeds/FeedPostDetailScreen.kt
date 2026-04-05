@@ -269,6 +269,9 @@ private fun FeedPostDetailContent(
                         onToggleLike = {
                             viewModel.toggleCommentLike(post.id, c.id, c.isLikedByUser)
                         },
+                        onToggleDislike = {
+                            viewModel.toggleCommentDislike(post.id, c.id, c.isDislikedByUser)
+                        },
                     )
                 }
             }

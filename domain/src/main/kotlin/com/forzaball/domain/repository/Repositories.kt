@@ -76,7 +76,9 @@ data class FeedComment(
     val authorAvatarUrl: String?,
     val text: String,
     val likeCount: Int,
+    val dislikeCount: Int,
     val isLikedByUser: Boolean,
+    val isDislikedByUser: Boolean,
     val createdAtMillis: Long,
 )
 
@@ -105,6 +107,10 @@ interface FeedRepository {
     suspend fun likeComment(postId: String, commentId: String)
 
     suspend fun unlikeComment(postId: String, commentId: String)
+
+    suspend fun dislikeComment(postId: String, commentId: String)
+
+    suspend fun undislikeComment(postId: String, commentId: String)
 
     /** Ensures `users/{uid}` exists for Firestore rules and profile display. */
     suspend fun ensureUserProfile()

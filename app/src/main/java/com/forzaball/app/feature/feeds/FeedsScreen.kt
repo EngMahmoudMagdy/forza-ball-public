@@ -25,8 +25,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
@@ -658,6 +656,9 @@ internal fun FeedCommentsBottomSheet(
                         onToggleLike = {
                             viewModel.toggleCommentLike(postId, c.id, c.isLikedByUser)
                         },
+                        onToggleDislike = {
+                            viewModel.toggleCommentDislike(postId, c.id, c.isDislikedByUser)
+                        },
                     )
                 }
             }
@@ -698,6 +699,7 @@ internal fun FeedCommentsBottomSheet(
 internal fun CommentRow(
     comment: FeedComment,
     onToggleLike: () -> Unit,
+    onToggleDislike: () -> Unit,
 ) {
     val avatar = comment.authorAvatarUrl ?: "$AVATAR_PLACEHOLDER${comment.userId}"
     Row(
@@ -736,21 +738,51 @@ internal fun CommentRow(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .clickable { onToggleLike() },
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(top = 4.dp),
             ) {
-                Icon(
-                    imageVector = if (comment.isLikedByUser) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = if (comment.isLikedByUser) ForzaBallPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "${comment.likeCount}",
-                    style = MaterialTheme.typography.labelSmall,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { onToggleLike() },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ThumbUp,
+                        contentDescription = "Like",
+                        modifier = Modifier.size(16.dp),
+                        tint = if (comment.isLikedByUser) {
+                            ForzaBallPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = formatCompactCount(comment.likeCount),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { onToggleDislike() },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ThumbDown,
+                        contentDescription = "Dislike",
+                        modifier = Modifier.size(16.dp),
+                        tint = if (comment.isDislikedByUser) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = formatCompactCount(comment.dislikeCount),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

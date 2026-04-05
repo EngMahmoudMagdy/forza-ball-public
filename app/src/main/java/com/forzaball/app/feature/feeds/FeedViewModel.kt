@@ -190,7 +190,12 @@ class FeedViewModel(
         }
     }
 
+    private var lastCommentReactionElapsed = 0L
+
     fun toggleCommentLike(postId: String, commentId: String, liked: Boolean) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastCommentReactionElapsed < 500L) return
+        lastCommentReactionElapsed = now
         viewModelScope.launch {
             runCatching {
                 if (liked) {
@@ -200,7 +205,25 @@ class FeedViewModel(
                 }
             }.onFailure { e ->
                 Timber.tag(TAG).e(e, "toggleCommentLike")
-                _ui.update { it.copy(errorMessage = e.message ?: "Couldn’t update") }
+                _ui.update { it.copy(errorMessage = e.message ?: "Couldn’t update like") }
+            }
+        }
+    }
+
+    fun toggleCommentDislike(postId: String, commentId: String, disliked: Boolean) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastCommentReactionElapsed < 500L) return
+        lastCommentReactionElapsed = now
+        viewModelScope.launch {
+            runCatching {
+                if (disliked) {
+                    feedRepository.undislikeComment(postId, commentId)
+                } else {
+                    feedRepository.dislikeComment(postId, commentId)
+                }
+            }.onFailure { e ->
+                Timber.tag(TAG).e(e, "toggleCommentDislike")
+                _ui.update { it.copy(errorMessage = e.message ?: "Couldn’t update dislike") }
             }
         }
     }
