@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,14 +54,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.forzaball.app.ui.theme.ForzaBallTheme
+import com.forzaball.domain.model.Club
+import com.forzaball.app.feature.personalization.catalogLeagues
+import com.forzaball.app.feature.profile.EditFavoritesOverlay
+import com.forzaball.app.feature.profile.EditFavoritesViewModel
 import com.forzaball.app.feature.profile.ProfileViewModel
 import com.forzaball.domain.model.Match
 import com.forzaball.domain.model.NewsArticle
+import com.forzaball.domain.model.TeamNextMatch
+import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.app.feature.feeds.CreatePostOverlay
+import com.forzaball.app.notifications.FeedOpenRequest
 import com.forzaball.app.feature.feeds.FeedPostDetailRoute
 import com.forzaball.app.feature.feeds.FeedViewModel
 import com.forzaball.app.feature.feeds.FeedsRoute
@@ -75,12 +85,17 @@ fun HomeRoute(
     viewModel: HomeViewModel = koinViewModel(),
     feedViewModel: FeedViewModel = koinViewModel(),
     profileViewModel: ProfileViewModel = koinViewModel(),
-    initialFeedPostId: String? = null,
+    editFavoritesViewModel: EditFavoritesViewModel = koinViewModel(),
+    /** Cold start / deep link: open Feeds tab and this post (optionally a comment). */
+    initialFeedOpen: FeedOpenRequest? = null,
     /** Opens a post from the global in-app banner (root overlay). */
-    bannerOpenPostId: String? = null,
+    bannerOpenRequest: FeedOpenRequest? = null,
     onBannerOpenConsumed: () -> Unit = {},
     onNavigateToSignIn: () -> Unit = {},
     onNavigateToSignUp: () -> Unit = {},
+    onNavigateToFixturesList: () -> Unit = {},
+    onNavigateToNewsList: () -> Unit = {},
+    onOpenNewsArticle: (String, String) -> Unit = { _, _ -> },
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -90,18 +105,18 @@ fun HomeRoute(
 
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var feedOverlayKey by rememberSaveable { mutableStateOf<String?>(null) }
+    var showEditFavorites by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(initialFeedPostId) {
-        if (initialFeedPostId != null) {
-            selectedTab = 2
-            feedOverlayKey = "post:$initialFeedPostId"
-        }
+    LaunchedEffect(initialFeedOpen) {
+        val open = initialFeedOpen ?: return@LaunchedEffect
+        selectedTab = 2
+        feedOverlayKey = open.overlayKey
     }
 
-    LaunchedEffect(bannerOpenPostId) {
-        val id = bannerOpenPostId ?: return@LaunchedEffect
+    LaunchedEffect(bannerOpenRequest) {
+        val open = bannerOpenRequest ?: return@LaunchedEffect
         selectedTab = 2
-        feedOverlayKey = "post:$id"
+        feedOverlayKey = open.overlayKey
         onBannerOpenConsumed()
     }
 
@@ -115,6 +130,13 @@ fun HomeRoute(
         onLogout = profileViewModel::signOut,
         onNavigateToSignIn = onNavigateToSignIn,
         onNavigateToSignUp = onNavigateToSignUp,
+        showEditFavorites = showEditFavorites,
+        onShowEditFavorites = { showEditFavorites = true },
+        onDismissEditFavorites = { showEditFavorites = false },
+        editFavoritesViewModel = editFavoritesViewModel,
+        onNavigateToFixturesList = onNavigateToFixturesList,
+        onNavigateToNewsList = onNavigateToNewsList,
+        onOpenNewsArticle = onOpenNewsArticle,
     )
 }
 
@@ -129,6 +151,13 @@ fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToSignIn: () -> Unit,
     onNavigateToSignUp: () -> Unit,
+    showEditFavorites: Boolean,
+    onShowEditFavorites: () -> Unit,
+    onDismissEditFavorites: () -> Unit,
+    editFavoritesViewModel: EditFavoritesViewModel,
+    onNavigateToFixturesList: () -> Unit,
+    onNavigateToNewsList: () -> Unit,
+    onOpenNewsArticle: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val feedUi by feedViewModel.ui.collectAsState()
@@ -150,7 +179,12 @@ fun HomeScreen(
                     .fillMaxWidth(),
             ) {
                 when (selectedTab) {
-                    0 -> HomeDashboardContent(state = state)
+                    0 -> HomeDashboardContent(
+                        state = state,
+                        onViewAllFixtures = onNavigateToFixturesList,
+                        onViewAllNews = onNavigateToNewsList,
+                        onOpenNewsArticle = onOpenNewsArticle,
+                    )
                     2 -> FeedsRoute(
                         viewModel = feedViewModel,
                         onOpenCreatePost = { onFeedOverlayKeyChange("create") },
@@ -158,9 +192,11 @@ fun HomeScreen(
                     )
                     4 -> ProfileTabContent(
                         authState = authState,
+                        userPreferences = state.userPreferences,
                         onLogout = onLogout,
                         onSignIn = onNavigateToSignIn,
                         onSignUp = onNavigateToSignUp,
+                        onEditFavorites = onShowEditFavorites,
                     )
                     else -> PlaceholderTabContent(
                         title = homeTitleForTab(selectedTab),
@@ -173,6 +209,12 @@ fun HomeScreen(
                 onTabSelected = onTabSelected,
             )
         }
+
+        EditFavoritesOverlay(
+            visible = showEditFavorites && selectedTab == 4,
+            viewModel = editFavoritesViewModel,
+            onDismiss = onDismissEditFavorites,
+        )
 
         when (feedOverlayKey) {
             null -> {}
@@ -192,12 +234,17 @@ fun HomeScreen(
             else -> {
                 val key = feedOverlayKey
                 if (key != null && key.startsWith("post:")) {
-                    val postId = key.removePrefix("post:")
-                    FeedPostDetailRoute(
-                        postId = postId,
-                        viewModel = feedViewModel,
-                        onBack = { onFeedOverlayKeyChange(null) },
-                    )
+                    val open = FeedOpenRequest.fromOverlayKey(key)
+                    if (open != null) {
+                        val uid = (authState as? AuthState.SignedIn)?.uid
+                        FeedPostDetailRoute(
+                            postId = open.postId,
+                            highlightCommentId = open.highlightCommentId,
+                            currentUserId = uid,
+                            viewModel = feedViewModel,
+                            onBack = { onFeedOverlayKeyChange(null) },
+                        )
+                    }
                 }
             }
         }
@@ -275,7 +322,12 @@ private fun HomeTopBar(title: String) {
 }
 
 @Composable
-private fun HomeDashboardContent(state: HomeState) {
+private fun HomeDashboardContent(
+    state: HomeState,
+    onViewAllFixtures: () -> Unit,
+    onViewAllNews: () -> Unit,
+    onOpenNewsArticle: (String, String) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 16.dp),
@@ -301,7 +353,7 @@ private fun HomeDashboardContent(state: HomeState) {
                         ),
                         color = ForzaBallPrimary,
                         modifier = Modifier
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .padding(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 2.dp)
                             .background(
                                 ForzaBallPrimary.copy(alpha = 0.1f),
                                 RoundedCornerShape(9999.dp),
@@ -311,7 +363,7 @@ private fun HomeDashboardContent(state: HomeState) {
                                 ForzaBallPrimary.copy(alpha = 0.2f),
                                 RoundedCornerShape(9999.dp),
                             )
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                            .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -323,11 +375,32 @@ private fun HomeDashboardContent(state: HomeState) {
             }
         }
 
+        if (state.teamNextMatches.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Next match for your teams",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+                )
+            }
+            item {
+                LazyRow(
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    items(state.teamNextMatches, key = { it.teamId }) { row ->
+                        TeamNextMatchCard(row = row)
+                    }
+                }
+            }
+        }
+
         item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -344,6 +417,7 @@ private fun HomeDashboardContent(state: HomeState) {
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = ForzaBallPrimary,
+                    modifier = Modifier.clickable(onClick = onViewAllFixtures),
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -361,29 +435,95 @@ private fun HomeDashboardContent(state: HomeState) {
         }
 
         item {
-            Text(
-                text = "Latest News for You",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 24.dp,
-                    bottom = 16.dp,
-                ),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Latest News for You",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Text(
+                    text = "View All",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = ForzaBallPrimary,
+                    modifier = Modifier.clickable(onClick = onViewAllNews),
+                )
+            }
         }
-        items(state.news) { article ->
-            if (state.news.indexOf(article) == 0) {
-                NewsCardLarge(article = article)
+        itemsIndexed(state.news, key = { _, a -> a.id }) { index, article ->
+            val open = article.articleUrl?.let { u ->
+                { onOpenNewsArticle(u, article.title) }
+            }
+            if (index == 0) {
+                NewsCardLarge(article = article, onClick = open)
             } else {
-                NewsCardHorizontal(article = article)
+                NewsCardHorizontal(article = article, onClick = open)
             }
         }
     }
 }
+
+@Composable
+private fun TeamNextMatchCard(row: TeamNextMatch) {
+    val m = row.nextMatch
+    Card(
+        modifier = Modifier.width(260.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    model = row.teamCrestUrl,
+                    contentDescription = row.teamDisplayName,
+                    modifier = Modifier.size(36.dp),
+                    contentScale = ContentScale.Fit,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = row.teamDisplayName.ifBlank { "Team ${row.teamId}" },
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            if (m != null) {
+                Text(
+                    text = "${m.homeClub.shortOrName()} vs ${m.awayClub.shortOrName()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = teamNextTimeFmt.format(java.util.Date(m.startTimeMillis)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            } else {
+                Text(
+                    text = "No upcoming fixture",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+private val teamNextTimeFmt = java.text.SimpleDateFormat("EEE d MMM · HH:mm", java.util.Locale.getDefault())
+
+private fun Club.shortOrName(): String = name.split(" ").takeLast(2).joinToString(" ").ifBlank { name }
 
 @Composable
 private fun PlaceholderTabContent(title: String) {
@@ -402,9 +542,11 @@ private fun PlaceholderTabContent(title: String) {
 @Composable
 private fun ProfileTabContent(
     authState: AuthState,
+    userPreferences: UserPreferences,
     onLogout: () -> Unit,
     onSignIn: () -> Unit,
     onSignUp: () -> Unit,
+    onEditFavorites: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -425,6 +567,42 @@ private fun ProfileTabContent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Favorite leagues",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                )
+                val leagueLabels = userPreferences.favoriteLeagues.map { slug ->
+                    catalogLeagues.find { it.id == slug }?.name ?: slug
+                }
+                Text(
+                    text = if (leagueLabels.isEmpty()) "None selected" else leagueLabels.joinToString(", "),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Favorite teams",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                )
+                Text(
+                    text = if (userPreferences.favoriteClubs.isEmpty()) {
+                        "None selected"
+                    } else {
+                        "${userPreferences.favoriteClubs.size} team(s) from ESPN"
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = onEditFavorites,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary),
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text("Edit leagues & teams", fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
@@ -806,11 +984,16 @@ private fun scoreLine(match: Match): String {
 }
 
 @Composable
-fun NewsCardLarge(article: NewsArticle) {
+fun NewsCardLarge(
+    article: NewsArticle,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
@@ -852,12 +1035,12 @@ fun NewsCardLarge(article: NewsArticle) {
                         ),
                         color = ForzaBallPrimary,
                         modifier = Modifier
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .padding(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 2.dp)
                             .background(
                                 ForzaBallPrimary.copy(alpha = 0.1f),
                                 RoundedCornerShape(4.dp),
                             )
-                            .padding(horizontal = 6.dp, vertical = 4.dp),
+                            .padding(start = 6.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
                     )
                     Text(
                         text = "Recently",
@@ -889,11 +1072,16 @@ fun NewsCardLarge(article: NewsArticle) {
 }
 
 @Composable
-fun NewsCardHorizontal(article: NewsArticle) {
+fun NewsCardHorizontal(
+    article: NewsArticle,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
@@ -950,6 +1138,116 @@ fun NewsCardHorizontal(article: NewsArticle) {
                     text = "Recently",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+private fun homePreviewSampleState(): HomeState {
+    val arsenal = Club(
+        id = "57",
+        name = "Arsenal",
+        leagueId = "pl",
+        crestUrl = "https://crests.football-data.org/57.png",
+    )
+    val chelsea = Club(
+        id = "61",
+        name = "Chelsea",
+        leagueId = "pl",
+        crestUrl = "https://crests.football-data.org/61.png",
+    )
+    val liverpool = Club(
+        id = "64",
+        name = "Liverpool",
+        leagueId = "pl",
+        crestUrl = "https://crests.football-data.org/64.png",
+    )
+    val city = Club(
+        id = "65",
+        name = "Man City",
+        leagueId = "pl",
+        crestUrl = "https://crests.football-data.org/65.png",
+    )
+    val highlight = Match(
+        id = "preview-1",
+        homeClub = arsenal,
+        awayClub = chelsea,
+        startTimeMillis = 0L,
+        isLive = true,
+        homeScore = 2,
+        awayScore = 1,
+        statusShort = "2H",
+        minuteElapsed = 67,
+        leagueName = "Premier League",
+    )
+    val liveRow = Match(
+        id = "preview-2",
+        homeClub = liverpool,
+        awayClub = city,
+        startTimeMillis = 0L,
+        isLive = true,
+        homeScore = 1,
+        awayScore = 1,
+        statusShort = "1H",
+        minuteElapsed = 34,
+        leagueName = "PL",
+    )
+    return HomeState(
+        favoriteClubMatch = highlight,
+        liveMatches = listOf(highlight, liveRow),
+        teamNextMatches = emptyList(),
+        news = listOf(
+            NewsArticle(
+                id = "n1",
+                title = "Title race heats up after dramatic weekend",
+                summary = "Key results reshape the table as the season enters its final stretch.",
+                imageUrl = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+                publishedAtMillis = 0L,
+                leagueId = "pl",
+                clubIds = listOf("premier league"),
+                articleUrl = null,
+            ),
+            NewsArticle(
+                id = "n2",
+                title = "Injury update ahead of European fixtures",
+                summary = "Managers face selection headaches with several first-team players sidelined.",
+                imageUrl = "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&q=80",
+                publishedAtMillis = 0L,
+                leagueId = "pl",
+                clubIds = listOf("news"),
+                articleUrl = null,
+            ),
+        ),
+    )
+}
+
+@Preview(name = "Home — Dashboard", showBackground = true, showSystemUi = true)
+@Composable
+private fun HomeScreenDashboardPreview() {
+    ForzaBallTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                HomeTopBar(title = homeTitleForTab(0))
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                ) {
+                    HomeDashboardContent(
+                        state = homePreviewSampleState(),
+                        onViewAllFixtures = {},
+                        onViewAllNews = {},
+                        onOpenNewsArticle = { _, _ -> },
+                    )
+                }
+                HomeBottomNavigation(
+                    selectedTab = 0,
+                    onTabSelected = {},
                 )
             }
         }

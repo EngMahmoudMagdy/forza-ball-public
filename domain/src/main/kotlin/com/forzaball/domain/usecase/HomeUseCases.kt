@@ -2,6 +2,7 @@ package com.forzaball.domain.usecase
 
 import com.forzaball.domain.model.HomeMatchContent
 import com.forzaball.domain.model.NewsArticle
+import com.forzaball.domain.model.TeamNextMatch
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.MatchRepository
 import com.forzaball.domain.repository.NewsRepository
@@ -17,15 +18,24 @@ class ObserveUserPreferencesUseCase(
 data class HomeScreenContent(
     val matches: HomeMatchContent,
     val news: List<NewsArticle>,
+    val teamNextMatches: List<TeamNextMatch>,
 )
 
 class LoadHomeContentUseCase(
     private val matchRepository: MatchRepository,
     private val newsRepository: NewsRepository,
 ) {
-    suspend operator fun invoke(clubIds: List<String>): HomeScreenContent {
-        val matches = matchRepository.loadFavoriteHighlightAndLive(clubIds)
-        val news = newsRepository.loadNewsForClubs(clubIds)
-        return HomeScreenContent(matches = matches, news = news)
+    suspend operator fun invoke(preferences: UserPreferences): HomeScreenContent {
+        val matches = matchRepository.loadFavoriteHighlightAndLive(
+            preferences.favoriteLeagues,
+            preferences.favoriteClubs,
+        )
+        val news = newsRepository.loadNewsForPreferences(
+            preferences.favoriteLeagues,
+            preferences.favoriteClubs,
+            maxArticles = 40,
+        )
+        val teamNext = matchRepository.loadNextMatchPerFavoriteTeam(preferences.favoriteClubs)
+        return HomeScreenContent(matches = matches, news = news, teamNextMatches = teamNext)
     }
 }

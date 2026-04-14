@@ -3,15 +3,18 @@ package com.forzaball.app.feature.feeds
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,12 +28,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,9 +47,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -69,12 +73,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.forzaball.app.core.shared_ui_components.SwipeRefreshSharedComponent
+import com.forzaball.app.ui.theme.ForzaBallPrimary
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
-import com.forzaball.app.ui.theme.ForzaBallPrimary
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.koin.androidx.compose.koinViewModel
 import java.util.Date
 import java.util.Locale
@@ -139,8 +142,10 @@ fun FeedsRoute(
         }
 
         commentPostId?.let { postId ->
+            val uid = (authState as? AuthState.SignedIn)?.uid
             FeedCommentsBottomSheet(
                 postId = postId,
+                currentUserId = uid,
                 viewModel = viewModel,
                 onDismiss = { commentPostId = null },
             )
@@ -150,6 +155,7 @@ fun FeedsRoute(
 
 @Composable
 private fun FeedsScreen(
+    modifier: Modifier = Modifier,
     ui: FeedUiState,
     authState: AuthState,
     onRefresh: () -> Unit,
@@ -159,13 +165,11 @@ private fun FeedsScreen(
     onSharePost: (String) -> Unit,
     onOpenCreatePost: () -> Unit,
     onOpenComments: (String) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    val swipeState = rememberSwipeRefreshState(ui.isRefreshing)
     val signedIn = authState is AuthState.SignedIn
 
-    SwipeRefresh(
-        state = swipeState,
+    SwipeRefreshSharedComponent(
+        isRefresh = ui.isRefreshing,
         onRefresh = onRefresh,
         modifier = modifier.fillMaxSize(),
     ) {
@@ -603,15 +607,20 @@ internal fun CreatePostOverlay(
 @Composable
 internal fun FeedCommentsBottomSheet(
     postId: String,
+    currentUserId: String?,
     viewModel: FeedViewModel,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var comments by remember { mutableStateOf<List<FeedComment>>(emptyList()) }
+    var post by remember { mutableStateOf<FeedPost?>(null) }
     var draft by rememberSaveable(postId) { mutableStateOf("") }
 
     LaunchedEffect(postId) {
         viewModel.observeComments(postId).collect { comments = it }
+    }
+    LaunchedEffect(postId) {
+        viewModel.observePost(postId).collect { post = it }
     }
 
     ModalBottomSheet(
@@ -619,76 +628,77 @@ internal fun FeedCommentsBottomSheet(
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
-        Column(
+        // Single LazyColumn: ModalBottomSheet measures nested scrollables poorly; a Column + LazyColumn
+        // often collapses the list to zero height.
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(bottom = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center,
-            ) {
+            item {
                 Box(
-                    Modifier
-                        .width(40.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
-                )
-            }
-            Text(
-                text = "Comments",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(320.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(comments, key = { it.id }) { c ->
-                    CommentRow(
-                        comment = c,
-                        onToggleLike = {
-                            viewModel.toggleCommentLike(postId, c.id, c.isLikedByUser)
-                        },
-                        onToggleDislike = {
-                            viewModel.toggleCommentDislike(postId, c.id, c.isDislikedByUser)
-                        },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        Modifier
+                            .width(40.dp)
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
                     )
                 }
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedTextField(
-                    value = draft,
-                    onValueChange = { if (it.length <= 200) draft = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("Add a comment…") },
-                    maxLines = 3,
+            item {
+                Text(
+                    text = "Comments",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = {
-                        val t = draft.trim()
-                        if (t.isEmpty()) return@IconButton
-                        viewModel.addComment(postId, t) { r ->
-                            if (r.isSuccess) {
-                                draft = ""
-                            }
-                        }
+            }
+            items(comments, key = { it.id }) { c ->
+                val postAuthorId = post?.userId
+                val canDelete = currentUserId != null &&
+                    (c.userId == currentUserId || postAuthorId == currentUserId)
+                CommentRow(
+                    comment = c,
+                    onToggleLike = {
+                        viewModel.toggleCommentLike(postId, c.id, c.isLikedByUser)
                     },
-                    enabled = draft.isNotBlank(),
+                    onToggleDislike = {
+                        viewModel.toggleCommentDislike(postId, c.id, c.isDislikedByUser)
+                    },
+                    canDelete = canDelete,
+                    onDelete = { viewModel.deleteComment(postId, c.id) },
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                    OutlinedTextField(
+                        value = draft,
+                        onValueChange = { if (it.length <= 200) draft = it },
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text("Add a comment…") },
+                        maxLines = 3,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    CommentSendIconButton(
+                        enabled = draft.isNotBlank(),
+                        onClick = {
+                            val t = draft.trim()
+                            if (t.isEmpty()) return@CommentSendIconButton
+                            viewModel.addComment(postId, t) { r ->
+                                r.onSuccess { draft = "" }
+                            }
+                        },
+                    )
                 }
             }
         }
@@ -696,92 +706,205 @@ internal fun FeedCommentsBottomSheet(
 }
 
 @Composable
+internal fun CommentSendIconButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.size(56.dp),
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.Send,
+            contentDescription = "Send",
+            modifier = Modifier.size(28.dp),
+            tint = if (enabled) ForzaBallPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 internal fun CommentRow(
     comment: FeedComment,
     onToggleLike: () -> Unit,
     onToggleDislike: () -> Unit,
+    canDelete: Boolean = false,
+    onDelete: () -> Unit = {},
+    /** 0 = normal; animated overlay alpha for notification / new-comment highlight. */
+    highlightOverlayAlpha: Float = 0f,
 ) {
     val avatar = comment.authorAvatarUrl ?: "$AVATAR_PLACEHOLDER${comment.userId}"
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
-    ) {
-        AsyncImage(
-            model = avatar,
-            contentDescription = null,
+    var showDeleteSheet by remember(comment.id) { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Card(
             modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = comment.authorName,
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                )
-                Text(
-                    text = formatFeedTime(comment.createdAtMillis),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Text(
-                text = comment.text,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(top = 4.dp),
-            ) {
+                .fillMaxWidth()
+                .combinedClickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {},
+                    onLongClick = if (canDelete) {
+                        { showDeleteSheet = true }
+                    } else {
+                        null
+                    },
+                ),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.14f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onToggleLike() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.Top,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ThumbUp,
-                        contentDescription = "Like",
-                        modifier = Modifier.size(16.dp),
-                        tint = if (comment.isLikedByUser) {
-                            ForzaBallPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
+                    AsyncImage(
+                        model = avatar,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = formatCompactCount(comment.likeCount),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = comment.authorName,
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Text(
+                                text = formatFeedTime(comment.createdAtMillis),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Text(
+                            text = comment.text,
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 20.sp),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(top = 6.dp),
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                            modifier = Modifier.padding(top = 8.dp),
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable { onToggleLike() },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ThumbUp,
+                                    contentDescription = "Like",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = if (comment.isLikedByUser) {
+                                        ForzaBallPrimary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = formatCompactCount(comment.likeCount),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable { onToggleDislike() },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ThumbDown,
+                                    contentDescription = "Dislike",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = if (comment.isDislikedByUser) {
+                                        MaterialTheme.colorScheme.error
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = formatCompactCount(comment.dislikeCount),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+                if (highlightOverlayAlpha > 0.001f) {
+                    Box(
+                        Modifier
+                            .matchParentSize()
+                            .background(
+                                ForzaBallPrimary.copy(alpha = highlightOverlayAlpha.coerceIn(0f, 1f)),
+                                RoundedCornerShape(12.dp),
+                            ),
                     )
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onToggleDislike() },
+            }
+        }
+
+        if (showDeleteSheet && canDelete) {
+            ModalBottomSheet(
+                onDismissRequest = { showDeleteSheet = false },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                        .navigationBarsPadding(),
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ThumbDown,
-                        contentDescription = "Dislike",
-                        modifier = Modifier.size(16.dp),
-                        tint = if (comment.isDislikedByUser) {
-                            MaterialTheme.colorScheme.error
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = formatCompactCount(comment.dislikeCount),
-                        style = MaterialTheme.typography.labelSmall,
+                        text = "Comment",
+                        style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Delete this comment?",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "This can’t be undone.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextButton(
+                        onClick = {
+                            onDelete()
+                            showDeleteSheet = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error,
+                        ),
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Delete comment", fontWeight = FontWeight.Medium)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

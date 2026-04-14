@@ -49,9 +49,9 @@ class ForzaFirebaseMessagingService : FirebaseMessagingService() {
             Timber.w("FCM message has no data and no notification body; nothing to show")
             return
         }
-        val payload = parsePayload(merged) ?: run {
-            Timber.w("FCM could not parse payload: $merged")
-            return
+        val payload = FeedPushFcmParser.parseForDelivery(merged)
+        if (FeedPushFcmParser.isGenericCampaign(payload)) {
+            Timber.i("FCM generic/campaign-style payload (notification-only or missing type/postId)")
         }
 
         val myUid = FirebaseAuth.getInstance().currentUser?.uid
@@ -115,11 +115,20 @@ class ForzaFirebaseMessagingService : FirebaseMessagingService() {
 
         val open = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra(FeedPushConstants.EXTRA_OPEN_FEED_POST_ID, payload.postId)
+            if (!FeedPushFcmParser.isGenericCampaign(payload)) {
+                putExtra(FeedPushConstants.EXTRA_OPEN_FEED_POST_ID, payload.postId)
+                payload.commentId?.takeIf { it.isNotBlank() }?.let {
+                    putExtra(FeedPushConstants.EXTRA_OPEN_FEED_COMMENT_ID, it)
+                }
+                // Duplicate FCM-shaped keys so taps work whether the system passes `data` or `notification` only.
+                FeedPushFcmParser.payloadToIntentExtras(payload).forEach { (k, v) ->
+                    putExtra(k, v)
+                }
+            }
         }
         val pending = PendingIntent.getActivity(
             this,
-            payload.postId.hashCode(),
+            payload.postId.hashCode() xor (payload.commentId?.hashCode() ?: 0) xor payload.type.ordinal,
             open,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -143,32 +152,7 @@ class ForzaFirebaseMessagingService : FirebaseMessagingService() {
         FeedPushType.Comment -> "${payload.actorName} commented"
         FeedPushType.Like -> "${payload.actorName} liked your post"
         FeedPushType.Dislike -> "${payload.actorName} disliked your post"
+        FeedPushType.CommentLike -> "${payload.actorName} liked your comment"
     }
 
-    private fun parsePayload(data: Map<String, String>): FeedPushPayload? {
-        val typeStr = data["type"] ?: return null
-        val postId = data["postId"] ?: return null
-        val type = when (typeStr) {
-            "new_post" -> FeedPushType.NewPost
-            "comment" -> FeedPushType.Comment
-            "like" -> FeedPushType.Like
-            "dislike" -> FeedPushType.Dislike
-            else -> return null
-        }
-        val reaction = when (typeStr) {
-            "like" -> FeedReactionKind.Like
-            "dislike" -> FeedReactionKind.Dislike
-            else -> null
-        }
-        val name = data["actorName"]?.trim().orEmpty().ifBlank { "Someone" }
-        return FeedPushPayload(
-            type = type,
-            postId = postId,
-            actorId = data["actorId"]?.takeIf { it.isNotBlank() },
-            actorName = name,
-            actorPhotoUrl = data["actorPhotoUrl"]?.takeIf { it.isNotBlank() },
-            preview = data["preview"].orEmpty(),
-            reaction = reaction,
-        )
-    }
 }

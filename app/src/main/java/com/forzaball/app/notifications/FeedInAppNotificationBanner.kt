@@ -82,6 +82,7 @@ fun FeedInAppNotificationBanner(
                         FeedPushType.Comment -> "${payload.actorName} commented"
                         FeedPushType.Like -> "${payload.actorName} liked your post"
                         FeedPushType.Dislike -> "${payload.actorName} disliked your post"
+                        FeedPushType.CommentLike -> "${payload.actorName} liked your comment"
                     },
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.inverseOnSurface,

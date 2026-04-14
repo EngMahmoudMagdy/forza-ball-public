@@ -1,6 +1,7 @@
 package com.forzaball.app.feature.feeds
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
@@ -26,6 +29,7 @@ import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,13 +40,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.yield
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,12 +74,17 @@ import java.util.Locale
 
 private const val AVATAR_PLACEHOLDER = "https://i.pravatar.cc/150?u="
 
+/** After comments exist in state, wait for the LazyColumn to compose them, then pause so the list is visible before scrolling to the target row. */
+private const val DELAY_MS_COMMENTS_VISIBLE_BEFORE_SCROLL = 600L
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedPostDetailRoute(
     postId: String,
     viewModel: FeedViewModel,
     onBack: () -> Unit,
+    highlightCommentId: String? = null,
+    currentUserId: String? = null,
 ) {
     var post by remember { mutableStateOf<FeedPost?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -114,6 +132,8 @@ fun FeedPostDetailRoute(
                     post = post!!,
                     viewModel = viewModel,
                     onBack = onBack,
+                    highlightCommentId = highlightCommentId,
+                    currentUserId = currentUserId,
                 )
             }
         }
@@ -126,13 +146,56 @@ private fun FeedPostDetailContent(
     post: FeedPost,
     viewModel: FeedViewModel,
     onBack: () -> Unit,
+    highlightCommentId: String?,
+    currentUserId: String?,
 ) {
     val context = LocalContext.current
     var draft by rememberSaveable(post.id) { mutableStateOf("") }
     var comments by remember { mutableStateOf<List<FeedComment>>(emptyList()) }
-
+    val listState = rememberLazyListState()
+    /** Which comment row receives the animated highlight (notification or newly posted). */
+    var highlightSubjectId by remember(post.id) { mutableStateOf<String?>(null) }
+    /** Drives [highlightProgress]: 0 = rest, 1 = emphasized (animated). */
+    var highlightTarget by remember(post.id) { mutableStateOf(0f) }
+    val highlightProgress by animateFloatAsState(
+        targetValue = highlightTarget,
+        animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+        label = "commentHighlight",
+    )
+    /** Just posted by this user — scroll + same highlight animation. */
+    var pendingLocalFlashId by remember(post.id) { mutableStateOf<String?>(null) }
     LaunchedEffect(post.id) {
         viewModel.observeComments(post.id).collect { comments = it }
+    }
+
+    // Do NOT use `comments` as a LaunchedEffect key — Firestore emits often and would cancel this coroutine
+    // before scroll/animation finishes. Wait for the target id inside the effect with snapshotFlow instead.
+    LaunchedEffect(highlightCommentId) {
+        val hid = highlightCommentId ?: return@LaunchedEffect
+        val listWhenReady = withTimeoutOrNull(20_000) {
+            snapshotFlow { comments }.first { list -> list.any { it.id == hid } }
+        } ?: return@LaunchedEffect
+        val idx = listWhenReady.indexOfFirst { it.id == hid }
+        if (idx < 0) return@LaunchedEffect
+
+        val itemIndex = 1 + idx
+        waitForCommentsListVisibleThenPause(listState, commentsSize = listWhenReady.size)
+        scrollLazyListToComment(listState, itemIndex)
+    }
+
+    LaunchedEffect(pendingLocalFlashId) {
+        val id = pendingLocalFlashId ?: return@LaunchedEffect
+        val listWhenReady = withTimeoutOrNull(20_000) {
+            snapshotFlow { comments }.first { list -> list.any { it.id == id } }
+        } ?: return@LaunchedEffect
+        val idx = listWhenReady.indexOfFirst { it.id == id }
+        if (idx < 0) return@LaunchedEffect
+
+        val itemIndex = 1 + idx
+        waitForCommentsListVisibleThenPause(listState, commentsSize = listWhenReady.size)
+        scrollLazyListToComment(listState, itemIndex)
+        yield()
+        delay(80)
     }
 
     Scaffold(
@@ -161,6 +224,7 @@ private fun FeedPostDetailContent(
                 .fillMaxSize(),
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
             ) {
@@ -264,6 +328,14 @@ private fun FeedPostDetailContent(
                     items = comments,
                     key = { it.id },
                 ) { c ->
+                    val canDelete = currentUserId != null &&
+                        (c.userId == currentUserId || post.userId == currentUserId)
+                    val overlayAlpha =
+                        if (highlightSubjectId != null && c.id == highlightSubjectId) {
+                            highlightProgress * 0.22f
+                        } else {
+                            0f
+                        }
                     CommentRow(
                         comment = c,
                         onToggleLike = {
@@ -272,6 +344,9 @@ private fun FeedPostDetailContent(
                         onToggleDislike = {
                             viewModel.toggleCommentDislike(post.id, c.id, c.isDislikedByUser)
                         },
+                        canDelete = canDelete,
+                        onDelete = { viewModel.deleteComment(post.id, c.id) },
+                        highlightOverlayAlpha = overlayAlpha,
                     )
                 }
             }
@@ -289,18 +364,19 @@ private fun FeedPostDetailContent(
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
+                CommentSendIconButton(
+                    enabled = draft.isNotBlank(),
                     onClick = {
                         val t = draft.trim()
-                        if (t.isEmpty()) return@IconButton
+                        if (t.isEmpty()) return@CommentSendIconButton
                         viewModel.addComment(post.id, t) { r ->
-                            if (r.isSuccess) draft = ""
+                            r.onSuccess { newId ->
+                                draft = ""
+                                pendingLocalFlashId = newId
+                            }
                         }
                     },
-                    enabled = draft.isNotBlank(),
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
-                }
+                )
             }
         }
     }
@@ -344,6 +420,43 @@ private fun PostDetailHeader(post: FeedPost) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+/**
+ * Waits until [LazyListState.layoutInfo] reflects all comment rows (header + comments),
+ * then waits [DELAY_MS_COMMENTS_VISIBLE_BEFORE_SCROLL] so the user can see the list before scrolling to the highlight.
+ */
+private suspend fun waitForCommentsListVisibleThenPause(
+    listState: LazyListState,
+    commentsSize: Int,
+) {
+    val expectedTotalItems = 1 + commentsSize
+    var n = 0
+    while (n < 150 && listState.layoutInfo.totalItemsCount < expectedTotalItems) {
+        delay(16)
+        n++
+    }
+    delay(DELAY_MS_COMMENTS_VISIBLE_BEFORE_SCROLL)
+}
+
+private suspend fun scrollLazyListToComment(listState: LazyListState, itemIndex: Int) {
+    val needCount = itemIndex + 1
+    var n = 0
+    while (n < 120 && listState.layoutInfo.totalItemsCount < needCount) {
+        delay(16)
+        n++
+    }
+    delay(48)
+    listState.scrollToItem(itemIndex)
+    delay(100)
+    listState.scrollToItem(itemIndex)
+    // Ensure the row is actually laid out in the viewport when possible
+    var v = 0
+    while (v < 50 && listState.layoutInfo.visibleItemsInfo.none { it.index == itemIndex }) {
+        delay(24)
+        listState.scrollToItem(itemIndex)
+        v++
     }
 }
 

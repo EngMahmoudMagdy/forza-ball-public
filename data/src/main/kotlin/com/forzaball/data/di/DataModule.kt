@@ -1,23 +1,26 @@
 package com.forzaball.data.di
 
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.forzaball.data.BuildConfig
 import com.forzaball.data.feed.FeedRepositoryImpl
-import com.google.firebase.firestore.FirebaseFirestore
 import com.forzaball.data.match.MatchRepositoryImpl
-import com.forzaball.data.network.ApiFootballAuthInterceptor
-import com.forzaball.data.network.ApiFootballService
+import com.forzaball.data.network.CurlLoggingInterceptor
+import com.forzaball.data.network.EspnApiService
 import com.forzaball.data.news.NewsRepositoryImpl
 import com.forzaball.data.preferences.PreferencesRepositoryImpl
-import com.forzaball.data.secrets.FootballSecrets
+import com.forzaball.data.soccer.SoccerTeamsRepositoryImpl
 import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.MatchRepository
 import com.forzaball.domain.repository.NewsRepository
 import com.forzaball.domain.repository.PreferencesRepository
+import com.forzaball.domain.repository.SoccerTeamsRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import timber.log.Timber
@@ -26,21 +29,35 @@ import java.util.concurrent.TimeUnit
 val dataModule = module {
     single { FirebaseFirestore.getInstance() }
 
-    single { FootballSecrets }
+    single {
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            coerceInputValues = true
+        }
+    }
 
     single {
         val logging = HttpLoggingInterceptor { message ->
             Timber.tag("OkHttp").d(message)
         }.apply {
             level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BASIC
+                HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.NONE
             }
         }
-        OkHttpClient.Builder()
-            .addInterceptor(ApiFootballAuthInterceptor(get()))
+        val builder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(
+                CurlLoggingInterceptor { line ->
+                    Timber.tag("OkHttp").d("curl: %s", line)
+                },
+            )
+        }
+        builder
             .addInterceptor(logging)
+            .addInterceptor(ChuckerInterceptor.Builder(androidContext()).build())
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -48,23 +65,20 @@ val dataModule = module {
     }
 
     single {
-        val json = Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            coerceInputValues = true
-        }
+        val json: Json = get()
         val contentType = "application/json".toMediaType()
         Retrofit.Builder()
-            .baseUrl(get<FootballSecrets>().baseUrl())
+            .baseUrl("https://site.api.espn.com/apis/site/v2/sports/soccer/")
             .client(get())
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }
 
-    single<ApiFootballService> { get<Retrofit>().create(ApiFootballService::class.java) }
+    single<EspnApiService> { get<Retrofit>().create(EspnApiService::class.java) }
 
+    single<SoccerTeamsRepository> { SoccerTeamsRepositoryImpl(get()) }
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
-    single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
-    single<MatchRepository> { MatchRepositoryImpl(get(), get()) }
+    single<NewsRepository> { NewsRepositoryImpl(get()) }
+    single<MatchRepository> { MatchRepositoryImpl(get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
 }

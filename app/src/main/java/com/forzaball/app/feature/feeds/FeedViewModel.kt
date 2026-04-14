@@ -179,7 +179,7 @@ class FeedViewModel(
 
     fun observePost(postId: String): Flow<FeedPost?> = feedRepository.observePost(postId)
 
-    fun addComment(postId: String, text: String, onDone: (Result<Unit>) -> Unit) {
+    fun addComment(postId: String, text: String, onDone: (Result<String>) -> Unit) {
         viewModelScope.launch {
             val result = feedRepository.addComment(postId, text)
             result.onFailure { e ->
@@ -229,6 +229,17 @@ class FeedViewModel(
     }
 
     fun observeComments(postId: String) = feedRepository.observeComments(postId)
+
+    fun deleteComment(postId: String, commentId: String) {
+        viewModelScope.launch {
+            runCatching {
+                feedRepository.deleteComment(postId, commentId)
+            }.onFailure { e ->
+                Timber.tag(TAG).e(e, "deleteComment")
+                _ui.update { it.copy(errorMessage = e.message ?: "Couldn't delete comment") }
+            }
+        }
+    }
 
     companion object {
         private const val TAG = "FeedViewModel"

@@ -6,7 +6,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import com.forzaball.app.notifications.FeedOpenRequest
 import com.forzaball.app.notifications.FeedPushConstants
+import com.forzaball.app.notifications.FeedPushFcmParser
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -31,14 +33,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.forzaball.app.feature.home.FixturesListRoute
+import com.forzaball.app.feature.home.HomeRoute
+import com.forzaball.app.feature.home.NavUrlCodec
+import com.forzaball.app.feature.home.NewsListRoute
+import com.forzaball.app.feature.home.NewsWebViewScreen
 import com.forzaball.app.notifications.FcmTokenRegistrationEffect
 import com.forzaball.app.notifications.FeedInAppNotificationBanner
 import com.forzaball.app.notifications.FeedNotificationBus
 import kotlinx.coroutines.delay
-import com.forzaball.app.feature.home.HomeRoute
 import com.forzaball.app.feature.onboarding.OnboardingScreen
 import com.forzaball.app.feature.personalization.PersonalizationStep1Screen
 import com.forzaball.app.feature.personalization.PersonalizationStep2Screen
@@ -47,21 +55,24 @@ import com.forzaball.app.feature.personalization.PersonalizationViewModel
 import com.forzaball.app.feature.splash.SplashRoute
 import com.forzaball.app.ui.theme.ForzaBallTheme
 import org.koin.androidx.compose.koinViewModel
+import com.forzaball.app.R
 
 class MainActivity : ComponentActivity() {
 
     /** Drives recomposition when a VIEW intent arrives while the activity is already running (singleTop). */
-    private val deepLinkPostIdState = mutableStateOf<String?>(null)
+    private val feedOpenRequestState = mutableStateOf<FeedOpenRequest?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Use normal window (opaque system bars, not the splash/transparent window).
+        setTheme(R.style.Theme_ForzaBall)
         super.onCreate(savedInstanceState)
         // Lay out content between status bar and navigation/gesture bar (not behind system bars).
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        deepLinkPostIdState.value = intent.extractFeedPostId()
+        feedOpenRequestState.value = intent.extractFeedOpenRequest()
         setContent {
-            val initialFeedPostId by deepLinkPostIdState
+            val initialFeedOpen by feedOpenRequestState
             ForzaBallTheme {
-                ForzaBallAppCompose(initialFeedPostId = initialFeedPostId)
+                ForzaBallAppCompose(initialFeedOpen = initialFeedOpen)
             }
         }
     }
@@ -69,13 +80,33 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        deepLinkPostIdState.value = intent.extractFeedPostId()
+        feedOpenRequestState.value = intent.extractFeedOpenRequest()
     }
 }
 
-private fun Intent?.extractFeedPostId(): String? {
-    this?.getStringExtra(FeedPushConstants.EXTRA_OPEN_FEED_POST_ID)?.takeIf { it.isNotBlank() }?.let { return it }
+private fun Intent?.extractFeedOpenRequest(): FeedOpenRequest? {
+    val explicitPost = this?.getStringExtra(FeedPushConstants.EXTRA_OPEN_FEED_POST_ID)?.takeIf { it.isNotBlank() }
+    if (explicitPost != null) {
+        val commentId = this.getStringExtra(FeedPushConstants.EXTRA_OPEN_FEED_COMMENT_ID)?.takeIf { it.isNotBlank() }
+            ?: this.getStringExtra("commentId")?.takeIf { it.isNotBlank() }
+            ?: this.getStringExtra("comment_id")?.takeIf { it.isNotBlank() }
+        return FeedOpenRequest(explicitPost, commentId)
+    }
+    // FCM: background messages with a `notification` block are often not delivered to
+    // FirebaseMessagingService; tapping the notification still delivers data keys via Activity extras.
+    val fcmData = FeedPushFcmParser.intentNotificationExtrasToDataMap(this)
+    if (fcmData.isNotEmpty()) {
+        val payload = FeedPushFcmParser.parseForDelivery(fcmData)
+        if (!FeedPushFcmParser.isGenericCampaign(payload)) {
+            return FeedOpenRequest(payload.postId, payload.commentId)
+        }
+    }
     val uri = this?.data ?: return null
+    val postIdFromUri = extractPostIdFromViewUri(uri) ?: return null
+    return FeedOpenRequest(postIdFromUri, null)
+}
+
+private fun extractPostIdFromViewUri(uri: Uri): String? {
     // Custom scheme: forzaball://post/<id>
     if (uri.scheme == "forzaball" && uri.host == "post") {
         return uri.pathSegments.firstOrNull()?.takeIf { it.isNotBlank() }
@@ -98,9 +129,9 @@ private fun Intent?.extractFeedPostId(): String? {
 }
 
 @Composable
-fun ForzaBallAppCompose(initialFeedPostId: String? = null) {
+fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
     val navController = rememberNavController()
-    var bannerOpenPostId by remember { mutableStateOf<String?>(null) }
+    var bannerOpenRequest by remember { mutableStateOf<FeedOpenRequest?>(null) }
     val feedBanner by FeedNotificationBus.pending.collectAsState()
     val context = LocalContext.current
 
@@ -235,11 +266,13 @@ fun ForzaBallAppCompose(initialFeedPostId: String? = null) {
                     onToggleLeague = viewModel::toggleLeague,
                     onBack = { navController.popBackStack() },
                     onNext = viewModel::nextStep,
+                    isLoadingTeams = state.isLoadingTeams,
                 )
 
                 2 -> PersonalizationStep2Screen(
                     selectedLeagueIds = state.selectedLeagueIds,
                     selectedClubIds = state.selectedClubIds,
+                    teamsByLeague = state.teamsByLeague,
                     onToggleClub = viewModel::toggleClub,
                     onBack = viewModel::previousStep,
                     onNext = viewModel::nextStep,
@@ -258,21 +291,59 @@ fun ForzaBallAppCompose(initialFeedPostId: String? = null) {
                     onToggleLeague = viewModel::toggleLeague,
                     onBack = { navController.popBackStack() },
                     onNext = viewModel::nextStep,
+                    isLoadingTeams = state.isLoadingTeams,
                 )
             }
         }
 
         composable("home") {
             HomeRoute(
-                initialFeedPostId = initialFeedPostId,
-                bannerOpenPostId = bannerOpenPostId,
-                onBannerOpenConsumed = { bannerOpenPostId = null },
+                initialFeedOpen = initialFeedOpen,
+                bannerOpenRequest = bannerOpenRequest,
+                onBannerOpenConsumed = { bannerOpenRequest = null },
                 onNavigateToSignIn = {
                     navController.navigate("signin")
                 },
                 onNavigateToSignUp = {
                     navController.navigate("signup")
                 },
+                onNavigateToNewsList = { navController.navigate("news_list") },
+                onNavigateToFixturesList = { navController.navigate("fixtures_list") },
+                onOpenNewsArticle = { url, _ ->
+                    val enc = NavUrlCodec.encode(url)
+                    navController.navigate("news_web/$enc")
+                },
+            )
+        }
+
+        composable("news_list") {
+            NewsListRoute(
+                onBack = { navController.popBackStack() },
+                onOpenArticle = { url, _ ->
+                    val enc = NavUrlCodec.encode(url)
+                    navController.navigate("news_web/$enc")
+                },
+            )
+        }
+
+        composable("fixtures_list") {
+            FixturesListRoute(
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = "news_web/{payload}",
+            arguments = listOf(
+                navArgument("payload") { type = NavType.StringType },
+            ),
+        ) { entry ->
+            val payload = entry.arguments?.getString("payload").orEmpty()
+            val url = runCatching { NavUrlCodec.decode(payload) }.getOrDefault("")
+            NewsWebViewScreen(
+                url = url,
+                title = "Article",
+                onClose = { navController.popBackStack() },
             )
         }
     }
@@ -282,7 +353,7 @@ fun ForzaBallAppCompose(initialFeedPostId: String? = null) {
                 payload = payload,
                 onOpen = {
                     FeedNotificationBus.clear()
-                    bannerOpenPostId = payload.postId
+                    bannerOpenRequest = FeedOpenRequest(payload.postId, payload.commentId)
                     navController.navigate("home") {
                         launchSingleTop = true
                     }

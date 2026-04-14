@@ -1,7 +1,8 @@
-package com.forzaball.app.feature.personalization
+package com.forzaball.app.feature.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.forzaball.app.feature.personalization.ClubItem
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.PreferencesRepository
@@ -9,28 +10,38 @@ import com.forzaball.domain.repository.SoccerTeamsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-data class PersonalizationState(
+data class EditFavoritesState(
     val step: Int = 1,
     val selectedLeagueIds: Set<String> = emptySet(),
     val selectedClubIds: Set<String> = emptySet(),
     val teamsByLeague: Map<String, List<ClubItem>> = emptyMap(),
     val isLoadingTeams: Boolean = false,
-    val nickname: String = "",
-    val profilePhotoUrl: String? = null,
-    val navigateToHome: Boolean = false,
+    val isSaving: Boolean = false,
+    val closed: Boolean = false,
 )
 
-class PersonalizationViewModel(
+class EditFavoritesViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val soccerTeamsRepository: SoccerTeamsRepository,
     private val feedRepository: FeedRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(PersonalizationState())
-    val state: StateFlow<PersonalizationState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(EditFavoritesState())
+    val state: StateFlow<EditFavoritesState> = _state.asStateFlow()
+
+    fun resetFromStorage() {
+        viewModelScope.launch {
+            val p = preferencesRepository.observeUserPreferences().first()
+            _state.value = EditFavoritesState(
+                selectedLeagueIds = p.favoriteLeagues.toSet(),
+                selectedClubIds = p.favoriteClubs.toSet(),
+            )
+        }
+    }
 
     fun toggleLeague(slug: String) {
         val s = _state.value
@@ -63,14 +74,6 @@ class PersonalizationViewModel(
         }
     }
 
-    fun setNickname(value: String) {
-        _state.value = _state.value.copy(nickname = value)
-    }
-
-    fun setProfilePhotoUrl(url: String?) {
-        _state.value = _state.value.copy(profilePhotoUrl = url)
-    }
-
     fun nextStep() {
         val s = _state.value
         if (s.step == 1) {
@@ -97,14 +100,11 @@ class PersonalizationViewModel(
                         step = 2,
                     )
                 }.onFailure { e ->
-                    Timber.e(e, "load teams for personalization")
+                    Timber.e(e, "load teams for edit favorites")
                     _state.value = _state.value.copy(isLoadingTeams = false)
                 }
             }
             return
-        }
-        if (s.step < 3) {
-            _state.value = s.copy(step = s.step + 1)
         }
     }
 
@@ -115,24 +115,23 @@ class PersonalizationViewModel(
         }
     }
 
-    fun finish() {
+    fun save() {
         viewModelScope.launch {
             val s = _state.value
-            val prefs = UserPreferences(
-                countryCode = null,
+            _state.value = s.copy(isSaving = true)
+            val existing = preferencesRepository.observeUserPreferences().first()
+            val prefs = existing.copy(
                 favoriteLeagues = s.selectedLeagueIds.toList(),
                 favoriteClubs = s.selectedClubIds.toList(),
-                nickname = s.nickname.takeIf { it.isNotBlank() },
-                profilePhotoUrl = s.profilePhotoUrl,
             )
             preferencesRepository.updateUserPreferences(prefs)
             runCatching { feedRepository.syncUserProfilePreferences(prefs) }
                 .onFailure { Timber.w(it, "syncUserProfilePreferences") }
-            _state.value = s.copy(navigateToHome = true)
+            _state.value = _state.value.copy(isSaving = false, closed = true)
         }
     }
 
-    fun clearNavigation() {
-        _state.value = _state.value.copy(navigateToHome = false)
+    fun clearClosed() {
+        _state.value = _state.value.copy(closed = false)
     }
 }

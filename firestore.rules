@@ -48,7 +48,10 @@ service cloud.firestore {
             && request.resource.data.timestamp == resource.data.timestamp
           )
         );
-        allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+        allow delete: if request.auth != null && (
+          request.auth.uid == resource.data.userId
+          || request.auth.uid == get(/databases/$(database)/documents/posts/$(postId)).data.userId
+        );
 
         match /commentLikes/{likeUid} {
           allow read: if true;

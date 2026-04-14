@@ -4,6 +4,8 @@ package com.forzaball.app.notifications
 data class FeedPushPayload(
     val type: FeedPushType,
     val postId: String,
+    /** Set for comment / comment_like notifications so the UI can scroll to this comment. */
+    val commentId: String?,
     val actorId: String?,
     val actorName: String,
     val actorPhotoUrl: String?,
@@ -16,8 +18,11 @@ data class FeedPushPayload(
 enum class FeedPushType {
     NewPost,
     Comment,
+    /** Someone liked the recipient’s post. */
     Like,
     Dislike,
+    /** Someone liked the recipient’s comment. */
+    CommentLike,
 }
 
 enum class FeedReactionKind {

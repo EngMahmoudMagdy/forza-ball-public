@@ -26,6 +26,8 @@ data class Match(
     /** Live minute when available. */
     val minuteElapsed: Int? = null,
     val leagueName: String? = null,
+    /** From ESPN when the fixture is final / post-match. */
+    val isCompleted: Boolean = false,
 )
 
 /** Highlight card + horizontal live list for the home screen. */
@@ -42,6 +44,16 @@ data class NewsArticle(
     val publishedAtMillis: Long,
     val leagueId: String?,
     val clubIds: List<String>,
+    /** ESPN story URL (web). */
+    val articleUrl: String? = null,
+)
+
+/** Next scheduled / live fixture for a favorite team from the team schedule API. */
+data class TeamNextMatch(
+    val teamId: String,
+    val teamDisplayName: String,
+    val teamCrestUrl: String?,
+    val nextMatch: Match?,
 )
 
 data class UserPreferences(

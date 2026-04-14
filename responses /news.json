@@ -1,0 +1,2050 @@
+{
+  "header": "Premier League News",
+  "link": {
+    "language": "en",
+    "rel": [
+      "index",
+      "desktop",
+      "league"
+    ],
+    "href": "https://www.espn.com/football/league/_/name/eng.1",
+    "text": "All Premier League News",
+    "shortText": "All News",
+    "isExternal": false,
+    "isPremium": false
+  },
+  "articles": [
+    {
+      "id": 48474970,
+      "nowId": "1-48474970",
+      "contentKey": "48474970-1-5-1",
+      "dataSourceIdentifier": "049a95af3e3e3",
+      "type": "HeadlineNews",
+      "headline": "Tottenham defender Cristian Romero out for remainder of the season - sources",
+      "description": "Tottenham defender Cristian Romero will be out for the remainder of the season after suffering a knee injury in the 1-0 defeat to Sunderland, ESPN Argentina reports.",
+      "lastModified": "2026-04-13T14:51:40Z",
+      "published": "2026-04-13T14:51:40Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "037bae6698bed",
+          "id": 48474949,
+          "type": "header",
+          "name": "Cristian Romero [1296x729]",
+          "caption": "Cristian Romero is set to be out for between five and eight weeks according to reports from Argentina.",
+          "alt": "Cristian Romero of Tottenham Hotspur is seen crying during the Premier League match between Sunderland and Tottenham Hotspur at Stadium of Light on April 12, 2026 in Sunderland, England.",
+          "credit": "George Wood/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0413/r1642837_1296x729_16-9.jpg"
+        },
+        {
+          "type": "Media",
+          "name": "Laurens slams De Zerbi after Tottenham's loss to Sunderland",
+          "caption": "Julien Laurens reacts to Tottenham's 1-0 loss Sunderland in Roberto De Zerbi's first game as manager.",
+          "height": 324,
+          "width": 576,
+          "url": "https://a.espncdn.com/media/motion/2026/0412/dm_260412_COM_SOC_ANALYSIS_Laurens_slams_De_Zerbi_after_Tottenhams_loss_to_Sunderland_2026_4_12/dm_260412_COM_SOC_ANALYSIS_Laurens_slams_De_Zerbi_after_Tottenhams_loss_to_Sunderland_2026_4_12.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 409224,
+          "type": "topic",
+          "guid": "52313677-19f8-b106-ec91-d8d17e6087fe",
+          "description": "news",
+          "sportId": 0,
+          "topicId": 781
+        },
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142303,
+          "type": "team",
+          "uid": "s:600~t:367",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a",
+          "description": "Tottenham Hotspur",
+          "sportId": 600,
+          "teamId": 367,
+          "team": {
+            "id": 367,
+            "description": "Tottenham Hotspur",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 275680,
+          "type": "athlete",
+          "uid": "s:600~a:96970",
+          "guid": "fad21314-b671-1f35-3c4c-1cb3dff354ad",
+          "description": "Cristian Romero",
+          "sportId": 600,
+          "athleteId": 96970,
+          "athlete": {
+            "id": 96970,
+            "description": "Cristian Romero",
+            "links": {
+              "web": {
+                "athletes": {
+                  "href": "https://www.espn.com/soccer/player/_/id/96970/cristian-romero"
+                }
+              },
+              "mobile": {
+                "athletes": {
+                  "href": "https://www.espn.com/soccer/player/_/id/96970/cristian-romero"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "guid",
+          "guid": "52313677-19f8-b106-ec91-d8d17e6087fe"
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a"
+        },
+        {
+          "type": "guid",
+          "guid": "fad21314-b671-1f35-3c4c-1cb3dff354ad"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/48474970/tottenham-defender-cristian-romero-remainder-season-sources"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=48474970"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/48474970"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=48474970"
+          }
+        }
+      },
+      "byline": "ESPN"
+    },
+    {
+      "id": 48472746,
+      "nowId": "1-48472746",
+      "contentKey": "48472746-1-6-1",
+      "dataSourceIdentifier": "f42941ee70611",
+      "type": "Story",
+      "headline": "Transfer rumors, news: Premier League clubs on alert over Leicester wonderkid",
+      "description": "Around half the teams in the Premier League want to sign Leicester City winger Jeremy Monga. Transfer Talk has the latest.",
+      "lastModified": "2026-04-13T13:38:02Z",
+      "published": "2026-04-13T13:38:02Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "e2013096c794d",
+          "id": 48472765,
+          "type": "header",
+          "name": "Leicester City's Jeremy Monga during the Sky Bet Championship match between Leicester City and Swansea City  [1296x729]",
+          "caption": "Leicester City's Jeremy Monga during the Sky Bet Championship match between Leicester City and Swansea City",
+          "credit": "Stephen White - CameraSport via Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0413/r1642705_1296x729_16-9.jpg"
+        },
+        {
+          "type": "Media",
+          "name": "Laurens: Man City have all the momentum over Arsenal in the title race",
+          "caption": "Julien Laurens speaks about the Premier League title race after Man City's 3-0 win over Chelsea.",
+          "height": 324,
+          "width": 576,
+          "url": "https://a.espncdn.com/media/motion/2026/0412/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 518441,
+          "type": "topic",
+          "guid": "c20f7f80-f88e-4084-6567-d1bf00c52bf0",
+          "description": "soccer transfers",
+          "sportId": 0,
+          "topicId": 3
+        },
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 597355,
+          "type": "topic",
+          "guid": "f9197630-65d3-54d8-60b3-72182b25d2ef",
+          "description": "blog - transfer talk",
+          "sportId": 0,
+          "topicId": 79
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142299,
+          "type": "team",
+          "uid": "s:600~t:359",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4",
+          "description": "Arsenal",
+          "sportId": 600,
+          "teamId": 359,
+          "team": {
+            "id": 359,
+            "description": "Arsenal",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142287,
+          "type": "team",
+          "uid": "s:600~t:382",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36",
+          "description": "Manchester City",
+          "sportId": 600,
+          "teamId": 382,
+          "team": {
+            "id": 382,
+            "description": "Manchester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142294,
+          "type": "team",
+          "uid": "s:600~t:361",
+          "guid": "ec6b4352-98d3-424d-6214-778d79b47a01",
+          "description": "Newcastle United",
+          "sportId": 600,
+          "teamId": 361,
+          "team": {
+            "id": 361,
+            "description": "Newcastle United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/361/newcastle-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/361/newcastle-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 704577,
+          "type": "athlete",
+          "uid": "s:600~a:389329",
+          "guid": "24be0e29-5795-3f57-a880-692edf73dcbc",
+          "description": "Jeremy Monga",
+          "sportId": 600,
+          "athleteId": 389329,
+          "athlete": {
+            "id": 389329,
+            "description": "Jeremy Monga",
+            "links": {
+              "web": {
+                "athletes": {
+                  "href": "https://www.espn.com/soccer/player/_/id/389329/jeremy-monga"
+                }
+              },
+              "mobile": {
+                "athletes": {
+                  "href": "https://www.espn.com/soccer/player/_/id/389329/jeremy-monga"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142304,
+          "type": "team",
+          "uid": "s:600~t:375",
+          "guid": "92a8c2ec-2772-1b9a-f221-52b55cd2fb14",
+          "description": "Leicester City",
+          "sportId": 600,
+          "teamId": 375,
+          "team": {
+            "id": 375,
+            "description": "Leicester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/375/leicester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/375/leicester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137794,
+          "type": "league",
+          "uid": "s:600~l:3914",
+          "guid": "5fa5be09-2f07-39bc-9269-5fee4c86fb56",
+          "description": "English League Championship",
+          "sportId": 600,
+          "leagueId": 24,
+          "league": {
+            "id": 3914,
+            "description": "English League Championship",
+            "abbreviation": "EFL Championship",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.2"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142292,
+          "type": "team",
+          "uid": "s:600~t:360",
+          "guid": "6ebc2fd0-35d3-733b-5666-b75035a3bce9",
+          "description": "Manchester United",
+          "sportId": 600,
+          "teamId": 360,
+          "team": {
+            "id": 360,
+            "description": "Manchester United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/360/manchester-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/360/manchester-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "guid",
+          "guid": "c20f7f80-f88e-4084-6567-d1bf00c52bf0"
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "f9197630-65d3-54d8-60b3-72182b25d2ef"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        },
+        {
+          "type": "guid",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4"
+        },
+        {
+          "type": "guid",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36"
+        },
+        {
+          "type": "guid",
+          "guid": "ec6b4352-98d3-424d-6214-778d79b47a01"
+        },
+        {
+          "type": "guid",
+          "guid": "24be0e29-5795-3f57-a880-692edf73dcbc"
+        },
+        {
+          "type": "guid",
+          "guid": "92a8c2ec-2772-1b9a-f221-52b55cd2fb14"
+        },
+        {
+          "type": "guid",
+          "guid": "5fa5be09-2f07-39bc-9269-5fee4c86fb56"
+        },
+        {
+          "type": "guid",
+          "guid": "6ebc2fd0-35d3-733b-5666-b75035a3bce9"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/48472746/premier-league-clubs-alert-leicester-wonderkid"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=48472746"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/48472746"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=48472746"
+          }
+        }
+      },
+      "byline": "ESPN"
+    },
+    {
+      "id": 48473257,
+      "nowId": "1-48473257",
+      "contentKey": "48473257-1-6-1",
+      "dataSourceIdentifier": "4968e56f0b8b3",
+      "type": "Story",
+      "headline": "Man City revive Premier League race, Inter win seven-goal thriller, more",
+      "description": "Man City's win at Chelsea and Arsenal's defeat at Bournemouth have thrown the title race wide open -- arguably, it's City's to lose from here. PLUS: Inter Milan win a seven-goal thriller at Como as Gab Marcotti recaps the weekend.",
+      "lastModified": "2026-04-13T16:10:47Z",
+      "published": "2026-04-13T16:10:47Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "e3673ec35e443",
+          "id": 48474032,
+          "type": "header",
+          "name": "City score v Chelsea 260413 [1296x729]",
+          "credit": "Justin Setterfield/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0413/r1642756_3_1296x729_16-9.jpg"
+        },
+        {
+          "type": "Media",
+          "name": "Laurens: Man City have all the momentum over Arsenal in the title race",
+          "caption": "Julien Laurens speaks about the Premier League title race after Man City's 3-0 win over Chelsea.",
+          "height": 324,
+          "width": 576,
+          "url": "https://a.espncdn.com/media/motion/2026/0412/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 597363,
+          "type": "topic",
+          "guid": "f9600604-ea22-8698-9178-cf5483ff154c",
+          "description": "blog - marcotti's musings",
+          "sportId": 0,
+          "topicId": 62
+        },
+        {
+          "id": 142287,
+          "type": "team",
+          "uid": "s:600~t:382",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36",
+          "description": "Manchester City",
+          "sportId": 600,
+          "teamId": 382,
+          "team": {
+            "id": 382,
+            "description": "Manchester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142299,
+          "type": "team",
+          "uid": "s:600~t:359",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4",
+          "description": "Arsenal",
+          "sportId": 600,
+          "teamId": 359,
+          "team": {
+            "id": 359,
+            "description": "Arsenal",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142296,
+          "type": "team",
+          "uid": "s:600~t:363",
+          "guid": "c43a00b9-2826-72b3-77a0-62730abc936e",
+          "description": "Chelsea",
+          "sportId": 600,
+          "teamId": 363,
+          "team": {
+            "id": 363,
+            "description": "Chelsea",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/363/chelsea"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/363/chelsea"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 193180,
+          "type": "team",
+          "uid": "s:600~t:2572",
+          "guid": "3f2c043b-2747-1851-c74a-4e05fd6e614b",
+          "description": "Como",
+          "sportId": 600,
+          "teamId": 2572,
+          "team": {
+            "id": 2572,
+            "description": "Como",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/2572/como"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/2572/como"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142583,
+          "type": "team",
+          "uid": "s:600~t:110",
+          "guid": "864b1935-65cc-fb9b-850d-790e4c8a8d47",
+          "description": "Internazionale",
+          "sportId": 600,
+          "teamId": 110,
+          "team": {
+            "id": 110,
+            "description": "Internazionale",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/110/internazionale"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/110/internazionale"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137798,
+          "type": "league",
+          "uid": "s:600~l:730",
+          "guid": "9c1e0753-2757-3b78-a6ed-1b595caf8191",
+          "description": "Italian Serie A",
+          "sportId": 600,
+          "leagueId": 12,
+          "league": {
+            "id": 730,
+            "description": "Italian Serie A",
+            "abbreviation": "Serie A",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/ita.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/ita.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "f9600604-ea22-8698-9178-cf5483ff154c"
+        },
+        {
+          "type": "guid",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36"
+        },
+        {
+          "type": "guid",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4"
+        },
+        {
+          "type": "guid",
+          "guid": "c43a00b9-2826-72b3-77a0-62730abc936e"
+        },
+        {
+          "type": "guid",
+          "guid": "3f2c043b-2747-1851-c74a-4e05fd6e614b"
+        },
+        {
+          "type": "guid",
+          "guid": "864b1935-65cc-fb9b-850d-790e4c8a8d47"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        },
+        {
+          "type": "guid",
+          "guid": "9c1e0753-2757-3b78-a6ed-1b595caf8191"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/48473257/manchester-city-premier-league-title-arsenal-chelsea-inter-milan-serie-analysis-gab-marcotti"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=48473257"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/48473257"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=48473257"
+          }
+        }
+      },
+      "byline": "Gabriele Marcotti"
+    },
+    {
+      "id": 48473408,
+      "nowId": "1-48473408",
+      "contentKey": "48473408-1-5-1",
+      "dataSourceIdentifier": "42967c5d49130",
+      "type": "HeadlineNews",
+      "headline": "Sunderland condemn racist abuse aimed at Brian Brobbey on social media",
+      "description": "Sunderland have condemned racist abuse directed towards Brian Brobbey on social media and offered the striker their full support.",
+      "lastModified": "2026-04-13T10:25:11Z",
+      "published": "2026-04-13T10:25:11Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "7862de7883a13",
+          "id": 48473436,
+          "type": "header",
+          "name": "Brian Brobbey of Sunderland [1296x729]",
+          "credit": "Robbie Jay Barratt - AMA/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0413/r1642724_1296x729_16-9.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 142297,
+          "type": "team",
+          "uid": "s:600~t:366",
+          "guid": "479e0b8f-fbeb-4a27-ce19-2c6ab31ac811",
+          "description": "Sunderland",
+          "sportId": 600,
+          "teamId": 366,
+          "team": {
+            "id": 366,
+            "description": "Sunderland",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/366/sunderland"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/366/sunderland"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142303,
+          "type": "team",
+          "uid": "s:600~t:367",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a",
+          "description": "Tottenham Hotspur",
+          "sportId": 600,
+          "teamId": 367,
+          "team": {
+            "id": 367,
+            "description": "Tottenham Hotspur",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 409224,
+          "type": "topic",
+          "guid": "52313677-19f8-b106-ec91-d8d17e6087fe",
+          "description": "news",
+          "sportId": 0,
+          "topicId": 781
+        },
+        {
+          "type": "guid",
+          "guid": "479e0b8f-fbeb-4a27-ce19-2c6ab31ac811"
+        },
+        {
+          "type": "guid",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "52313677-19f8-b106-ec91-d8d17e6087fe"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/48473408/sunderland-condemn-racist-abuse-aimed-brian-brobbey-social-media"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=48473408"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/48473408"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=48473408"
+          }
+        }
+      }
+    },
+    {
+      "id": 48439510,
+      "nowId": "1-48439510",
+      "contentKey": "48439510-1-6-1",
+      "dataSourceIdentifier": "66692e8beae92",
+      "type": "Story",
+      "headline": "Why missing Champions League can boost Premier League teams: What data shows",
+      "description": "The UEFA Champions League is the pinnacle of club soccer, but maybe for Premier League teams, it's just an extra headache?",
+      "lastModified": "2026-04-13T08:27:30Z",
+      "published": "2026-04-13T08:27:30Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "1834af4faa621",
+          "id": 48439704,
+          "type": "header",
+          "name": "Chelsea Liam Rosenior Alejandro Garnacho March1-2026 [1296x729]",
+          "credit": "Marc Atkins/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0409/r1640975_1296x729_16-9.jpg"
+        },
+        {
+          "type": "Media",
+          "name": "Can Arne Slot guide Liverpool to a Champions League spot?",
+          "caption": "Shaka Hislop and Craig Burley raise concerns about Liverpool's future transfers if they fail to qualify for the Champions League.",
+          "height": 324,
+          "width": 576,
+          "url": "https://a.espncdn.com/media/motion/2026/0330/dm_260330_COM_SOC_Analysis_Can_Arne_Slot_guide_Liverpool_to_a_Champions_League_spot_20260330_GLOBAL/dm_260330_COM_SOC_Analysis_Can_Arne_Slot_guide_Liverpool_to_a_Champions_League_spot_20260330_GLOBAL.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137793,
+          "type": "league",
+          "uid": "s:600~l:775",
+          "guid": "da52796f-2621-3351-8e77-955da92ea82d",
+          "description": "UEFA Champions League",
+          "sportId": 600,
+          "leagueId": 2,
+          "league": {
+            "id": 775,
+            "description": "UEFA Champions League",
+            "abbreviation": "UEFA Champions League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/uefa.champions"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/uefa.champions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142295,
+          "type": "team",
+          "uid": "s:600~t:364",
+          "guid": "a47fbcec-c948-cf4c-9e41-3dfa37588c9c",
+          "description": "Liverpool",
+          "sportId": 600,
+          "teamId": 364,
+          "team": {
+            "id": 364,
+            "description": "Liverpool",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/364/liverpool"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/364/liverpool"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142296,
+          "type": "team",
+          "uid": "s:600~t:363",
+          "guid": "c43a00b9-2826-72b3-77a0-62730abc936e",
+          "description": "Chelsea",
+          "sportId": 600,
+          "teamId": 363,
+          "team": {
+            "id": 363,
+            "description": "Chelsea",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/363/chelsea"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/363/chelsea"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142292,
+          "type": "team",
+          "uid": "s:600~t:360",
+          "guid": "6ebc2fd0-35d3-733b-5666-b75035a3bce9",
+          "description": "Manchester United",
+          "sportId": 600,
+          "teamId": 360,
+          "team": {
+            "id": 360,
+            "description": "Manchester United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/360/manchester-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/360/manchester-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142287,
+          "type": "team",
+          "uid": "s:600~t:382",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36",
+          "description": "Manchester City",
+          "sportId": 600,
+          "teamId": 382,
+          "team": {
+            "id": 382,
+            "description": "Manchester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142299,
+          "type": "team",
+          "uid": "s:600~t:359",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4",
+          "description": "Arsenal",
+          "sportId": 600,
+          "teamId": 359,
+          "team": {
+            "id": 359,
+            "description": "Arsenal",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142303,
+          "type": "team",
+          "uid": "s:600~t:367",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a",
+          "description": "Tottenham Hotspur",
+          "sportId": 600,
+          "teamId": 367,
+          "team": {
+            "id": 367,
+            "description": "Tottenham Hotspur",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/367/tottenham-hotspur"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 597365,
+          "type": "topic",
+          "guid": "433ba0ed-de47-163a-9119-9d2e636abf8e",
+          "description": "blog - tactics and analysis",
+          "sportId": 0,
+          "topicId": 67
+        },
+        {
+          "id": 597350,
+          "type": "topic",
+          "guid": "147d7cce-39ac-4614-3400-18871da01772",
+          "description": "blog - espn fc united",
+          "sportId": 0,
+          "topicId": 68
+        },
+        {
+          "id": 142293,
+          "type": "team",
+          "uid": "s:600~t:362",
+          "guid": "610557ff-e870-ea0e-a3b2-8244df325d22",
+          "description": "Aston Villa",
+          "sportId": 600,
+          "teamId": 362,
+          "team": {
+            "id": 362,
+            "description": "Aston Villa",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/362/aston-villa"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/362/aston-villa"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142294,
+          "type": "team",
+          "uid": "s:600~t:361",
+          "guid": "ec6b4352-98d3-424d-6214-778d79b47a01",
+          "description": "Newcastle United",
+          "sportId": 600,
+          "teamId": 361,
+          "team": {
+            "id": 361,
+            "description": "Newcastle United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/361/newcastle-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/361/newcastle-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142540,
+          "type": "team",
+          "uid": "s:600~t:337",
+          "guid": "0446e7fd-7655-f17a-d282-8c401b808d1f",
+          "description": "Brentford",
+          "sportId": 600,
+          "teamId": 337,
+          "team": {
+            "id": 337,
+            "description": "Brentford",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/337/brentford"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/337/brentford"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142530,
+          "type": "team",
+          "uid": "s:600~t:331",
+          "guid": "78c91a3f-9e5e-c8fe-8fca-778e97cb021a",
+          "description": "Brighton & Hove Albion",
+          "sportId": 600,
+          "teamId": 331,
+          "team": {
+            "id": 331,
+            "description": "Brighton & Hove Albion",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/331/brighton-hove-albion"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/331/brighton-hove-albion"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142289,
+          "type": "team",
+          "uid": "s:600~t:384",
+          "guid": "e8703d92-a160-9bbf-cb81-1be6f3fd7969",
+          "description": "Crystal Palace",
+          "sportId": 600,
+          "teamId": 384,
+          "team": {
+            "id": 384,
+            "description": "Crystal Palace",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/384/crystal-palace"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/384/crystal-palace"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142534,
+          "type": "team",
+          "uid": "s:600~t:380",
+          "guid": "7b64f56c-a775-945c-6eb8-686461c3e898",
+          "description": "Wolverhampton Wanderers",
+          "sportId": 600,
+          "teamId": 380,
+          "team": {
+            "id": 380,
+            "description": "Wolverhampton Wanderers",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/380/wolverhampton-wanderers"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/380/wolverhampton-wanderers"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142305,
+          "type": "team",
+          "uid": "s:600~t:349",
+          "guid": "1e76c2fe-68a5-3950-8881-47e916c0c115",
+          "description": "AFC Bournemouth",
+          "sportId": 600,
+          "teamId": 349,
+          "team": {
+            "id": 349,
+            "description": "AFC Bournemouth",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/349/afc-bournemouth"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/349/afc-bournemouth"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142300,
+          "type": "team",
+          "uid": "s:600~t:368",
+          "guid": "c531d4dd-ea53-c1fc-9c91-c7f8f31b5a40",
+          "description": "Everton",
+          "sportId": 600,
+          "teamId": 368,
+          "team": {
+            "id": 368,
+            "description": "Everton",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/368/everton"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/368/everton"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142550,
+          "type": "team",
+          "uid": "s:600~t:370",
+          "guid": "14acbd22-f709-1525-c5ab-1cb3ec8d1696",
+          "description": "Fulham",
+          "sportId": 600,
+          "teamId": 370,
+          "team": {
+            "id": 370,
+            "description": "Fulham",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/370/fulham"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/370/fulham"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142290,
+          "type": "team",
+          "uid": "s:600~t:371",
+          "guid": "28c48827-3a74-9af3-21b2-f324cdb1fc01",
+          "description": "West Ham United",
+          "sportId": 600,
+          "teamId": 371,
+          "team": {
+            "id": 371,
+            "description": "West Ham United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/371/west-ham-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/371/west-ham-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142548,
+          "type": "team",
+          "uid": "s:600~t:373",
+          "guid": "136dc14e-288f-bbc3-d2c4-3a51d1a84cd1",
+          "description": "Ipswich Town",
+          "sportId": 600,
+          "teamId": 373,
+          "team": {
+            "id": 373,
+            "description": "Ipswich Town",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/373/ipswich-town"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/373/ipswich-town"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142304,
+          "type": "team",
+          "uid": "s:600~t:375",
+          "guid": "92a8c2ec-2772-1b9a-f221-52b55cd2fb14",
+          "description": "Leicester City",
+          "sportId": 600,
+          "teamId": 375,
+          "team": {
+            "id": 375,
+            "description": "Leicester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/375/leicester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/375/leicester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142302,
+          "type": "team",
+          "uid": "s:600~t:376",
+          "guid": "c881cee0-dd07-4765-3c7f-12fb2e770bfd",
+          "description": "Southampton",
+          "sportId": 600,
+          "teamId": 376,
+          "team": {
+            "id": 376,
+            "description": "Southampton",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/376/southampton"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/376/southampton"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142546,
+          "type": "team",
+          "uid": "s:600~t:393",
+          "guid": "ad9ef79b-ca27-077e-8a6f-335e0d220b27",
+          "description": "Nottingham Forest",
+          "sportId": 600,
+          "teamId": 393,
+          "team": {
+            "id": 393,
+            "description": "Nottingham Forest",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/393/nottingham-forest"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/393/nottingham-forest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142297,
+          "type": "team",
+          "uid": "s:600~t:366",
+          "guid": "479e0b8f-fbeb-4a27-ce19-2c6ab31ac811",
+          "description": "Sunderland",
+          "sportId": 600,
+          "teamId": 366,
+          "team": {
+            "id": 366,
+            "description": "Sunderland",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/366/sunderland"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/366/sunderland"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142528,
+          "type": "team",
+          "uid": "s:600~t:357",
+          "guid": "231a0077-e0f5-f148-974b-82b9ec5f304e",
+          "description": "Leeds United",
+          "sportId": 600,
+          "teamId": 357,
+          "team": {
+            "id": 357,
+            "description": "Leeds United",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/357/leeds-united"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/357/leeds-united"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142527,
+          "type": "team",
+          "uid": "s:600~t:379",
+          "guid": "0e306f49-0f1d-27a2-4259-0643dce9c676",
+          "description": "Burnley",
+          "sportId": 600,
+          "teamId": 379,
+          "team": {
+            "id": 379,
+            "description": "Burnley",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/379/burnley"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/379/burnley"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        },
+        {
+          "type": "guid",
+          "guid": "da52796f-2621-3351-8e77-955da92ea82d"
+        },
+        {
+          "type": "guid",
+          "guid": "a47fbcec-c948-cf4c-9e41-3dfa37588c9c"
+        },
+        {
+          "type": "guid",
+          "guid": "c43a00b9-2826-72b3-77a0-62730abc936e"
+        },
+        {
+          "type": "guid",
+          "guid": "6ebc2fd0-35d3-733b-5666-b75035a3bce9"
+        },
+        {
+          "type": "guid",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36"
+        },
+        {
+          "type": "guid",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4"
+        },
+        {
+          "type": "guid",
+          "guid": "f987a4b2-f3f9-e7f6-eb7d-eda43893be5a"
+        },
+        {
+          "type": "guid",
+          "guid": "433ba0ed-de47-163a-9119-9d2e636abf8e"
+        },
+        {
+          "type": "guid",
+          "guid": "147d7cce-39ac-4614-3400-18871da01772"
+        },
+        {
+          "type": "guid",
+          "guid": "610557ff-e870-ea0e-a3b2-8244df325d22"
+        },
+        {
+          "type": "guid",
+          "guid": "ec6b4352-98d3-424d-6214-778d79b47a01"
+        },
+        {
+          "type": "guid",
+          "guid": "0446e7fd-7655-f17a-d282-8c401b808d1f"
+        },
+        {
+          "type": "guid",
+          "guid": "78c91a3f-9e5e-c8fe-8fca-778e97cb021a"
+        },
+        {
+          "type": "guid",
+          "guid": "e8703d92-a160-9bbf-cb81-1be6f3fd7969"
+        },
+        {
+          "type": "guid",
+          "guid": "7b64f56c-a775-945c-6eb8-686461c3e898"
+        },
+        {
+          "type": "guid",
+          "guid": "1e76c2fe-68a5-3950-8881-47e916c0c115"
+        },
+        {
+          "type": "guid",
+          "guid": "c531d4dd-ea53-c1fc-9c91-c7f8f31b5a40"
+        },
+        {
+          "type": "guid",
+          "guid": "14acbd22-f709-1525-c5ab-1cb3ec8d1696"
+        },
+        {
+          "type": "guid",
+          "guid": "28c48827-3a74-9af3-21b2-f324cdb1fc01"
+        },
+        {
+          "type": "guid",
+          "guid": "136dc14e-288f-bbc3-d2c4-3a51d1a84cd1"
+        },
+        {
+          "type": "guid",
+          "guid": "92a8c2ec-2772-1b9a-f221-52b55cd2fb14"
+        },
+        {
+          "type": "guid",
+          "guid": "c881cee0-dd07-4765-3c7f-12fb2e770bfd"
+        },
+        {
+          "type": "guid",
+          "guid": "ad9ef79b-ca27-077e-8a6f-335e0d220b27"
+        },
+        {
+          "type": "guid",
+          "guid": "479e0b8f-fbeb-4a27-ce19-2c6ab31ac811"
+        },
+        {
+          "type": "guid",
+          "guid": "231a0077-e0f5-f148-974b-82b9ec5f304e"
+        },
+        {
+          "type": "guid",
+          "guid": "0e306f49-0f1d-27a2-4259-0643dce9c676"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/48439510/why-missing-champions-league-boost-premier-league-teams-data-shows"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=48439510"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/48439510"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=48439510"
+          }
+        }
+      },
+      "byline": "Ryan O'Hanlon"
+    },
+    {
+      "id": 47974492,
+      "nowId": "1-47974492",
+      "contentKey": "47974492-1-6-1",
+      "dataSourceIdentifier": "3c2fb089cdf55",
+      "type": "Story",
+      "headline": "Arsenal letting Man City back into Premier League title race follows familiar pattern",
+      "description": "Arsenal's Premier League championship charge suffered yet another wobble on Saturday, leaving many Gunners fans to wonder: \"Is it really happening again?\"",
+      "lastModified": "2026-04-13T08:15:52Z",
+      "published": "2026-04-13T08:15:52Z",
+      "images": [
+        {
+          "dataSourceIdentifier": "acca96f2a251e",
+          "id": 48472943,
+          "type": "header",
+          "name": "Arsenal woe, Gabriel [1296x729]",
+          "credit": "Marc Atkins/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2026/0413/r1642708_1296x729_16-9.jpg"
+        },
+        {
+          "dataSourceIdentifier": "a1df7ceed13e8",
+          "id": 33905654,
+          "type": "header",
+          "name": " Granit Xhaka of Arsenal  [1296x729]",
+          "credit": "James Williamson - AMA/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2022/0512/r1012029_1296x729_16-9.jpg"
+        },
+        {
+          "dataSourceIdentifier": "99f3083f0e082",
+          "id": 45052820,
+          "type": "header",
+          "name": "rsenal's Martin Odegaard woe [1296x729]",
+          "credit": "Shaun Botterill/Getty Images",
+          "height": 729,
+          "width": 1296,
+          "url": "https://a.espncdn.com/photo/2025/0509/r1489790_2_1296x729_16-9.jpg"
+        },
+        {
+          "type": "Media",
+          "name": "Laurens: Man City have all the momentum over Arsenal in the title race",
+          "caption": "Julien Laurens speaks about the Premier League title race after Man City's 3-0 win over Chelsea.",
+          "height": 324,
+          "width": 576,
+          "url": "https://a.espncdn.com/media/motion/2026/0412/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12/dm_260412_COM_SOC_ANALYSIS_Laurens_Man_City_have_all_the_momentum_over_Arsenal_in_the_title_race_2026_4_12.jpg"
+        }
+      ],
+      "categories": [
+        {
+          "id": 142299,
+          "type": "team",
+          "uid": "s:600~t:359",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4",
+          "description": "Arsenal",
+          "sportId": 600,
+          "teamId": 359,
+          "team": {
+            "id": 359,
+            "description": "Arsenal",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/359/arsenal"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 142287,
+          "type": "team",
+          "uid": "s:600~t:382",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36",
+          "description": "Manchester City",
+          "sportId": 600,
+          "teamId": 382,
+          "team": {
+            "id": 382,
+            "description": "Manchester City",
+            "links": {
+              "web": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              },
+              "mobile": {
+                "teams": {
+                  "href": "https://www.espn.com/soccer/club/_/id/382/manchester-city"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 137781,
+          "type": "league",
+          "uid": "s:600~l:700",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38",
+          "description": "English Premier League",
+          "sportId": 600,
+          "leagueId": 23,
+          "league": {
+            "id": 700,
+            "description": "English Premier League",
+            "abbreviation": "Premier League",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/league/_/name/eng.1"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 81497,
+          "type": "league",
+          "uid": "s:600",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259",
+          "description": "Soccer",
+          "sportId": 600,
+          "leagueId": 600,
+          "league": {
+            "id": 600,
+            "description": "Soccer",
+            "links": {
+              "web": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              },
+              "mobile": {
+                "leagues": {
+                  "href": "https://www.espn.com/soccer/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": 597349,
+          "type": "topic",
+          "guid": "e4d76e8f-6d22-9501-0d34-cdeed991b984",
+          "description": "blog - the toe poke",
+          "sportId": 0,
+          "topicId": 65
+        },
+        {
+          "type": "guid",
+          "guid": "feb44e87-58fa-9597-2691-b3c32768ebe4"
+        },
+        {
+          "type": "guid",
+          "guid": "94fd5d7e-35b1-9d52-c9f2-4a37259bea36"
+        },
+        {
+          "type": "guid",
+          "guid": "6949f3af-300c-35f1-beab-b95669eedd38"
+        },
+        {
+          "type": "guid",
+          "guid": "119cfa41-71d4-39bf-a790-6273a52b0259"
+        },
+        {
+          "type": "guid",
+          "guid": "e4d76e8f-6d22-9501-0d34-cdeed991b984"
+        }
+      ],
+      "premium": false,
+      "links": {
+        "web": {
+          "href": "https://www.espn.com/soccer/story/_/id/47974492/arsenal-letting-man-city-back-premier-league-title-race-follows-familiar-pattern"
+        },
+        "mobile": {
+          "href": "http://m.espn.go.com/soccer/story?storyId=47974492"
+        },
+        "api": {
+          "self": {
+            "href": "https://content.core.api.espn.com/v1/sports/news/47974492"
+          }
+        },
+        "app": {
+          "sportscenter": {
+            "href": "sportscenter://x-callback-url/showStory?uid=47974492"
+          }
+        }
+      },
+      "byline": "Chris Wright"
+    }
+  ]
+}

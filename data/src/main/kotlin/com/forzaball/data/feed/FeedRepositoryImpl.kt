@@ -1,5 +1,6 @@
 package com.forzaball.data.feed
 
+import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.domain.repository.FeedRepository
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.math.max
 
@@ -332,21 +334,30 @@ class FeedRepositoryImpl(
             return@callbackFlow
         }
 
+        suspend fun emitComments(comments: List<FeedComment>) {
+            withContext(Dispatchers.Main.immediate) {
+                trySend(comments)
+            }
+        }
+
         val reg = firestore.collection(COL_POSTS).document(postId).collection(SUB_COMMENTS)
             .orderBy(FIELD_TIMESTAMP, Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Timber.tag(TAG).e(error, "comments listener")
+                    ioScope.launch {
+                        emitComments(emptyList())
+                    }
                     return@addSnapshotListener
                 }
                 val docs = snapshot?.documents.orEmpty()
                 ioScope.launch {
                     try {
                         val comments = buildComments(uid, postId, docs)
-                        trySend(comments)
+                        emitComments(comments)
                     } catch (e: Exception) {
                         Timber.tag(TAG).e(e, "map comments")
-                        trySend(emptyList())
+                        emitComments(emptyList())
                     }
                 }
             }
@@ -361,47 +372,93 @@ class FeedRepositoryImpl(
     ): List<FeedComment> {
         if (docs.isEmpty()) return emptyList()
         val userIds = docs.mapNotNull { it.getString(FIELD_USER_ID) }.distinct()
-        val profiles = loadUserProfiles(userIds)
+        val profiles = runCatching { loadUserProfiles(userIds) }
+            .onFailure { Timber.tag(TAG).e(it, "loadUserProfiles for comments") }
+            .getOrDefault(emptyMap())
         return coroutineScope {
             docs.map { doc ->
                 async {
-                    val authorId = doc.getString(FIELD_USER_ID) ?: return@async null
-                    val profile = profiles[authorId]
-                    val name = profile?.takeIf { it.exists() }?.let { u ->
-                        u.getString(FIELD_USERNAME)?.takeIf { n -> n.isNotBlank() }
-                            ?: u.getString(FIELD_EMAIL)?.substringBefore("@")?.ifBlank { null }
-                    } ?: "User"
-                    val avatar = profile?.takeIf { it.exists() }?.getString(FIELD_AVATAR_URL)
-                    val commentBase = firestore.collection(COL_POSTS).document(postId)
-                        .collection(SUB_COMMENTS).document(doc.id)
-                    val likeSnap = commentBase.collection(SUB_COMMENT_LIKES).document(uid)
-                        .get(Source.DEFAULT).await()
-                    val dislikeSnap = commentBase.collection(SUB_COMMENT_DISLIKES).document(uid)
-                        .get(Source.DEFAULT).await()
-                    FeedComment(
-                        id = doc.id,
-                        userId = authorId,
-                        authorName = name,
-                        authorAvatarUrl = avatar,
-                        text = doc.getString(FIELD_TEXT).orEmpty(),
-                        likeCount = (doc.getLong(FIELD_LIKE_COUNT) ?: 0L).toInt(),
-                        dislikeCount = (doc.getLong(FIELD_DISLIKE_COUNT) ?: 0L).toInt(),
-                        isLikedByUser = likeSnap.exists(),
-                        isDislikedByUser = dislikeSnap.exists(),
-                        createdAtMillis = doc.getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
-                    )
+                    mapCommentDocument(uid, postId, doc, profiles)
                 }
-            }.mapNotNull { it.await() }
+            }.mapNotNull { runCatching { it.await() }.getOrNull() }
         }
     }
 
-    override suspend fun addComment(postId: String, text: String): Result<Unit> = runCatching {
+    private suspend fun mapCommentDocument(
+        uid: String,
+        postId: String,
+        doc: com.google.firebase.firestore.DocumentSnapshot,
+        profiles: Map<String, com.google.firebase.firestore.DocumentSnapshot>,
+    ): FeedComment? {
+        val authorId = doc.getString(FIELD_USER_ID) ?: return null
+        val profile = profiles[authorId]
+        val name = profile?.takeIf { it.exists() }?.let { u ->
+            u.getString(FIELD_USERNAME)?.takeIf { n -> n.isNotBlank() }
+                ?: u.getString(FIELD_EMAIL)?.substringBefore("@")?.ifBlank { null }
+        } ?: "User"
+        val avatar = profile?.takeIf { it.exists() }?.getString(FIELD_AVATAR_URL)
+        val commentBase = firestore.collection(COL_POSTS).document(postId)
+            .collection(SUB_COMMENTS).document(doc.id)
+        val liked = runCatching {
+            commentBase.collection(SUB_COMMENT_LIKES).document(uid)
+                .get(Source.DEFAULT).await()
+                .exists()
+        }.getOrElse { e ->
+            Timber.tag(TAG).w(e, "comment like read")
+            false
+        }
+        val disliked = runCatching {
+            commentBase.collection(SUB_COMMENT_DISLIKES).document(uid)
+                .get(Source.DEFAULT).await()
+                .exists()
+        }.getOrElse { e ->
+            Timber.tag(TAG).w(e, "comment dislike read")
+            false
+        }
+        return FeedComment(
+            id = doc.id,
+            userId = authorId,
+            authorName = name,
+            authorAvatarUrl = avatar,
+            text = doc.getString(FIELD_TEXT).orEmpty(),
+            likeCount = (doc.getLong(FIELD_LIKE_COUNT) ?: 0L).toInt(),
+            dislikeCount = (doc.getLong(FIELD_DISLIKE_COUNT) ?: 0L).toInt(),
+            isLikedByUser = liked,
+            isDislikedByUser = disliked,
+            createdAtMillis = doc.getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
+        )
+    }
+
+    override suspend fun deleteComment(postId: String, commentId: String): Result<Unit> = runCatching {
+        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val postRef = firestore.collection(COL_POSTS).document(postId)
+        val commentRef = postRef.collection(SUB_COMMENTS).document(commentId)
+        val likesSnap = commentRef.collection(SUB_COMMENT_LIKES).get(Source.DEFAULT).await()
+        val dislikesSnap = commentRef.collection(SUB_COMMENT_DISLIKES).get(Source.DEFAULT).await()
+        firestore.runTransaction { tx ->
+            val post = tx.get(postRef)
+            val comment = tx.get(commentRef)
+            if (!post.exists() || !comment.exists()) error("Missing")
+            val commentAuthor = comment.getString(FIELD_USER_ID)
+            val postAuthor = post.getString(FIELD_USER_ID)
+            val canDelete = uid == commentAuthor || uid == postAuthor
+            if (!canDelete) error("Not allowed")
+            val count = post.getLong(FIELD_COMMENT_COUNT) ?: 0L
+            likesSnap.documents.forEach { doc -> tx.delete(doc.reference) }
+            dislikesSnap.documents.forEach { doc -> tx.delete(doc.reference) }
+            tx.delete(commentRef)
+            tx.update(postRef, FIELD_COMMENT_COUNT, max(0L, count - 1))
+        }.await()
+    }
+
+    override suspend fun addComment(postId: String, text: String): Result<String> = runCatching {
         val uid = auth.currentUser?.uid ?: error("Not signed in")
         val trimmed = text.trim()
         require(trimmed.isNotEmpty()) { "Empty comment" }
         require(trimmed.length <= MAX_COMMENT_CHARS) { "Too long" }
         val postRef = firestore.collection(COL_POSTS).document(postId)
         val commentRef = postRef.collection(SUB_COMMENTS).document()
+        val newId = commentRef.id
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
             if (!post.exists()) error("Post missing")
@@ -409,7 +466,7 @@ class FeedRepositoryImpl(
             tx.set(
                 commentRef,
                 mapOf(
-                    FIELD_COMMENT_ID to commentRef.id,
+                    FIELD_COMMENT_ID to newId,
                     FIELD_USER_ID to uid,
                     FIELD_TEXT to trimmed,
                     FIELD_TIMESTAMP to FieldValue.serverTimestamp(),
@@ -419,6 +476,7 @@ class FeedRepositoryImpl(
             )
             tx.update(postRef, FIELD_COMMENT_COUNT, count + 1)
         }.await()
+        newId
     }
 
     override suspend fun likeComment(postId: String, commentId: String) {
@@ -546,6 +604,22 @@ class FeedRepositoryImpl(
         ).await()
     }
 
+    override suspend fun syncUserProfilePreferences(preferences: UserPreferences) {
+        val uid = auth.currentUser?.uid ?: return
+        val data = mutableMapOf<String, Any>(
+            FIELD_FAVORITE_LEAGUES to preferences.favoriteLeagues,
+            FIELD_FAVORITE_CLUBS to preferences.favoriteClubs,
+        )
+        preferences.nickname?.takeIf { it.isNotBlank() }?.let { nick ->
+            data[FIELD_USERNAME] = nick
+            data[FIELD_DISPLAY_NAME] = nick
+        }
+        preferences.profilePhotoUrl?.takeIf { it.isNotBlank() }?.let { url ->
+            data[FIELD_AVATAR_URL] = url
+        }
+        firestore.collection(COL_USERS).document(uid).set(data, SetOptions.merge()).await()
+    }
+
     private fun sanitizeHandle(raw: String): String {
         val s = raw.lowercase().map { c ->
             when {
@@ -587,5 +661,7 @@ class FeedRepositoryImpl(
         private const val FIELD_FOLLOWING_COUNT = "followingCount"
         private const val FIELD_COMMENT_ID = "commentId"
         private const val FIELD_FCM_TOKEN = "fcmToken"
+        private const val FIELD_FAVORITE_LEAGUES = "favoriteLeagues"
+        private const val FIELD_FAVORITE_CLUBS = "favoriteClubs"
     }
 }

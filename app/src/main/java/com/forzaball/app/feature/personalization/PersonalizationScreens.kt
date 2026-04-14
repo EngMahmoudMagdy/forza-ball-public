@@ -40,38 +40,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.forzaball.app.ui.theme.ForzaBallPrimary
-
-data class LeagueItem(val id: String, val name: String, val country: String, val logoUrl: String?)
-data class ClubItem(val id: String, val name: String, val leagueId: String, val crestUrl: String?)
-
-/** League ids match [API-Football](https://www.api-football.com/documentation-v3) `league` resource. */
-val defaultLeagues = listOf(
-    LeagueItem("39", "Premier League", "England", "https://lh3.googleusercontent.com/aida-public/AB6AXuAmtStcogjmWj7G6BNMpp5J3kaAnIMQkDGe8cSSsqnOfIy1cEur2AsNNyXtXcRzNvAj8QEIYIY0ZkeuE9VDc0laCh4g6nmQZgmjCkviNSILHHn7UI7QNzetiyUS4jWRJxkJ_qzjcDnBh7OcS7oANNRRTwmpMtqnjMq2kbjHmfMp7jDTDWPsSoe8HuT69cOcbS3HSsHVcbThQYe8wPpeuBssoGExOL-z7uMNc3TN58GQDnnbH5iRp6Wtq16d8yzBpFR2kqTNSCSeECNF"),
-    LeagueItem("140", "La Liga", "Spain", null),
-    LeagueItem("135", "Serie A", "Italy", null),
-    LeagueItem("78", "Bundesliga", "Germany", null),
-    LeagueItem("61", "Ligue 1", "France", null),
-    LeagueItem("2", "Champions League", "International", null),
-    LeagueItem("253", "MLS", "USA", null),
-)
-
-/** Team ids match API-Football `teams` resource (used for fixtures, live scores, injuries). */
-val defaultClubs = listOf(
-    ClubItem("50", "Man City", "39", "https://media.api-sports.io/football/teams/50.png"),
-    ClubItem("40", "Liverpool", "39", "https://media.api-sports.io/football/teams/40.png"),
-    ClubItem("42", "Arsenal", "39", "https://media.api-sports.io/football/teams/42.png"),
-    ClubItem("541", "Real Madrid", "140", "https://media.api-sports.io/football/teams/541.png"),
-    ClubItem("529", "Barcelona", "140", "https://media.api-sports.io/football/teams/529.png"),
-    ClubItem("489", "AC Milan", "135", "https://media.api-sports.io/football/teams/489.png"),
-    ClubItem("496", "Juventus", "135", "https://media.api-sports.io/football/teams/496.png"),
-    ClubItem("157", "FC Bayern", "78", "https://media.api-sports.io/football/teams/157.png"),
-    ClubItem("85", "Paris Saint-Germain", "61", "https://media.api-sports.io/football/teams/85.png"),
-)
 
 @Composable
 fun PersonalizationStep1Screen(
@@ -79,9 +53,23 @@ fun PersonalizationStep1Screen(
     onToggleLeague: (String) -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    isLoadingTeams: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background,
+                        ForzaBallPrimary.copy(alpha = 0.09f),
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                    ),
+                ),
+            ),
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -102,7 +90,7 @@ fun PersonalizationStep1Screen(
         Text("Select Your Favorite Leagues", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold), modifier = Modifier.padding(horizontal = 16.dp))
         Text("Choose at least one league.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
         Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            defaultLeagues.forEach { league ->
+            catalogLeagues.forEach { league ->
                 Row(
                     modifier = Modifier.fillMaxWidth().clickable { onToggleLeague(league.id) }.padding(16.dp).border(1.dp, ForzaBallPrimary.copy(alpha = 0.1f), RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically,
@@ -122,9 +110,16 @@ fun PersonalizationStep1Screen(
                 }
             }
         }
-        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp), enabled = selectedLeagueIds.isNotEmpty(), colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary), shape = RoundedCornerShape(12.dp)) {
-            Text("Next", fontWeight = FontWeight.Bold)
+        Button(
+            onClick = onNext,
+            modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp),
+            enabled = selectedLeagueIds.isNotEmpty() && !isLoadingTeams,
+            colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary),
+            shape = RoundedCornerShape(12.dp),
+        ) {
+            Text(if (isLoadingTeams) "Loading teams…" else "Next", fontWeight = FontWeight.Bold)
             Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))
+        }
         }
     }
 }
@@ -133,25 +128,43 @@ fun PersonalizationStep1Screen(
 fun PersonalizationStep2Screen(
     selectedLeagueIds: Set<String>,
     selectedClubIds: Set<String>,
+    teamsByLeague: Map<String, List<ClubItem>>,
     onToggleClub: (String) -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    primaryActionLabel: String = "Next",
+    primaryActionEnabled: Boolean = true,
+    step2OfTotal: Int = 3,
     modifier: Modifier = Modifier,
 ) {
-    val clubsForLeagues = defaultClubs.filter { it.leagueId in selectedLeagueIds }
+    val clubsForLeagues = selectedLeagueIds.flatMap { slug -> teamsByLeague[slug].orEmpty() }
     val maxPerLeague = 3
-    val countByLeague = clubsForLeagues.groupBy { it.leagueId }.mapValues { it.value.count { c -> c.id in selectedClubIds } }
+    val countByLeague = clubsForLeagues.groupBy { it.leagueSlug }.mapValues { it.value.count { c -> c.id in selectedClubIds } }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background,
+                        ForzaBallPrimary.copy(alpha = 0.09f),
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                    ),
+                ),
+            ),
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
             Text("Personalization", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), modifier = Modifier.weight(1f))
         }
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Text("Step 2 of 3", style = MaterialTheme.typography.bodyMedium)
+            Text("Step 2 of $step2OfTotal", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(4.dp))
             Box(modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)).background(ForzaBallPrimary.copy(alpha = 0.2f))) {
-                Box(modifier = Modifier.fillMaxWidth(2f / 3f).fillMaxSize().background(ForzaBallPrimary, RoundedCornerShape(4.dp)))
+                val frac = if (step2OfTotal <= 2) 1f else 2f / 3f
+                Box(modifier = Modifier.fillMaxWidth(frac).fillMaxSize().background(ForzaBallPrimary, RoundedCornerShape(4.dp)))
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -159,7 +172,7 @@ fun PersonalizationStep2Screen(
         Text("Select up to 3 teams per league.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
         Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             clubsForLeagues.forEach { club ->
-                val count = countByLeague[club.leagueId] ?: 0
+                val count = countByLeague[club.leagueSlug] ?: 0
                 val selected = club.id in selectedClubIds
                 val canSelect = selected || count < maxPerLeague
                 Row(
@@ -174,9 +187,16 @@ fun PersonalizationStep2Screen(
                 }
             }
         }
-        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp), colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary), shape = RoundedCornerShape(12.dp)) {
-            Text("Next", fontWeight = FontWeight.Bold)
+        Button(
+            onClick = onNext,
+            modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp),
+            enabled = primaryActionEnabled,
+            colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary),
+            shape = RoundedCornerShape(12.dp),
+        ) {
+            Text(primaryActionLabel, fontWeight = FontWeight.Bold)
             Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))
+        }
         }
     }
 }

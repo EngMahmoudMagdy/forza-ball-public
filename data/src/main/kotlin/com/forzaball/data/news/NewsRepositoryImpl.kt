@@ -1,45 +1,55 @@
 package com.forzaball.data.news
 
-import com.forzaball.data.network.ApiFootballService
+import com.forzaball.data.network.EspnApiService
 import com.forzaball.data.network.toNewsArticle
-import com.forzaball.data.network.toResultNewsArticle
-import com.forzaball.data.secrets.FootballSecrets
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.repository.NewsRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 
 class NewsRepositoryImpl(
-    private val api: ApiFootballService,
-    private val secrets: FootballSecrets,
+    private val espn: EspnApiService,
 ) : NewsRepository {
 
-    override suspend fun loadNewsForClubs(clubIds: List<String>): List<NewsArticle> {
-        if (secrets.apiKey().isBlank()) {
-            Timber.w("API_FOOTBALL_KEY missing — skipping news fetch")
-            return emptyList()
-        }
-        val ids = clubIds.mapNotNull { it.toIntOrNull() }
-        if (ids.isEmpty()) return emptyList()
+    override suspend fun loadNewsForPreferences(
+        favoriteLeagueSlugs: List<String>,
+        favoriteTeamIds: List<String>,
+        maxArticles: Int,
+    ): List<NewsArticle> {
+        val leagues = favoriteLeagueSlugs.map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+        if (leagues.isEmpty()) return emptyList()
+        val teamSet = favoriteTeamIds.map { it.trim() }.filter { it.isNotEmpty() }.toSet()
 
         return runCatching {
-            val articles = mutableListOf<NewsArticle>()
-            val primary = ids.first()
-            api.fixtures(team = primary, last = 6).response.orEmpty()
-                .map { it.toResultNewsArticle() }
-                .forEach { articles.add(it) }
-
-            ids.take(3).forEach { teamId ->
-                api.injuries(team = teamId).response.orEmpty()
-                    .map { it.toNewsArticle() }
-                    .forEach { articles.add(it) }
+            val articles = coroutineScope {
+                leagues.map { slug ->
+                    async {
+                        runCatching { espn.news(slug) }
+                            .getOrElse { e ->
+                                Timber.w(e, "ESPN news failed for %s", slug)
+                                null
+                            }
+                            ?.articles.orEmpty()
+                            .mapNotNull { it.toNewsArticle(slug) }
+                    }
+                }.flatMap { it.await() }
             }
 
-            articles
+            val filtered = if (teamSet.isNotEmpty()) {
+                articles.filter { article ->
+                    article.clubIds.any { it in teamSet } || article.clubIds.isEmpty()
+                }
+            } else {
+                articles
+            }
+
+            filtered
                 .distinctBy { it.id }
                 .sortedByDescending { it.publishedAtMillis }
-                .take(30)
+                .take(maxArticles.coerceAtLeast(1))
         }.getOrElse { e ->
-            Timber.e(e, "loadNewsForClubs failed")
+            Timber.e(e, "loadNewsForPreferences failed")
             emptyList()
         }
     }

@@ -1,0 +1,1613 @@
+{
+  "leagues": [
+    {
+      "id": "775",
+      "uid": "s:600~l:775",
+      "name": "UEFA Champions League",
+      "abbreviation": "UEFA Champions League",
+      "midsizeName": "UEFA.CHAMPIONS",
+      "slug": "uefa.champions",
+      "season": {
+        "year": 2025,
+        "startDate": "2025-07-01T04:00Z",
+        "endDate": "2026-07-01T03:59Z",
+        "displayName": "2025-26 UEFA Champions League",
+        "type": {
+          "id": "4",
+          "type": 13679,
+          "name": "Quarterfinals",
+          "abbreviation": "Quarterfinals"
+        }
+      },
+      "logos": [
+        {
+          "href": "https://a.espncdn.com/i/leaguelogos/soccer/500/2.png",
+          "width": 500,
+          "height": 500,
+          "alt": "",
+          "rel": [
+            "full",
+            "default"
+          ],
+          "lastUpdated": "2019-05-08T16:07Z"
+        },
+        {
+          "href": "https://a.espncdn.com/i/leaguelogos/soccer/500-dark/2.png",
+          "width": 500,
+          "height": 500,
+          "alt": "",
+          "rel": [
+            "full",
+            "dark"
+          ],
+          "lastUpdated": "2019-05-08T16:07Z"
+        }
+      ],
+      "calendarType": "list",
+      "calendarIsWhitelist": true,
+      "calendarStartDate": "2025-07-01T04:00Z",
+      "calendarEndDate": "2026-07-01T03:59Z",
+      "calendar": [
+        {
+          "label": "UEFA Champions League",
+          "startDate": "2025-07-01T04:00Z",
+          "endDate": "2026-07-01T03:59Z",
+          "entries": [
+            {
+              "label": "League Phase",
+              "detail": "Sep 16-Jan 28",
+              "value": "1",
+              "startDate": "2025-08-28T07:00Z",
+              "endDate": "2026-01-30T07:59Z"
+            },
+            {
+              "label": "Knockout Round Playoffs",
+              "detail": "Feb 17-25",
+              "value": "2",
+              "startDate": "2026-01-30T08:00Z",
+              "endDate": "2026-02-27T07:59Z"
+            },
+            {
+              "label": "Rd of 16",
+              "detail": "Mar 10-18",
+              "value": "3",
+              "startDate": "2026-02-27T08:00Z",
+              "endDate": "2026-03-20T06:59Z"
+            },
+            {
+              "label": "Quarterfinals",
+              "detail": "Apr 7-15",
+              "value": "4",
+              "startDate": "2026-03-20T07:00Z",
+              "endDate": "2026-04-17T06:59Z"
+            },
+            {
+              "label": "Semifinals",
+              "detail": "Apr 28-May 5",
+              "value": "5",
+              "startDate": "2026-04-17T07:00Z",
+              "endDate": "2026-05-08T06:59Z"
+            },
+            {
+              "label": "Final",
+              "detail": "May 30",
+              "value": "6",
+              "startDate": "2026-05-08T07:00Z",
+              "endDate": "2026-07-01T06:59Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "season": {
+    "type": 13679,
+    "year": 2025
+  },
+  "day": {
+    "date": "2026-04-14"
+  },
+  "events": [
+    {
+      "id": "401862892",
+      "uid": "s:600~l:775~e:401862892",
+      "date": "2026-04-14T19:00Z",
+      "name": "Barcelona at Atlético Madrid",
+      "shortName": "BAR @ ATM",
+      "season": {
+        "year": 2025,
+        "type": 13679,
+        "slug": "quarterfinals"
+      },
+      "competitions": [
+        {
+          "id": "401862892",
+          "uid": "s:600~l:775~e:401862892~c:401862892",
+          "date": "2026-04-14T19:00Z",
+          "startDate": "2026-04-14T19:00Z",
+          "attendance": 0,
+          "timeValid": true,
+          "recent": false,
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Tue, April 14th at 3:00 PM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "venue": {
+            "id": "10633",
+            "fullName": "Riyadh Air Metropolitano",
+            "address": {
+              "city": "Madrid",
+              "country": "Spain"
+            }
+          },
+          "tickets": [
+            {
+              "summary": "Tickets as low as $547",
+              "numberAvailable": 185,
+              "links": [
+                {
+                  "href": "https://www.vividseats.com/champions-league-tickets-riyadh-air-metropolitano-4-14-2026--sports-soccer/production/6803560?wsUser=717"
+                },
+                {
+                  "href": "https://www.vividseats.com/venues/riyadh-air-metropolitano-tickets.html?wsUser=717"
+                }
+              ]
+            }
+          ],
+          "format": {
+            "regulation": {
+              "periods": 2
+            }
+          },
+          "leg": {
+            "value": 2,
+            "displayValue": "2nd Leg"
+          },
+          "series": {
+            "competitors": [
+              {
+                "id": "1068",
+                "uid": "s:600~t:1068",
+                "winner": false,
+                "aggregateScore": 2.0
+              },
+              {
+                "id": "83",
+                "uid": "s:600~t:83",
+                "winner": false,
+                "aggregateScore": 0.0
+              }
+            ],
+            "completed": false,
+            "title": "Quarterfinals",
+            "totalCompetitions": 2
+          },
+          "notes": [
+            {
+              "text": "2nd Leg - Atlético Madrid lead 2-0 on aggregate",
+              "headline": "2nd Leg - Atlético Madrid lead 2-0 on aggregate",
+              "type": "event"
+            }
+          ],
+          "geoBroadcasts": [
+            {
+              "type": {
+                "id": "4",
+                "shortName": "STREAMING"
+              },
+              "market": {
+                "id": "1",
+                "type": "National"
+              },
+              "media": {
+                "shortName": "Paramount+"
+              },
+              "lang": "en",
+              "region": "us"
+            }
+          ],
+          "broadcasts": [
+            {
+              "market": "national",
+              "names": [
+                "Paramount+"
+              ]
+            }
+          ],
+          "broadcast": "",
+          "competitors": [
+            {
+              "id": "1068",
+              "uid": "s:600~t:1068",
+              "type": "team",
+              "order": 0,
+              "homeAway": "home",
+              "winner": false,
+              "form": "LWLLL",
+              "score": "0",
+              "aggregateScore": 2.0,
+              "team": {
+                "id": "1068",
+                "uid": "s:600~t:1068",
+                "abbreviation": "ATM",
+                "displayName": "Atlético Madrid",
+                "shortDisplayName": "Atlético",
+                "name": "Atlético Madrid",
+                "location": "Atlético Madrid",
+                "color": "ca3624",
+                "alternateColor": "000099",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/1068/atletico-madrid",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/1068/atletico-madrid",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/1068/atletico-madrid",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/1068/atletico-madrid",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "10633"
+                }
+              },
+              "statistics": [],
+              "leaders": [
+                {
+                  "name": "goals",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "9",
+                      "value": 9.0,
+                      "athlete": {
+                        "id": "277206",
+                        "displayName": "Julián Álvarez",
+                        "shortName": "J. Álvarez",
+                        "fullName": "Julián Álvarez",
+                        "jersey": "19",
+                        "active": true,
+                        "team": {
+                          "id": "1068"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/277206/julian-alvarez",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "F"
+                        }
+                      },
+                      "team": {
+                        "id": "1068"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "goalsLeaders",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "9",
+                      "value": 9.0,
+                      "athlete": {
+                        "id": "277206",
+                        "displayName": "Julián Álvarez",
+                        "shortName": "J. Álvarez",
+                        "fullName": "Julián Álvarez",
+                        "jersey": "19",
+                        "active": true,
+                        "team": {
+                          "id": "1068"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/277206/julian-alvarez",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "F"
+                        }
+                      },
+                      "team": {
+                        "id": "1068"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "83",
+              "uid": "s:600~t:83",
+              "type": "team",
+              "order": 1,
+              "homeAway": "away",
+              "winner": false,
+              "form": "WLWWW",
+              "score": "0",
+              "aggregateScore": 0.0,
+              "team": {
+                "id": "83",
+                "uid": "s:600~t:83",
+                "abbreviation": "BAR",
+                "displayName": "Barcelona",
+                "shortDisplayName": "Barcelona",
+                "name": "Barcelona",
+                "location": "Barcelona",
+                "color": "990000",
+                "alternateColor": "FCE38A",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/83/barcelona",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/83/barcelona",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/83/barcelona",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/83/barcelona",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "1625"
+                }
+              },
+              "statistics": [],
+              "leaders": [
+                {
+                  "name": "goals",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "6",
+                      "value": 6.0,
+                      "athlete": {
+                        "id": "354334",
+                        "displayName": "Fermín López",
+                        "shortName": "F. López",
+                        "fullName": "Fermín López",
+                        "jersey": "16",
+                        "active": true,
+                        "team": {
+                          "id": "83"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/354334/fermin-lopez",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "M"
+                        }
+                      },
+                      "team": {
+                        "id": "83"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "goalsLeaders",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "6",
+                      "value": 6.0,
+                      "athlete": {
+                        "id": "354334",
+                        "displayName": "Fermín López",
+                        "shortName": "F. López",
+                        "fullName": "Fermín López",
+                        "jersey": "16",
+                        "active": true,
+                        "team": {
+                          "id": "83"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/354334/fermin-lopez",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "M"
+                        }
+                      },
+                      "team": {
+                        "id": "83"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "details": [],
+          "odds": [
+            {
+              "overUnder": 3.5,
+              "link": {
+                "language": "en-US",
+                "rel": [
+                  "game",
+                  "desktop",
+                  "bets"
+                ],
+                "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535",
+                "text": "Game",
+                "shortText": "Game",
+                "isExternal": true,
+                "isPremium": false,
+                "isHidden": false
+              },
+              "provider": {
+                "id": "100",
+                "name": "DraftKings",
+                "priority": 1,
+                "displayName": "DraftKings",
+                "logos": [
+                  {
+                    "href": "https://a.espncdn.com/i/betting/Draftkings_Light.svg",
+                    "rel": [
+                      "light"
+                    ]
+                  },
+                  {
+                    "href": "https://a.espncdn.com/i/betting/Draftkings_Dark.svg",
+                    "rel": [
+                      "dark"
+                    ]
+                  }
+                ]
+              },
+              "drawOdds": {
+                "moneyLine": 340,
+                "link": {
+                  "language": "en-US",
+                  "rel": [
+                    "draw",
+                    "desktop",
+                    "bets",
+                    "draftkings"
+                  ],
+                  "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0ML84248719_2",
+                  "text": "Draw Bet",
+                  "shortText": "Draw Bet",
+                  "isExternal": true,
+                  "isPremium": false,
+                  "isHidden": false
+                }
+              },
+              "total": {
+                "displayName": "Total",
+                "shortDisplayName": "Total",
+                "over": {
+                  "open": {
+                    "line": "o3.5",
+                    "odds": "-125"
+                  },
+                  "close": {
+                    "line": "o3.5",
+                    "odds": "-120",
+                    "link": {
+                      "rel": [
+                        "over",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0OU84248754O350_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "over",
+                          "betType": "straight",
+                          "betDetails": "Over:3.5"
+                        }
+                      }
+                    }
+                  }
+                },
+                "under": {
+                  "open": {
+                    "line": "u3.5",
+                    "odds": "-105"
+                  },
+                  "close": {
+                    "line": "u3.5",
+                    "odds": "-105",
+                    "link": {
+                      "rel": [
+                        "under",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0OU84248754U350_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "under",
+                          "betType": "straight",
+                          "betDetails": "Under:3.5"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "pointSpread": {
+                "displayName": "Spread",
+                "shortDisplayName": "Spread",
+                "home": {
+                  "open": {
+                    "line": "+0.5",
+                    "odds": "-125"
+                  },
+                  "close": {
+                    "line": "+0.5",
+                    "odds": "-105",
+                    "link": {
+                      "rel": [
+                        "homeSpread",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0HC84248759P50_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "home",
+                          "betType": "straight",
+                          "betDetails": "Spread:ATM+0.5"
+                        }
+                      }
+                    }
+                  }
+                },
+                "away": {
+                  "open": {
+                    "line": "-0.5",
+                    "odds": "-115"
+                  },
+                  "close": {
+                    "line": "-0.5",
+                    "odds": "-135",
+                    "link": {
+                      "rel": [
+                        "awaySpread",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0HC84248759N50_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "away",
+                          "betType": "straight",
+                          "betDetails": "Spread:BAR-0.5"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "moneyline": {
+                "displayName": "Moneyline",
+                "shortDisplayName": "ML",
+                "home": {
+                  "open": {
+                    "odds": "+230"
+                  },
+                  "close": {
+                    "odds": "+275",
+                    "link": {
+                      "rel": [
+                        "home",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0ML84248719_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "home",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                },
+                "away": {
+                  "open": {
+                    "odds": "-105"
+                  },
+                  "close": {
+                    "odds": "-125",
+                    "link": {
+                      "rel": [
+                        "away",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0ML84248719_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "away",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                },
+                "draw": {
+                  "open": {
+                    "odds": "+310"
+                  },
+                  "close": {
+                    "odds": "+340",
+                    "link": {
+                      "rel": [
+                        "draw",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958535%3Foutcomes%3D0ML84248719_2",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862892,
+                          "betSide": "draw",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "details": "BAR -125"
+            }
+          ],
+          "wasSuspended": false,
+          "playByPlayAvailable": true,
+          "playByPlayAthletes": true
+        }
+      ],
+      "status": {
+        "clock": 0.0,
+        "displayClock": "0'",
+        "type": {
+          "id": "1",
+          "name": "STATUS_SCHEDULED",
+          "state": "pre",
+          "completed": false,
+          "description": "Scheduled",
+          "detail": "Tue, April 14th at 3:00 PM EDT",
+          "shortDetail": "Scheduled"
+        }
+      },
+      "venue": {
+        "displayName": "Riyadh Air Metropolitano"
+      },
+      "links": [
+        {
+          "language": "en-US",
+          "rel": [
+            "summary",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/match/_/gameId/401862892/barcelona-atletico-madrid",
+          "text": "Summary",
+          "shortText": "Summary",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        },
+        {
+          "language": "en-US",
+          "rel": [
+            "stats",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/matchstats/_/gameId/401862892",
+          "text": "Statistics",
+          "shortText": "Statistics",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        }
+      ]
+    },
+    {
+      "id": "401862889",
+      "uid": "s:600~l:775~e:401862889",
+      "date": "2026-04-14T19:00Z",
+      "name": "Paris Saint-Germain at Liverpool",
+      "shortName": "PSG @ LIV",
+      "season": {
+        "year": 2025,
+        "type": 13679,
+        "slug": "quarterfinals"
+      },
+      "competitions": [
+        {
+          "id": "401862889",
+          "uid": "s:600~l:775~e:401862889~c:401862889",
+          "date": "2026-04-14T19:00Z",
+          "startDate": "2026-04-14T19:00Z",
+          "attendance": 0,
+          "timeValid": true,
+          "recent": false,
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Tue, April 14th at 3:00 PM EDT",
+              "shortDetail": "Scheduled"
+            }
+          },
+          "venue": {
+            "id": "192",
+            "fullName": "Anfield",
+            "address": {
+              "city": "Liverpool",
+              "country": "England"
+            }
+          },
+          "tickets": [
+            {
+              "summary": "Tickets as low as $345",
+              "numberAvailable": 213,
+              "links": [
+                {
+                  "href": "https://www.vividseats.com/champions-league-tickets-anfield-stadium-4-14-2026--sports-soccer/production/6803556?wsUser=717"
+                },
+                {
+                  "href": "https://www.vividseats.com/venues/anfield-stadium-tickets.html?wsUser=717"
+                }
+              ]
+            }
+          ],
+          "format": {
+            "regulation": {
+              "periods": 2
+            }
+          },
+          "leg": {
+            "value": 2,
+            "displayValue": "2nd Leg"
+          },
+          "series": {
+            "competitors": [
+              {
+                "id": "364",
+                "uid": "s:600~t:364",
+                "winner": false,
+                "aggregateScore": 0.0
+              },
+              {
+                "id": "160",
+                "uid": "s:600~t:160",
+                "winner": false,
+                "aggregateScore": 2.0
+              }
+            ],
+            "completed": false,
+            "title": "Quarterfinals",
+            "totalCompetitions": 2
+          },
+          "notes": [
+            {
+              "text": "2nd Leg - Paris Saint-Germain lead 2-0 on aggregate",
+              "headline": "2nd Leg - Paris Saint-Germain lead 2-0 on aggregate",
+              "type": "event"
+            }
+          ],
+          "geoBroadcasts": [
+            {
+              "type": {
+                "id": "4",
+                "shortName": "STREAMING"
+              },
+              "market": {
+                "id": "1",
+                "type": "National"
+              },
+              "media": {
+                "shortName": "Paramount+"
+              },
+              "lang": "en",
+              "region": "us"
+            }
+          ],
+          "broadcasts": [
+            {
+              "market": "national",
+              "names": [
+                "Paramount+"
+              ]
+            }
+          ],
+          "broadcast": "",
+          "competitors": [
+            {
+              "id": "364",
+              "uid": "s:600~t:364",
+              "type": "team",
+              "order": 0,
+              "homeAway": "home",
+              "winner": false,
+              "form": "WLLLW",
+              "score": "0",
+              "aggregateScore": 0.0,
+              "team": {
+                "id": "364",
+                "uid": "s:600~t:364",
+                "abbreviation": "LIV",
+                "displayName": "Liverpool",
+                "shortDisplayName": "Liverpool",
+                "name": "Liverpool",
+                "location": "Liverpool",
+                "color": "d11317",
+                "alternateColor": "FFFFFF",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/364/liverpool",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/364/liverpool",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/364/liverpool",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/364/liverpool",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "1452"
+                }
+              },
+              "statistics": [],
+              "leaders": [
+                {
+                  "name": "goals",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "5",
+                      "value": 5.0,
+                      "athlete": {
+                        "id": "257206",
+                        "displayName": "Dominik Szoboszlai",
+                        "shortName": "D. Szoboszlai",
+                        "fullName": "Dominik Szoboszlai",
+                        "jersey": "8",
+                        "active": true,
+                        "team": {
+                          "id": "364"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/257206/dominik-szoboszlai",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "M"
+                        }
+                      },
+                      "team": {
+                        "id": "364"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "goalsLeaders",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "5",
+                      "value": 5.0,
+                      "athlete": {
+                        "id": "257206",
+                        "displayName": "Dominik Szoboszlai",
+                        "shortName": "D. Szoboszlai",
+                        "fullName": "Dominik Szoboszlai",
+                        "jersey": "8",
+                        "active": true,
+                        "team": {
+                          "id": "364"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/257206/dominik-szoboszlai",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "M"
+                        }
+                      },
+                      "team": {
+                        "id": "364"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "160",
+              "uid": "s:600~t:160",
+              "type": "team",
+              "order": 1,
+              "homeAway": "away",
+              "winner": false,
+              "form": "WWWWW",
+              "score": "0",
+              "aggregateScore": 2.0,
+              "team": {
+                "id": "160",
+                "uid": "s:600~t:160",
+                "abbreviation": "PSG",
+                "displayName": "Paris Saint-Germain",
+                "shortDisplayName": "PSG",
+                "name": "Paris Saint-Germain",
+                "location": "Paris Saint-Germain",
+                "color": "011F68",
+                "alternateColor": "ffffff",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/160/paris-saint-germain",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/160/paris-saint-germain",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/160/paris-saint-germain",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/160/paris-saint-germain",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "3555"
+                }
+              },
+              "statistics": [],
+              "leaders": [
+                {
+                  "name": "goals",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "8",
+                      "value": 8.0,
+                      "athlete": {
+                        "id": "274745",
+                        "displayName": "Khvicha Kvaratskhelia",
+                        "shortName": "K. Kvaratskhelia",
+                        "fullName": "Khvicha Kvaratskhelia",
+                        "jersey": "7",
+                        "active": true,
+                        "team": {
+                          "id": "160"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/274745/khvicha-kvaratskhelia",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "F"
+                        }
+                      },
+                      "team": {
+                        "id": "160"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "goalsLeaders",
+                  "displayName": "Goals",
+                  "shortDisplayName": "Goals",
+                  "abbreviation": "G",
+                  "leaders": [
+                    {
+                      "displayValue": "8",
+                      "value": 8.0,
+                      "athlete": {
+                        "id": "274745",
+                        "displayName": "Khvicha Kvaratskhelia",
+                        "shortName": "K. Kvaratskhelia",
+                        "fullName": "Khvicha Kvaratskhelia",
+                        "jersey": "7",
+                        "active": true,
+                        "team": {
+                          "id": "160"
+                        },
+                        "links": [
+                          {
+                            "rel": [
+                              "playercard",
+                              "desktop",
+                              "athlete"
+                            ],
+                            "href": "https://www.espn.com/soccer/player/_/id/274745/khvicha-kvaratskhelia",
+                            "isHidden": false
+                          }
+                        ],
+                        "position": {
+                          "abbreviation": "F"
+                        }
+                      },
+                      "team": {
+                        "id": "160"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "details": [],
+          "odds": [
+            {
+              "overUnder": 3.5,
+              "link": {
+                "language": "en-US",
+                "rel": [
+                  "game",
+                  "desktop",
+                  "bets"
+                ],
+                "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534",
+                "text": "Game",
+                "shortText": "Game",
+                "isExternal": true,
+                "isPremium": false,
+                "isHidden": false
+              },
+              "provider": {
+                "id": "100",
+                "name": "DraftKings",
+                "priority": 1
+              },
+              "drawOdds": {
+                "moneyLine": 310,
+                "link": {
+                  "language": "en-US",
+                  "rel": [
+                    "draw",
+                    "desktop",
+                    "bets",
+                    "draftkings"
+                  ],
+                  "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0ML84248718_2",
+                  "text": "Draw Bet",
+                  "shortText": "Draw Bet",
+                  "isExternal": true,
+                  "isPremium": false,
+                  "isHidden": false
+                }
+              },
+              "total": {
+                "displayName": "Total",
+                "shortDisplayName": "Total",
+                "over": {
+                  "open": {
+                    "line": "o3.5",
+                    "odds": "+115"
+                  },
+                  "close": {
+                    "line": "o3.5",
+                    "odds": "+105",
+                    "link": {
+                      "rel": [
+                        "over",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0OU84248726O350_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "over",
+                          "betType": "straight",
+                          "betDetails": "Over:3.5"
+                        }
+                      }
+                    }
+                  }
+                },
+                "under": {
+                  "open": {
+                    "line": "u3.5",
+                    "odds": "-150"
+                  },
+                  "close": {
+                    "line": "u3.5",
+                    "odds": "-130",
+                    "link": {
+                      "rel": [
+                        "under",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0OU84248726U350_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "under",
+                          "betType": "straight",
+                          "betDetails": "Under:3.5"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "pointSpread": {
+                "displayName": "Spread",
+                "shortDisplayName": "Spread",
+                "home": {
+                  "open": {
+                    "line": "-0.5",
+                    "odds": "+100"
+                  },
+                  "close": {
+                    "line": "-0.5",
+                    "odds": "+130",
+                    "link": {
+                      "rel": [
+                        "homeSpread",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0HC84248731N50_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "home",
+                          "betType": "straight",
+                          "betDetails": "Spread:LIV-0.5"
+                        }
+                      }
+                    }
+                  }
+                },
+                "away": {
+                  "open": {
+                    "line": "+0.5",
+                    "odds": "-150"
+                  },
+                  "close": {
+                    "line": "+0.5",
+                    "odds": "-180",
+                    "link": {
+                      "rel": [
+                        "awaySpread",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0HC84248731P50_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "away",
+                          "betType": "straight",
+                          "betDetails": "Spread:PSG+0.5"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "moneyline": {
+                "displayName": "Moneyline",
+                "shortDisplayName": "ML",
+                "home": {
+                  "open": {
+                    "odds": "+115"
+                  },
+                  "close": {
+                    "odds": "+140",
+                    "link": {
+                      "rel": [
+                        "home",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0ML84248718_1",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "home",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                },
+                "away": {
+                  "open": {
+                    "odds": "+170"
+                  },
+                  "close": {
+                    "odds": "+155",
+                    "link": {
+                      "rel": [
+                        "away",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0ML84248718_3",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "away",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                },
+                "draw": {
+                  "open": {
+                    "odds": "+350"
+                  },
+                  "close": {
+                    "odds": "+310",
+                    "link": {
+                      "rel": [
+                        "draw",
+                        "bets"
+                      ],
+                      "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33958534%3Foutcomes%3D0ML84248718_2",
+                      "tracking": {
+                        "campaign": "betting-integrations",
+                        "tags": {
+                          "league": "uefa.champions",
+                          "sport": "soccer",
+                          "gameId": 401862889,
+                          "betSide": "draw",
+                          "betType": "straight"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "details": "LIV +140"
+            }
+          ],
+          "wasSuspended": false,
+          "playByPlayAvailable": true,
+          "playByPlayAthletes": true
+        }
+      ],
+      "status": {
+        "clock": 0.0,
+        "displayClock": "0'",
+        "type": {
+          "id": "1",
+          "name": "STATUS_SCHEDULED",
+          "state": "pre",
+          "completed": false,
+          "description": "Scheduled",
+          "detail": "Tue, April 14th at 3:00 PM EDT",
+          "shortDetail": "Scheduled"
+        }
+      },
+      "venue": {
+        "displayName": "Anfield"
+      },
+      "links": [
+        {
+          "language": "en-US",
+          "rel": [
+            "summary",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/match/_/gameId/401862889/paris-saint-germain-liverpool",
+          "text": "Summary",
+          "shortText": "Summary",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        },
+        {
+          "language": "en-US",
+          "rel": [
+            "stats",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/matchstats/_/gameId/401862889",
+          "text": "Statistics",
+          "shortText": "Statistics",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        }
+      ]
+    }
+  ],
+  "provider": {
+    "id": "100",
+    "name": "DraftKings",
+    "priority": 1,
+    "displayName": "DraftKings",
+    "logos": [
+      {
+        "href": "https://a.espncdn.com/i/betting/Draftkings_Light.svg",
+        "rel": [
+          "light"
+        ]
+      },
+      {
+        "href": "https://a.espncdn.com/i/betting/Draftkings_Dark.svg",
+        "rel": [
+          "dark"
+        ]
+      }
+    ]
+  }
+}

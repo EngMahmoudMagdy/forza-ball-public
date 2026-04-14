@@ -18,7 +18,7 @@ room = "2.8.4"
 datastore = "1.2.0"
 work = "2.11.1"
 koin = "4.1.1"
-firebaseBom = "34.10.0"
+firebaseBom = "34.11.0"
 playServicesAuth = "21.5.1"
 securityCrypto = "1.1.0"
 playIntegrity = "1.6.0"
@@ -28,6 +28,7 @@ media3 = "1.9.2"
 sqlcipher = "4.5.7"
 navCompose = "2.9.7"
 accompanist = "0.36.0"
+chucker = "4.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,8 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlinx-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
+chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
+chucker-no-op = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 # Paging

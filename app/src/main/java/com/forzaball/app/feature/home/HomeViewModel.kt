@@ -2,6 +2,7 @@ package com.forzaball.app.feature.home
 
 import androidx.lifecycle.viewModelScope
 import com.forzaball.app.core.mvi.MviViewModel
+import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.usecase.LoadHomeContentUseCase
 import com.forzaball.domain.usecase.ObserveUserPreferencesUseCase
 import kotlinx.coroutines.flow.collectLatest
@@ -16,7 +17,8 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             observeUserPreferences().collectLatest { preferences ->
-                loadContent(preferences.favoriteClubs)
+                setState { copy(userPreferences = preferences) }
+                loadContent(preferences)
             }
         }
     }
@@ -26,21 +28,22 @@ class HomeViewModel(
             is HomeIntent.Load -> Unit
             is HomeIntent.Refresh -> {
                 val prefs = observeUserPreferences().first()
-                loadContent(prefs.favoriteClubs)
+                loadContent(prefs)
             }
         }
     }
 
-    private suspend fun loadContent(clubIds: List<String>) {
+    private suspend fun loadContent(preferences: UserPreferences) {
         setState { copy(isLoading = true, errorMessage = null) }
         runCatching {
-            loadHomeContent(clubIds)
+            loadHomeContent(preferences)
         }.onSuccess { content ->
             setState {
                 copy(
                     isLoading = false,
                     favoriteClubMatch = content.matches.highlightMatch,
                     liveMatches = content.matches.liveMatches,
+                    teamNextMatches = content.teamNextMatches,
                     news = content.news,
                     errorMessage = null,
                 )

@@ -4,7 +4,10 @@ import com.forzaball.app.data.auth.AuthRepositoryImpl
 import com.forzaball.app.feature.auth.signin.SignInViewModel
 import com.forzaball.app.feature.auth.signup.SignUpViewModel
 import com.forzaball.app.feature.feeds.FeedViewModel
+import com.forzaball.app.feature.home.FixturesListViewModel
 import com.forzaball.app.feature.home.HomeViewModel
+import com.forzaball.app.feature.home.NewsListViewModel
+import com.forzaball.app.feature.profile.EditFavoritesViewModel
 import com.forzaball.app.feature.profile.ProfileViewModel
 import com.forzaball.app.feature.personalization.PersonalizationViewModel
 import com.forzaball.app.feature.splash.SplashViewModel
@@ -17,11 +20,14 @@ val appModule = module {
     single { FirebaseAuth.getInstance() }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     viewModel { HomeViewModel(get(), get()) }
+    viewModel { NewsListViewModel(get(), get()) }
+    viewModel { FixturesListViewModel(get(), get()) }
     viewModel { FeedViewModel(get(), get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { SplashViewModel(get(), get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { SignInViewModel(get(), get()) }
-    viewModel { PersonalizationViewModel(get()) }
+    viewModel { PersonalizationViewModel(get(), get(), get()) }
+    viewModel { EditFavoritesViewModel(get(), get(), get()) }
 }
 
