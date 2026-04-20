@@ -3,7 +3,6 @@ package com.forzaball.app.feature.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.forzaball.app.feature.personalization.ClubItem
-import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.PreferencesRepository
 import com.forzaball.domain.repository.SoccerTeamsRepository
@@ -16,9 +15,9 @@ import timber.log.Timber
 
 data class EditFavoritesState(
     val step: Int = 1,
-    val selectedLeagueIds: Set<String> = emptySet(),
-    val selectedClubIds: Set<String> = emptySet(),
-    val teamsByLeague: Map<String, List<ClubItem>> = emptyMap(),
+    val selectedLeagueId: String? = null,
+    val selectedClubId: String? = null,
+    val teamsForLeague: List<ClubItem> = emptyList(),
     val isLoadingTeams: Boolean = false,
     val isSaving: Boolean = false,
     val closed: Boolean = false,
@@ -37,65 +36,40 @@ class EditFavoritesViewModel(
         viewModelScope.launch {
             val p = preferencesRepository.observeUserPreferences().first()
             _state.value = EditFavoritesState(
-                selectedLeagueIds = p.favoriteLeagues.toSet(),
-                selectedClubIds = p.favoriteClubs.toSet(),
+                selectedLeagueId = p.favoriteTeamLeagueSlug,
+                selectedClubId = p.favoriteTeamId,
             )
         }
     }
 
-    fun toggleLeague(slug: String) {
+    fun selectLeague(slug: String) {
         val s = _state.value
-        val newLeagues = if (slug in s.selectedLeagueIds) {
-            s.selectedLeagueIds - slug
-        } else {
-            s.selectedLeagueIds + slug
-        }
-        val newClubs = if (slug !in newLeagues) {
-            s.selectedClubIds.filter { id ->
-                s.teamsByLeague[slug]?.any { it.id == id } != true
-            }.toSet()
-        } else {
-            s.selectedClubIds
-        }
-        _state.value = s.copy(selectedLeagueIds = newLeagues, selectedClubIds = newClubs)
+        _state.value = s.copy(selectedLeagueId = slug, selectedClubId = null)
     }
 
-    fun toggleClub(id: String) {
+    fun selectClub(id: String) {
         val s = _state.value
-        val clubs = s.selectedLeagueIds.flatMap { slug -> s.teamsByLeague[slug].orEmpty() }
-        val club = clubs.find { it.id == id } ?: return
-        val slug = club.leagueSlug
-        val countInLeague = clubs.count { it.leagueSlug == slug && it.id in s.selectedClubIds }
-        val selected = id in s.selectedClubIds
-        if (selected) {
-            _state.value = s.copy(selectedClubIds = s.selectedClubIds - id)
-        } else if (countInLeague < 3) {
-            _state.value = s.copy(selectedClubIds = s.selectedClubIds + id)
-        }
+        _state.value = s.copy(selectedClubId = if (s.selectedClubId == id) null else id)
     }
 
     fun nextStep() {
         val s = _state.value
         if (s.step == 1) {
+            val leagueId = s.selectedLeagueId ?: return
             viewModelScope.launch {
                 _state.value = s.copy(isLoadingTeams = true)
                 runCatching {
-                    buildMap {
-                        s.selectedLeagueIds.forEach { slug ->
-                            val clubs = soccerTeamsRepository.teamsForLeague(slug).map { domain ->
-                                ClubItem(
-                                    id = domain.id,
-                                    name = domain.name,
-                                    leagueSlug = slug,
-                                    crestUrl = domain.crestUrl,
-                                )
-                            }
-                            put(slug, clubs)
-                        }
+                    soccerTeamsRepository.teamsForLeague(leagueId).map { domain ->
+                        ClubItem(
+                            id = domain.id,
+                            name = domain.name,
+                            leagueSlug = leagueId,
+                            crestUrl = domain.crestUrl,
+                        )
                     }
-                }.onSuccess { map ->
+                }.onSuccess { clubs ->
                     _state.value = _state.value.copy(
-                        teamsByLeague = map,
+                        teamsForLeague = clubs,
                         isLoadingTeams = false,
                         step = 2,
                     )
@@ -104,7 +78,6 @@ class EditFavoritesViewModel(
                     _state.value = _state.value.copy(isLoadingTeams = false)
                 }
             }
-            return
         }
     }
 
@@ -118,11 +91,16 @@ class EditFavoritesViewModel(
     fun save() {
         viewModelScope.launch {
             val s = _state.value
+            val leagueId = s.selectedLeagueId
+            val clubId = s.selectedClubId
+            if (leagueId.isNullOrBlank() || clubId.isNullOrBlank()) return@launch
             _state.value = s.copy(isSaving = true)
             val existing = preferencesRepository.observeUserPreferences().first()
+            val club = s.teamsForLeague.find { it.id == clubId }
             val prefs = existing.copy(
-                favoriteLeagues = s.selectedLeagueIds.toList(),
-                favoriteClubs = s.selectedClubIds.toList(),
+                favoriteTeamLeagueSlug = leagueId,
+                favoriteTeamId = clubId,
+                favoriteTeamName = club?.name,
             )
             preferencesRepository.updateUserPreferences(prefs)
             runCatching { feedRepository.syncUserProfilePreferences(prefs) }

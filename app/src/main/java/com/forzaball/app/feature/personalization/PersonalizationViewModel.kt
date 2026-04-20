@@ -14,9 +14,9 @@ import timber.log.Timber
 
 data class PersonalizationState(
     val step: Int = 1,
-    val selectedLeagueIds: Set<String> = emptySet(),
-    val selectedClubIds: Set<String> = emptySet(),
-    val teamsByLeague: Map<String, List<ClubItem>> = emptyMap(),
+    val selectedLeagueId: String? = null,
+    val selectedClubId: String? = null,
+    val teamsForLeague: List<ClubItem> = emptyList(),
     val isLoadingTeams: Boolean = false,
     val nickname: String = "",
     val profilePhotoUrl: String? = null,
@@ -32,35 +32,19 @@ class PersonalizationViewModel(
     private val _state = MutableStateFlow(PersonalizationState())
     val state: StateFlow<PersonalizationState> = _state.asStateFlow()
 
-    fun toggleLeague(slug: String) {
+    fun selectLeague(slug: String) {
         val s = _state.value
-        val newLeagues = if (slug in s.selectedLeagueIds) {
-            s.selectedLeagueIds - slug
-        } else {
-            s.selectedLeagueIds + slug
-        }
-        val newClubs = if (slug !in newLeagues) {
-            s.selectedClubIds.filter { id ->
-                s.teamsByLeague[slug]?.any { it.id == id } != true
-            }.toSet()
-        } else {
-            s.selectedClubIds
-        }
-        _state.value = s.copy(selectedLeagueIds = newLeagues, selectedClubIds = newClubs)
+        _state.value = s.copy(
+            selectedLeagueId = slug,
+            selectedClubId = null,
+        )
     }
 
-    fun toggleClub(id: String) {
+    fun selectClub(id: String) {
         val s = _state.value
-        val clubs = s.selectedLeagueIds.flatMap { slug -> s.teamsByLeague[slug].orEmpty() }
-        val club = clubs.find { it.id == id } ?: return
-        val slug = club.leagueSlug
-        val countInLeague = clubs.count { it.leagueSlug == slug && it.id in s.selectedClubIds }
-        val selected = id in s.selectedClubIds
-        if (selected) {
-            _state.value = s.copy(selectedClubIds = s.selectedClubIds - id)
-        } else if (countInLeague < 3) {
-            _state.value = s.copy(selectedClubIds = s.selectedClubIds + id)
-        }
+        _state.value = s.copy(
+            selectedClubId = if (s.selectedClubId == id) null else id,
+        )
     }
 
     fun setNickname(value: String) {
@@ -74,25 +58,21 @@ class PersonalizationViewModel(
     fun nextStep() {
         val s = _state.value
         if (s.step == 1) {
+            val leagueId = s.selectedLeagueId ?: return
             viewModelScope.launch {
                 _state.value = s.copy(isLoadingTeams = true)
                 runCatching {
-                    buildMap {
-                        s.selectedLeagueIds.forEach { slug ->
-                            val clubs = soccerTeamsRepository.teamsForLeague(slug).map { domain ->
-                                ClubItem(
-                                    id = domain.id,
-                                    name = domain.name,
-                                    leagueSlug = slug,
-                                    crestUrl = domain.crestUrl,
-                                )
-                            }
-                            put(slug, clubs)
-                        }
+                    soccerTeamsRepository.teamsForLeague(leagueId).map { domain ->
+                        ClubItem(
+                            id = domain.id,
+                            name = domain.name,
+                            leagueSlug = leagueId,
+                            crestUrl = domain.crestUrl,
+                        )
                     }
-                }.onSuccess { map ->
+                }.onSuccess { clubs ->
                     _state.value = _state.value.copy(
-                        teamsByLeague = map,
+                        teamsForLeague = clubs,
                         isLoadingTeams = false,
                         step = 2,
                     )
@@ -109,19 +89,21 @@ class PersonalizationViewModel(
     }
 
     fun previousStep() {
-        val s = _state.value
-        if (s.step > 1) {
-            _state.value = s.copy(step = s.step - 1)
+        val st = _state.value
+        if (st.step > 1) {
+            _state.value = st.copy(step = st.step - 1)
         }
     }
 
     fun finish() {
         viewModelScope.launch {
             val s = _state.value
+            val club = s.teamsForLeague.find { it.id == s.selectedClubId }
             val prefs = UserPreferences(
                 countryCode = null,
-                favoriteLeagues = s.selectedLeagueIds.toList(),
-                favoriteClubs = s.selectedClubIds.toList(),
+                favoriteTeamLeagueSlug = s.selectedLeagueId,
+                favoriteTeamId = s.selectedClubId,
+                favoriteTeamName = club?.name,
                 nickname = s.nickname.takeIf { it.isNotBlank() },
                 profilePhotoUrl = s.profilePhotoUrl,
             )

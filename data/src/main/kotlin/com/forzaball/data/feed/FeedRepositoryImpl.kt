@@ -1,6 +1,8 @@
 package com.forzaball.data.feed
 
 import com.forzaball.domain.model.UserPreferences
+import com.forzaball.domain.model.favoriteTeamIdsList
+import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.domain.repository.FeedRepository
@@ -607,8 +609,11 @@ class FeedRepositoryImpl(
     override suspend fun syncUserProfilePreferences(preferences: UserPreferences) {
         val uid = auth.currentUser?.uid ?: return
         val data = mutableMapOf<String, Any>(
-            FIELD_FAVORITE_LEAGUES to preferences.favoriteLeagues,
-            FIELD_FAVORITE_CLUBS to preferences.favoriteClubs,
+            FIELD_FAVORITE_LEAGUES to preferences.leagueSlugsForEspnContent(),
+            FIELD_FAVORITE_CLUBS to preferences.favoriteTeamIdsList(),
+            FIELD_FAVORITE_TEAM_ID to (preferences.favoriteTeamId ?: ""),
+            FIELD_FAVORITE_TEAM_LEAGUE_SLUG to (preferences.favoriteTeamLeagueSlug ?: ""),
+            FIELD_FAVORITE_TEAM_NAME to (preferences.favoriteTeamName ?: ""),
         )
         preferences.nickname?.takeIf { it.isNotBlank() }?.let { nick ->
             data[FIELD_USERNAME] = nick
@@ -663,5 +668,8 @@ class FeedRepositoryImpl(
         private const val FIELD_FCM_TOKEN = "fcmToken"
         private const val FIELD_FAVORITE_LEAGUES = "favoriteLeagues"
         private const val FIELD_FAVORITE_CLUBS = "favoriteClubs"
+        private const val FIELD_FAVORITE_TEAM_ID = "favoriteTeamId"
+        private const val FIELD_FAVORITE_TEAM_LEAGUE_SLUG = "favoriteTeamLeagueSlug"
+        private const val FIELD_FAVORITE_TEAM_NAME = "favoriteTeamName"
     }
 }

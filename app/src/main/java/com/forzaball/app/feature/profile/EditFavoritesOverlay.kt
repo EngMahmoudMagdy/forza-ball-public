@@ -41,18 +41,17 @@ fun EditFavoritesOverlay(
         Box(modifier = Modifier.fillMaxSize()) {
             when (state.step) {
                 1 -> PersonalizationStep1Screen(
-                    selectedLeagueIds = state.selectedLeagueIds,
-                    onToggleLeague = viewModel::toggleLeague,
+                    selectedLeagueId = state.selectedLeagueId,
+                    onSelectLeague = viewModel::selectLeague,
                     onBack = onDismiss,
                     onNext = viewModel::nextStep,
                     isLoadingTeams = state.isLoadingTeams,
                     modifier = Modifier.fillMaxSize(),
                 )
                 else -> PersonalizationStep2Screen(
-                    selectedLeagueIds = state.selectedLeagueIds,
-                    selectedClubIds = state.selectedClubIds,
-                    teamsByLeague = state.teamsByLeague,
-                    onToggleClub = viewModel::toggleClub,
+                    clubs = state.teamsForLeague,
+                    selectedClubId = state.selectedClubId,
+                    onSelectClub = viewModel::selectClub,
                     onBack = viewModel::previousStep,
                     onNext = { if (!state.isSaving) viewModel.save() },
                     primaryActionLabel = if (state.isSaving) "Saving…" else "Save",

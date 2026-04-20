@@ -50,3 +50,6 @@ val catalogLeagues = listOf(
         logoUrl = null,
     ),
 )
+
+/** Leagues users pick a domestic club from (UCL is merged into schedules separately). */
+val domesticLeagueCatalog = catalogLeagues.filter { it.id != "uefa.champions" }

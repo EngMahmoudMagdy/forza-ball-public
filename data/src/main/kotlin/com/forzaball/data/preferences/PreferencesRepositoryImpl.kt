@@ -22,8 +22,12 @@ private val Context.dataStore by preferencesDataStore(
 
 private object Keys {
     val COUNTRY = stringPreferencesKey("country")
+    /** Legacy — migrated to favorite team fields on read. */
     val FAVORITE_LEAGUES = stringPreferencesKey("favorite_leagues")
     val FAVORITE_CLUBS = stringPreferencesKey("favorite_clubs")
+    val FAVORITE_TEAM_ID = stringPreferencesKey("favorite_team_id")
+    val FAVORITE_TEAM_LEAGUE = stringPreferencesKey("favorite_team_league")
+    val FAVORITE_TEAM_NAME = stringPreferencesKey("favorite_team_name")
     val NICKNAME = stringPreferencesKey("nickname")
     val PROFILE_PHOTO_URL = stringPreferencesKey("profile_photo_url")
 }
@@ -48,8 +52,11 @@ class PreferencesRepositoryImpl(
     override suspend fun updateUserPreferences(preferences: UserPreferences) {
         context.dataStore.edit { prefs ->
             prefs[Keys.COUNTRY] = preferences.countryCode.orEmpty()
-            prefs[Keys.FAVORITE_LEAGUES] = preferences.favoriteLeagues.joinToString(separator = ",")
-            prefs[Keys.FAVORITE_CLUBS] = preferences.favoriteClubs.joinToString(separator = ",")
+            prefs.remove(Keys.FAVORITE_LEAGUES)
+            prefs.remove(Keys.FAVORITE_CLUBS)
+            prefs[Keys.FAVORITE_TEAM_ID] = preferences.favoriteTeamId.orEmpty()
+            prefs[Keys.FAVORITE_TEAM_LEAGUE] = preferences.favoriteTeamLeagueSlug.orEmpty()
+            prefs[Keys.FAVORITE_TEAM_NAME] = preferences.favoriteTeamName.orEmpty()
             prefs[Keys.NICKNAME] = preferences.nickname.orEmpty()
             prefs[Keys.PROFILE_PHOTO_URL] = preferences.profilePhotoUrl.orEmpty()
         }
@@ -57,17 +64,30 @@ class PreferencesRepositoryImpl(
 
     private fun Preferences.toDomain(): UserPreferences {
         val country = this[Keys.COUNTRY]
-        val leagues = this[Keys.FAVORITE_LEAGUES]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
-        val clubs = this[Keys.FAVORITE_CLUBS]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
         val nickname = this[Keys.NICKNAME]
         val profilePhotoUrl = this[Keys.PROFILE_PHOTO_URL]
+        val newTeamId = this[Keys.FAVORITE_TEAM_ID]?.takeIf { it.isNotBlank() }
+        val newLeague = this[Keys.FAVORITE_TEAM_LEAGUE]?.takeIf { it.isNotBlank() }
+        val newName = this[Keys.FAVORITE_TEAM_NAME]?.takeIf { it.isNotBlank() }
+        if (newTeamId != null) {
+            return UserPreferences(
+                countryCode = country,
+                favoriteTeamLeagueSlug = newLeague,
+                favoriteTeamId = newTeamId,
+                favoriteTeamName = newName,
+                nickname = nickname?.takeIf { it.isNotBlank() },
+                profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
+            )
+        }
+        val legacyLeagues = this[Keys.FAVORITE_LEAGUES]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
+        val legacyClubs = this[Keys.FAVORITE_CLUBS]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
         return UserPreferences(
             countryCode = country,
-            favoriteLeagues = leagues,
-            favoriteClubs = clubs,
+            favoriteTeamLeagueSlug = legacyLeagues.firstOrNull(),
+            favoriteTeamId = legacyClubs.firstOrNull(),
+            favoriteTeamName = null,
             nickname = nickname?.takeIf { it.isNotBlank() },
             profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
         )
     }
 }
-

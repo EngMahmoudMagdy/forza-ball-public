@@ -8,6 +8,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.forzaball.app.feature.home.paging.FixturesPagingSource
 import com.forzaball.domain.model.Match
+import com.forzaball.domain.model.favoriteTeamIdsList
+import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.MatchRepository
 import com.forzaball.domain.usecase.ObserveUserPreferencesUseCase
 import kotlinx.coroutines.flow.Flow
@@ -32,8 +34,8 @@ class FixturesListViewModel(
                     pagingSourceFactory = {
                         FixturesPagingSource(
                             matchRepository = matchRepository,
-                            leagues = prefs.favoriteLeagues,
-                            teams = prefs.favoriteClubs,
+                            leagues = prefs.leagueSlugsForEspnContent(),
+                            teams = prefs.favoriteTeamIdsList(),
                         )
                     },
                 ).flow

@@ -1,6 +1,8 @@
 package com.forzaball.data.match
 
 import com.forzaball.data.network.EspnApiService
+import com.forzaball.data.network.EspnScheduleHeaderTeamDto
+import com.forzaball.data.network.espnLeagueDisplayNameForSlug
 import com.forzaball.data.network.toMatch
 import com.forzaball.data.network.toMatchFromEvent
 import com.forzaball.domain.model.HomeMatchContent
@@ -69,7 +71,7 @@ class MatchRepositoryImpl(
                                 null
                             }
                             ?.events.orEmpty()
-                            .mapNotNull { it.toMatchFromEvent() }
+                            .mapNotNull { it.toMatchFromEvent("all") }
                     }
                 }.flatMap { it.await() }
             }
@@ -82,39 +84,57 @@ class MatchRepositoryImpl(
         }
     }
 
-    override suspend fun loadNextMatchPerFavoriteTeam(teamIds: List<String>): List<TeamNextMatch> {
-        val ids = teamIds.map { it.trim() }.filter { it.isNotEmpty() }.distinct()
-        if (ids.isEmpty()) return emptyList()
+    override suspend fun loadNextMatchForFavoriteTeam(
+        domesticLeagueSlug: String?,
+        teamId: String?,
+        fallbackTeamDisplayName: String?,
+    ): TeamNextMatch? {
+        val tid = teamId?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val league = domesticLeagueSlug?.trim()?.takeIf { it.isNotEmpty() }
         val now = System.currentTimeMillis()
-        return coroutineScope {
-            ids.map { teamId ->
-                async {
-                    runCatching {
-                        val env = espn.teamSchedule(teamId)
-                        val header = env.team
-                        val matches = env.events.orEmpty().mapNotNull { it.toMatchFromEvent() }
-                        val sorted = matches.filter { !it.isCompleted && !isFinished(it) }
-                            .sortedBy { it.startTimeMillis }
-                        val next = sorted.firstOrNull { it.startTimeMillis >= now - 60_000L }
-                            ?: sorted.firstOrNull()
-                        TeamNextMatch(
-                            teamId = teamId,
-                            teamDisplayName = header?.displayName.orEmpty(),
-                            teamCrestUrl = header?.logo,
-                            nextMatch = next,
-                        )
-                    }.getOrElse { e ->
-                        Timber.w(e, "next match for team %s", teamId)
-                        TeamNextMatch(
-                            teamId = teamId,
-                            teamDisplayName = "",
-                            teamCrestUrl = null,
-                            nextMatch = null,
-                        )
-                    }
+
+        var headerTeam: EspnScheduleHeaderTeamDto? = null
+        val collected = mutableListOf<Match>()
+
+        suspend fun ingestSchedule(leagueSlug: String) {
+            val env = runCatching { espn.teamScheduleInLeague(leagueSlug, tid) }
+                .getOrElse { e ->
+                    Timber.w(e, "team schedule failed league=%s team=%s", leagueSlug, tid)
+                    return
                 }
-            }.map { it.await() }
+            if (headerTeam == null) headerTeam = env.team
+            env.events.orEmpty().mapNotNullTo(collected) { it.toMatchFromEvent(leagueSlug) }
         }
+
+        if (league != null) {
+            ingestSchedule(league)
+        } else {
+            runCatching { espn.teamSchedule(tid) }
+                .onSuccess { env ->
+                    headerTeam = env.team
+                    env.events.orEmpty().mapNotNullTo(collected) { it.toMatchFromEvent("all") }
+                }
+                .onFailure { e -> Timber.w(e, "all team schedule failed team=%s", tid) }
+        }
+
+        if (league != "uefa.champions") {
+            ingestSchedule("uefa.champions")
+        }
+
+        val merged = collected.distinctBy { it.id }
+        val sorted = merged.filter { !it.isCompleted && !isFinished(it) }
+            .sortedBy { it.startTimeMillis }
+        val next = sorted.firstOrNull { it.startTimeMillis >= now - 60_000L }
+            ?: sorted.firstOrNull()
+
+        val h = headerTeam
+        return TeamNextMatch(
+            teamId = tid,
+            teamDisplayName = h?.displayName?.takeIf { it.isNotBlank() }
+                ?: fallbackTeamDisplayName.orEmpty(),
+            teamCrestUrl = h?.logo,
+            nextMatch = next,
+        )
     }
 
     private suspend fun loadMatchesFromScoreboards(leagues: List<String>): List<Match> = coroutineScope {
@@ -127,7 +147,7 @@ class MatchRepositoryImpl(
                     } ?: return@async emptyList()
                 dto.events.orEmpty().mapNotNull { event ->
                     val comp = event.competitions?.firstOrNull() ?: return@mapNotNull null
-                    comp.toMatch(event.id, slug, leagueDisplayNameForSlug(slug))
+                    comp.toMatch(event.id, slug, espnLeagueDisplayNameForSlug(slug))
                 }
             }
         }.flatMap { it.await() }
@@ -140,13 +160,4 @@ class MatchRepositoryImpl(
         return false
     }
 
-    private fun leagueDisplayNameForSlug(slug: String): String = when (slug) {
-        "eng.1" -> "Premier League"
-        "esp.1" -> "La Liga"
-        "ger.1" -> "Bundesliga"
-        "uefa.champions" -> "UEFA Champions League"
-        "usa.1" -> "MLS"
-        "ksa.1" -> "Saudi Pro League"
-        else -> slug
-    }
 }

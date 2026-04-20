@@ -17,12 +17,13 @@ data class HomeState(
     val isLoading: Boolean = false,
     val favoriteClubMatch: Match? = null,
     val liveMatches: List<Match> = emptyList(),
-    val teamNextMatches: List<TeamNextMatch> = emptyList(),
+    val favoriteTeamNextMatch: TeamNextMatch? = null,
     val news: List<NewsArticle> = emptyList(),
     val userPreferences: UserPreferences = UserPreferences(
         countryCode = null,
-        favoriteLeagues = emptyList(),
-        favoriteClubs = emptyList(),
+        favoriteTeamLeagueSlug = null,
+        favoriteTeamId = null,
+        favoriteTeamName = null,
     ),
     val errorMessage: String? = null,
 ) : UiState

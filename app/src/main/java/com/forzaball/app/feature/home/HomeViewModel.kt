@@ -43,7 +43,7 @@ class HomeViewModel(
                     isLoading = false,
                     favoriteClubMatch = content.matches.highlightMatch,
                     liveMatches = content.matches.liveMatches,
-                    teamNextMatches = content.teamNextMatches,
+                    favoriteTeamNextMatch = content.favoriteTeamNextMatch,
                     news = content.news,
                     errorMessage = null,
                 )

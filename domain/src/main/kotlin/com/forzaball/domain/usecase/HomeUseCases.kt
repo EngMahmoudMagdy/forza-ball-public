@@ -4,6 +4,8 @@ import com.forzaball.domain.model.HomeMatchContent
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.TeamNextMatch
 import com.forzaball.domain.model.UserPreferences
+import com.forzaball.domain.model.favoriteTeamIdsList
+import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.MatchRepository
 import com.forzaball.domain.repository.NewsRepository
 import com.forzaball.domain.repository.PreferencesRepository
@@ -18,7 +20,7 @@ class ObserveUserPreferencesUseCase(
 data class HomeScreenContent(
     val matches: HomeMatchContent,
     val news: List<NewsArticle>,
-    val teamNextMatches: List<TeamNextMatch>,
+    val favoriteTeamNextMatch: TeamNextMatch?,
 )
 
 class LoadHomeContentUseCase(
@@ -26,16 +28,19 @@ class LoadHomeContentUseCase(
     private val newsRepository: NewsRepository,
 ) {
     suspend operator fun invoke(preferences: UserPreferences): HomeScreenContent {
-        val matches = matchRepository.loadFavoriteHighlightAndLive(
-            preferences.favoriteLeagues,
-            preferences.favoriteClubs,
-        )
+        val leagues = preferences.leagueSlugsForEspnContent()
+        val teams = preferences.favoriteTeamIdsList()
+        val matches = matchRepository.loadFavoriteHighlightAndLive(leagues, teams)
         val news = newsRepository.loadNewsForPreferences(
-            preferences.favoriteLeagues,
-            preferences.favoriteClubs,
+            leagues,
+            teams,
             maxArticles = 40,
         )
-        val teamNext = matchRepository.loadNextMatchPerFavoriteTeam(preferences.favoriteClubs)
-        return HomeScreenContent(matches = matches, news = news, teamNextMatches = teamNext)
+        val teamNext = matchRepository.loadNextMatchForFavoriteTeam(
+            preferences.favoriteTeamLeagueSlug,
+            preferences.favoriteTeamId,
+            preferences.favoriteTeamName,
+        )
+        return HomeScreenContent(matches = matches, news = news, favoriteTeamNextMatch = teamNext)
     }
 }

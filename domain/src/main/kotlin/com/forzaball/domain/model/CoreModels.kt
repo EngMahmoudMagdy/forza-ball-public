@@ -58,9 +58,25 @@ data class TeamNextMatch(
 
 data class UserPreferences(
     val countryCode: String?,
-    val favoriteLeagues: List<String>,
-    val favoriteClubs: List<String>,
+    /** ESPN league slug the user picked the team from (domestic), e.g. eng.1 */
+    val favoriteTeamLeagueSlug: String?,
+    /** ESPN team id */
+    val favoriteTeamId: String?,
+    /** Display name at selection time (profile / UI). */
+    val favoriteTeamName: String?,
     val nickname: String? = null,
     val profilePhotoUrl: String? = null,
 )
+
+/** Leagues used for scoreboards, news, and merged fixtures: domestic + UCL when domestic is not already UCL. */
+fun UserPreferences.leagueSlugsForEspnContent(): List<String> {
+    val domestic = favoriteTeamLeagueSlug?.trim()?.takeIf { it.isNotEmpty() } ?: return emptyList()
+    return buildList {
+        add(domestic)
+        if (domestic != "uefa.champions") add("uefa.champions")
+    }.distinct()
+}
+
+fun UserPreferences.favoriteTeamIdsList(): List<String> =
+    listOfNotNull(favoriteTeamId?.trim()?.takeIf { it.isNotEmpty() })
 

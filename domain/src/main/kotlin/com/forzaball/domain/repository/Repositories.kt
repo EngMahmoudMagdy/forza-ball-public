@@ -64,8 +64,15 @@ interface MatchRepository {
         favoriteTeamIds: List<String>,
     ): List<Match>
 
-    /** Next match per favorite team using `all/teams/{id}/schedule?fixture=true`. */
-    suspend fun loadNextMatchPerFavoriteTeam(teamIds: List<String>): List<TeamNextMatch>
+    /**
+     * Earliest upcoming or live fixture for the favorite team, merging
+     * `{domesticLeague}/teams/{id}/schedule` and `uefa.champions/teams/{id}/schedule` when applicable.
+     */
+    suspend fun loadNextMatchForFavoriteTeam(
+        domesticLeagueSlug: String?,
+        teamId: String?,
+        fallbackTeamDisplayName: String?,
+    ): TeamNextMatch?
 }
 
 /** Social feed post (text-only). */
@@ -139,7 +146,7 @@ interface FeedRepository {
     /** Stores FCM registration token on `users/{uid}` for Cloud Messaging (server-triggered pushes). */
     suspend fun saveMessagingToken(token: String)
 
-    /** Merges nickname, avatar, and favorite leagues/clubs into `users/{uid}`. */
+    /** Merges nickname, avatar, and favorite team fields into `users/{uid}`. */
     suspend fun syncUserProfilePreferences(preferences: UserPreferences)
 }
 

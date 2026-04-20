@@ -262,18 +262,17 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
             }
             when (state.step) {
                 1 -> PersonalizationStep1Screen(
-                    selectedLeagueIds = state.selectedLeagueIds,
-                    onToggleLeague = viewModel::toggleLeague,
+                    selectedLeagueId = state.selectedLeagueId,
+                    onSelectLeague = viewModel::selectLeague,
                     onBack = { navController.popBackStack() },
                     onNext = viewModel::nextStep,
                     isLoadingTeams = state.isLoadingTeams,
                 )
 
                 2 -> PersonalizationStep2Screen(
-                    selectedLeagueIds = state.selectedLeagueIds,
-                    selectedClubIds = state.selectedClubIds,
-                    teamsByLeague = state.teamsByLeague,
-                    onToggleClub = viewModel::toggleClub,
+                    clubs = state.teamsForLeague,
+                    selectedClubId = state.selectedClubId,
+                    onSelectClub = viewModel::selectClub,
                     onBack = viewModel::previousStep,
                     onNext = viewModel::nextStep,
                 )
@@ -287,8 +286,8 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                 )
 
                 else -> PersonalizationStep1Screen(
-                    selectedLeagueIds = state.selectedLeagueIds,
-                    onToggleLeague = viewModel::toggleLeague,
+                    selectedLeagueId = state.selectedLeagueId,
+                    onSelectLeague = viewModel::selectLeague,
                     onBack = { navController.popBackStack() },
                     onNext = viewModel::nextStep,
                     isLoadingTeams = state.isLoadingTeams,

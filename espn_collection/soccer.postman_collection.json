@@ -1,0 +1,500 @@
+{
+  "info": {
+    "_postman_id": "f129064f-c7bc-4644-9ed0-d610a9cf4289",
+    "name": "ESPN Soccer APIs",
+    "description": "Generated from soccer.md. Covers Core v2/v3, Site API, specialized match endpoints, and CDN scoreboard.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Core API v2",
+      "item": [
+        {
+          "name": "List Soccer Leagues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues"
+          }
+        },
+        {
+          "name": "League Calendar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{coreV2Base}}/leagues/{{league}}/calendar?dates={{dates}}&page={{page}}&limit={{limit}}&groups={{groups}}&smartdates={{smartdates}}&advance={{advance}}&utcOffset={{utcOffset}}&weeks={{weeks}}&seasontype={{seasonType}}",
+              "host": [
+                "{{coreV2Base}}"
+              ],
+              "path": [
+                "leagues",
+                "{{league}}",
+                "calendar"
+              ],
+              "query": [
+                {
+                  "key": "dates",
+                  "value": "{{dates}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                },
+                {
+                  "key": "groups",
+                  "value": "{{groups}}"
+                },
+                {
+                  "key": "smartdates",
+                  "value": "{{smartdates}}"
+                },
+                {
+                  "key": "advance",
+                  "value": "{{advance}}"
+                },
+                {
+                  "key": "utcOffset",
+                  "value": "{{utcOffset}}"
+                },
+                {
+                  "key": "weeks",
+                  "value": "{{weeks}}"
+                },
+                {
+                  "key": "seasontype",
+                  "value": "{{seasonType}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "League Seasons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/seasons?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Season Athletes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/seasons/{{season}}/athletes?active={{active}}&sort={{sort}}&page={{page}}&limit={{limit}}&position={{position}}"
+          }
+        },
+        {
+          "name": "Season Draft",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/seasons/{{season}}/draft?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Season Free Agents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/seasons/{{season}}/freeagents?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Teams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/teams?page={{page}}&limit={{limit}}&active={{active}}"
+          }
+        },
+        {
+          "name": "Athletes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/athletes?page={{page}}&limit={{limit}}&active={{active}}&position={{position}}"
+          }
+        },
+        {
+          "name": "Athlete By Id (Core)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/athletes/{{athleteId}}"
+          }
+        },
+        {
+          "name": "Event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}"
+          }
+        },
+        {
+          "name": "Competition",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}"
+          }
+        },
+        {
+          "name": "Competition Broadcasts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/broadcasts?lang={{lang}}&region={{region}}"
+          }
+        },
+        {
+          "name": "Competition Competitor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/competitors/{{competitorId}}"
+          }
+        },
+        {
+          "name": "Competition Odds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/odds"
+          }
+        },
+        {
+          "name": "Competition Officials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/officials"
+          }
+        },
+        {
+          "name": "Competition Plays",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/plays?limit={{playsLimit}}"
+          }
+        },
+        {
+          "name": "Competition Situation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/situation"
+          }
+        },
+        {
+          "name": "Competition Probabilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events/{{eventId}}/competitions/{{competitionId}}/probabilities"
+          }
+        },
+        {
+          "name": "Standings (Core)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/standings?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Rankings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/rankings?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Venues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/venues?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Media",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/media?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/countries?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Franchises",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/franchises?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Positions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/positions?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Current Season",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/season?page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Tournaments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/tournaments?majorsOnly={{majorsOnly}}&page={{page}}&limit={{limit}}"
+          }
+        },
+        {
+          "name": "Leaders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/leaders"
+          }
+        },
+        {
+          "name": "Season Leaders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/seasons/{{season}}/leaders"
+          }
+        },
+        {
+          "name": "League Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV2Base}}/leagues/{{league}}/events?page={{page}}&limit={{limit}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Core API v3",
+      "item": [
+        {
+          "name": "League (v3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV3Base}}/{{league}}"
+          }
+        },
+        {
+          "name": "Athletes (v3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV3Base}}/{{league}}/athletes?limit={{limit}}&active={{active}}"
+          }
+        },
+        {
+          "name": "Season (v3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{coreV3Base}}/{{league}}/seasons/{{season}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Site API",
+      "item": [
+        {
+          "name": "Scoreboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/scoreboard"
+          }
+        },
+        {
+          "name": "Scoreboard By Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/scoreboard?dates={{datesYYYYMMDD}}"
+          }
+        },
+        {
+          "name": "Teams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/teams"
+          }
+        },
+        {
+          "name": "Team Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/teams/{{teamId}}"
+          }
+        },
+        {
+          "name": "Team Roster",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/teams/{{teamId}}/roster"
+          }
+        },
+        {
+          "name": "Team Injuries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/teams/{{teamId}}/injuries"
+          }
+        },
+        {
+          "name": "Team Schedule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/teams/{{teamId}}/schedule"
+          }
+        },
+        {
+          "name": "News",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/news"
+          }
+        },
+        {
+          "name": "Match Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteV2Base}}/{{league}}/summary?event={{eventId}}"
+          }
+        },
+        {
+          "name": "Standings (apis/v2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteApisV2Base}}/{{league}}/standings"
+          }
+        },
+        {
+          "name": "Standings (site.web.apis/v2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteWebApisV2Base}}/{{league}}/standings"
+          }
+        },
+        {
+          "name": "Athlete Overview (site.web)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteWebV2Base}}/{{league}}/athletes/{{athleteId}}/overview"
+          }
+        },
+        {
+          "name": "Athlete Stats (site.web - often unsupported)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteWebV2Base}}/{{league}}/athletes/{{athleteId}}/stats"
+          }
+        },
+        {
+          "name": "Athlete Gamelog (site.web - often unsupported)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteWebV2Base}}/{{league}}/athletes/{{athleteId}}/gamelog"
+          }
+        },
+        {
+          "name": "Athlete Splits (site.web - often unsupported)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{siteWebV2Base}}/{{league}}/athletes/{{athleteId}}/splits"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CDN",
+      "item": [
+        {
+          "name": "CDN Soccer Scoreboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{cdnBase}}/scoreboard?xhr=1&league={{league}}"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "coreV2Base",
+      "value": "https://sports.core.api.espn.com/v2/sports/soccer"
+    },
+    {
+      "key": "coreV3Base",
+      "value": "https://sports.core.api.espn.com/v3/sports/soccer"
+    },
+    {
+      "key": "siteV2Base",
+      "value": "https://site.api.espn.com/apis/site/v2/sports/soccer"
+    },
+    {
+      "key": "siteApisV2Base",
+      "value": "https://site.api.espn.com/apis/v2/sports/soccer"
+    },
+    {
+      "key": "siteWebApisV2Base",
+      "value": "https://site.web.api.espn.com/apis/v2/sports/soccer"
+    },
+    {
+      "key": "siteWebV2Base",
+      "value": "https://site.web.api.espn.com/apis/site/v2/sports/soccer"
+    },
+    {
+      "key": "cdnBase",
+      "value": "https://cdn.espn.com/core/soccer"
+    }
+  ]
+}

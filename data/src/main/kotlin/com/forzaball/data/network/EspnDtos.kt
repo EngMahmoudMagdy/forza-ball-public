@@ -185,6 +185,17 @@ internal fun EspnTeamsEnvelopeDto.toClubs(leagueSlug: String): List<Club> {
     }
 }
 
+internal fun espnLeagueDisplayNameForSlug(slug: String): String = when (slug) {
+    "eng.1" -> "Premier League"
+    "esp.1" -> "La Liga"
+    "ger.1" -> "Bundesliga"
+    "uefa.champions" -> "UEFA Champions League"
+    "usa.1" -> "MLS"
+    "ksa.1" -> "Saudi Pro League"
+    "all", "schedule", "fixtures" -> "Fixture"
+    else -> slug
+}
+
 private fun EspnScoreboardTeamDto.crestUrl(): String? {
     logo?.takeIf { it.isNotBlank() }?.let { return it }
     val rels = logos.orEmpty()
@@ -231,7 +242,7 @@ internal fun EspnCompetitionDto.toMatch(
         awayScore = away.score?.toIntOrNull(),
         statusShort = statusShort,
         minuteElapsed = minute,
-        leagueName = leagueDisplayName ?: leagueSlug,
+        leagueName = leagueDisplayName ?: espnLeagueDisplayNameForSlug(leagueSlug),
         isCompleted = completed,
     )
 }
@@ -248,9 +259,9 @@ private fun parseEspnInstant(iso: String): Long? = try {
     null
 }
 
-internal fun EspnEventDto.toMatchFromEvent(): Match? {
+internal fun EspnEventDto.toMatchFromEvent(leagueSlug: String): Match? {
     val comp = competitions?.firstOrNull() ?: return null
-    return comp.toMatch(id, "schedule", season?.displayName)
+    return comp.toMatch(id, leagueSlug, espnLeagueDisplayNameForSlug(leagueSlug))
 }
 
 internal fun EspnNewsArticleDto.toNewsArticle(leagueSlug: String): NewsArticle? {

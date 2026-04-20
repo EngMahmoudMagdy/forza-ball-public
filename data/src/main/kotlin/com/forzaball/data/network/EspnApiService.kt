@@ -30,4 +30,12 @@ interface EspnApiService {
         @Path("teamId") teamId: String,
         @Query("fixture") fixture: Boolean? = true,
     ): EspnTeamScheduleEnvelopeDto
+
+    /** Schedule within a competition (e.g. domestic league or UEFA Champions League). */
+    @GET("{league}/teams/{teamId}/schedule")
+    suspend fun teamScheduleInLeague(
+        @Path("league", encoded = true) league: String,
+        @Path("teamId") teamId: String,
+        @Query("fixture") fixture: Boolean? = true,
+    ): EspnTeamScheduleEnvelopeDto
 }

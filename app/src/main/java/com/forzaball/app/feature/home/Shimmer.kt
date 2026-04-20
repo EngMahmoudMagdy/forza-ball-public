@@ -25,12 +25,18 @@ import com.forzaball.app.ui.theme.ForzaBallPrimary
 
 @Composable
 fun ListLoadingHeaderShimmer(modifier: Modifier = Modifier) {
-    ShimmerBlock(height = 72.dp, modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+    ShimmerBlock(
+        height = 72.dp,
+        modifier = modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+    )
 }
 
 @Composable
 fun ListLoadingFooterShimmer(modifier: Modifier = Modifier) {
-    ShimmerBlock(height = 56.dp, modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+    ShimmerBlock(
+        height = 56.dp,
+        modifier = modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+    )
 }
 
 @Composable
@@ -65,7 +71,7 @@ private fun ShimmerBlock(height: androidx.compose.ui.unit.Dp, modifier: Modifier
 fun FullScreenShimmerPlaceholder() {
     Column(Modifier.padding(16.dp)) {
         repeat(6) {
-            ShimmerBlock(height = 88.dp, modifier = Modifier.padding(vertical = 6.dp))
+            ShimmerBlock(height = 88.dp, modifier = Modifier.padding(top = 6.dp, bottom = 6.dp))
         }
     }
 }

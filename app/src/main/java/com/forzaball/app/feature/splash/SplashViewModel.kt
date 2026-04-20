@@ -38,7 +38,7 @@ class SplashViewModel(
                 }
                 is AuthState.SignedIn -> {
                     val prefs = preferencesRepository.observeUserPreferences().first()
-                    val hasCompletedPersonalization = prefs.favoriteLeagues.isNotEmpty() &&
+                    val hasCompletedPersonalization = !prefs.favoriteTeamId.isNullOrBlank() &&
                         !prefs.nickname.isNullOrBlank()
                     if (hasCompletedPersonalization) {
                         _destination.emit(SplashDestination.Home)

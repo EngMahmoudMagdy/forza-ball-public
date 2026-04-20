@@ -50,7 +50,7 @@ class SignInViewModel(
 
     private suspend fun navigateAfterSignIn() {
         val prefs = preferencesRepository.observeUserPreferences().first()
-        val hasCompletedPersonalization = prefs.favoriteLeagues.isNotEmpty() &&
+        val hasCompletedPersonalization = !prefs.favoriteTeamId.isNullOrBlank() &&
             !prefs.nickname.isNullOrBlank()
         _state.value = _state.value.copy(
             isLoading = false,
