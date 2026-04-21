@@ -8,8 +8,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.forzaball.app.feature.home.paging.NewsPagingSource
 import com.forzaball.domain.model.NewsArticle
-import com.forzaball.domain.model.favoriteTeamIdsList
-import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.NewsRepository
 import com.forzaball.domain.usecase.ObserveUserPreferencesUseCase
 import kotlinx.coroutines.flow.first
@@ -34,8 +32,7 @@ class NewsListViewModel(
                     pagingSourceFactory = {
                         NewsPagingSource(
                             newsRepository = newsRepository,
-                            leagues = prefs.leagueSlugsForEspnContent(),
-                            teams = prefs.favoriteTeamIdsList(),
+                            domesticLeagueSlug = prefs.favoriteTeamLeagueSlug,
                         )
                     },
                 ).flow

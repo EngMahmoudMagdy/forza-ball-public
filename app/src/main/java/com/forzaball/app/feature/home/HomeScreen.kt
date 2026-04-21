@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +69,7 @@ import com.forzaball.app.feature.profile.ProfileViewModel
 import com.forzaball.domain.model.Match
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.TeamNextMatch
+import com.forzaball.domain.model.TeamStandingSnapshot
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.app.feature.feeds.CreatePostOverlay
@@ -95,7 +98,6 @@ fun HomeRoute(
     onNavigateToSignIn: () -> Unit = {},
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToFixturesList: () -> Unit = {},
-    onNavigateToNewsList: () -> Unit = {},
     onOpenNewsArticle: (String, String) -> Unit = { _, _ -> },
 ) {
     val state by viewModel.state.collectAsState()
@@ -136,7 +138,7 @@ fun HomeRoute(
         onDismissEditFavorites = { showEditFavorites = false },
         editFavoritesViewModel = editFavoritesViewModel,
         onNavigateToFixturesList = onNavigateToFixturesList,
-        onNavigateToNewsList = onNavigateToNewsList,
+        onViewAllNews = { selectedTab = 1 },
         onOpenNewsArticle = onOpenNewsArticle,
         onRefresh = { viewModel.processIntent(HomeIntent.Refresh()) },
     )
@@ -158,13 +160,14 @@ fun HomeScreen(
     onDismissEditFavorites: () -> Unit,
     editFavoritesViewModel: EditFavoritesViewModel,
     onNavigateToFixturesList: () -> Unit,
-    onNavigateToNewsList: () -> Unit,
+    onViewAllNews: () -> Unit,
     onOpenNewsArticle: (String, String) -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val feedUi by feedViewModel.ui.collectAsState()
     val authState by feedViewModel.authState.collectAsState()
+    val scoresViewModel: ScoresViewModel = koinViewModel()
 
     Box(
         modifier = modifier
@@ -185,14 +188,23 @@ fun HomeScreen(
                     0 -> HomeDashboardContent(
                         state = state,
                         onViewAllFixtures = onNavigateToFixturesList,
-                        onViewAllNews = onNavigateToNewsList,
+                        onViewAllNews = onViewAllNews,
                         onOpenNewsArticle = onOpenNewsArticle,
                         onRefresh = onRefresh,
+                    )
+                    1 -> NewsListRoute(
+                        embeddedInTab = true,
+                        onBack = {},
+                        onOpenArticle = onOpenNewsArticle,
                     )
                     2 -> FeedsRoute(
                         viewModel = feedViewModel,
                         onOpenCreatePost = { onFeedOverlayKeyChange("create") },
                         onOpenPost = { onFeedOverlayKeyChange("post:$it") },
+                    )
+                    3 -> ScoresTabContent(
+                        scoresViewModel = scoresViewModel,
+                        userPreferences = state.userPreferences,
                     )
                     4 -> ProfileTabContent(
                         authState = authState,
@@ -571,6 +583,211 @@ private val teamNextTimeFmt = java.text.SimpleDateFormat("EEE d MMM · HH:mm", j
 
 private fun Club.shortOrName(): String = name.split(" ").takeLast(2).joinToString(" ").ifBlank { name }
 
+private val scoresRowTimeFmt =
+    java.text.SimpleDateFormat("EEE d MMM · HH:mm", java.util.Locale.getDefault())
+
+@Composable
+private fun ScoresTabContent(
+    scoresViewModel: ScoresViewModel,
+    userPreferences: UserPreferences,
+) {
+    val ui by scoresViewModel.state.collectAsState()
+    val hasTeam = !userPreferences.favoriteTeamId.isNullOrBlank()
+
+    SwipeRefreshSharedComponent(
+        modifier = Modifier.fillMaxSize(),
+        isRefresh = ui.isLoading,
+        onRefresh = { scoresViewModel.refresh() },
+    ) {
+        if (!hasTeam) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Choose your favorite team in your profile to see league standings, European tables when applicable, and fixtures.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                ui.errorMessage?.takeIf { it.isNotBlank() }?.let { msg ->
+                    item {
+                        Text(
+                            text = msg,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+                item {
+                    Text(
+                        text = "Standings",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+                item {
+                    val domesticTitle = ui.domesticStanding?.leagueDisplayName
+                        ?: catalogLeagues.find { it.id == userPreferences.favoriteTeamLeagueSlug }?.name
+                        ?: userPreferences.favoriteTeamLeagueSlug.orEmpty()
+                    StandingSnapshotCard(
+                        title = domesticTitle.ifBlank { "Domestic league" },
+                        snapshot = ui.domesticStanding,
+                    )
+                }
+                if (ui.showUclSection) {
+                    item {
+                        StandingSnapshotCard(
+                            title = "UEFA Champions League",
+                            snapshot = ui.uclStanding,
+                        )
+                    }
+                }
+                item {
+                    Text(
+                        text = "Fixtures",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+                val fixtures = ui.fixtures.sortedBy { it.startTimeMillis }
+                if (fixtures.isEmpty() && !ui.isLoading) {
+                    item {
+                        Text(
+                            text = "No fixtures loaded yet.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                items(fixtures, key = { it.id }) { m ->
+                    ScoresFixtureRow(match = m)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StandingSnapshotCard(
+    title: String,
+    snapshot: TeamStandingSnapshot?,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                color = ForzaBallPrimary,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            if (snapshot == null) {
+                Text(
+                    text = "Not listed in the current table.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                Text(
+                    text = "#${snapshot.position} · ${snapshot.teamName}",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                )
+                Text(
+                    text = "${snapshot.played} played · ${snapshot.points} pts · " +
+                        "W ${snapshot.wins} · D ${snapshot.draws} · L ${snapshot.losses}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                snapshot.recordSummary?.takeIf { it.isNotBlank() }?.let { rec ->
+                    Text(
+                        text = rec,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+                snapshot.goalDifferenceDisplay?.takeIf { it.isNotBlank() }?.let { gd ->
+                    Text(
+                        text = "GD $gd",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScoresFixtureRow(match: Match) {
+    val statusText = when {
+        match.isLive -> buildString {
+            append(match.statusShort ?: "LIVE")
+            match.minuteElapsed?.let { append(" · ${it}′") }
+        }
+        match.isCompleted || match.statusShort?.contains("final", ignoreCase = true) == true ||
+            match.statusShort?.equals("FT", ignoreCase = true) == true -> run {
+            val hs = match.homeScore?.toString() ?: "–"
+            val away = match.awayScore?.toString() ?: "–"
+            "$hs – $away · ${match.statusShort ?: "FT"}"
+        }
+        else -> "${match.homeClub.shortOrName()} vs ${match.awayClub.shortOrName()} · ${match.statusShort ?: "Scheduled"}"
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)),
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = match.leagueName?.takeIf { it.isNotBlank() } ?: match.homeClub.leagueId,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = ForzaBallPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = scoresRowTimeFmt.format(java.util.Date(match.startTimeMillis)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "${match.homeClub.shortOrName()} vs ${match.awayClub.shortOrName()}",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+    }
+}
+
 @Composable
 private fun PlaceholderTabContent(title: String) {
     Box(
@@ -615,34 +832,58 @@ private fun ProfileTabContent(
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Favorite team",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                )
-                val leagueLabel = userPreferences.favoriteTeamLeagueSlug?.let { slug ->
-                    catalogLeagues.find { it.id == slug }?.name ?: slug
-                }
-                Text(
-                    text = when {
-                        userPreferences.favoriteTeamId.isNullOrBlank() -> "None selected"
-                        else -> {
-                            val name = userPreferences.favoriteTeamName?.takeIf { it.isNotBlank() }
-                                ?: "ESPN team ${userPreferences.favoriteTeamId}"
-                            if (leagueLabel != null) "$name · $leagueLabel" else name
-                        }
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onEditFavorites,
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary),
                     shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 ) {
-                    Text("Change favorite team", fontWeight = FontWeight.Bold)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = "Favorite league",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        val leagueLabel = userPreferences.favoriteTeamLeagueSlug?.let { slug ->
+                            catalogLeagues.find { it.id == slug }?.name ?: slug
+                        }
+                        Text(
+                            text = leagueLabel ?: "None selected",
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Favorite team",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = when {
+                                userPreferences.favoriteTeamId.isNullOrBlank() -> "None selected"
+                                else -> {
+                                    userPreferences.favoriteTeamName?.takeIf { it.isNotBlank() }
+                                        ?: "ESPN team ${userPreferences.favoriteTeamId}"
+                                }
+                            },
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = onEditFavorites,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary),
+                            shape = RoundedCornerShape(12.dp),
+                        ) {
+                            Text("Change favorite team", fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = onLogout,

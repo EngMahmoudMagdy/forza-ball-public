@@ -6,6 +6,7 @@ import com.forzaball.domain.model.NewsArticle
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
 @Serializable
@@ -207,10 +208,12 @@ internal fun EspnCompetitionDto.toMatch(
     eventId: String?,
     leagueSlug: String,
     leagueDisplayName: String?,
+    /** Some schedule payloads put kickoff time only on the parent event, not on `competitions[0]`. */
+    eventLevelDate: String? = null,
 ): Match? {
     val comps = competitors.orEmpty()
-    val home = comps.firstOrNull { it.homeAway == "home" } ?: return null
-    val away = comps.firstOrNull { it.homeAway == "away" } ?: return null
+    val home = comps.firstOrNull { it.homeAway?.equals("home", ignoreCase = true) == true } ?: return null
+    val away = comps.firstOrNull { it.homeAway?.equals("away", ignoreCase = true) == true } ?: return null
     val homeTeam = home.team ?: return null
     val awayTeam = away.team ?: return null
     val homeId = homeTeam.id ?: home.id ?: return null
@@ -218,7 +221,10 @@ internal fun EspnCompetitionDto.toMatch(
     val state = status?.type?.state
     val isLive = state == "in"
     val completed = status?.type?.completed == true || state == "post"
-    val startIso = startDate ?: date ?: return null
+    val startIso = startDate?.takeIf { it.isNotBlank() }
+        ?: date?.takeIf { it.isNotBlank() }
+        ?: eventLevelDate?.takeIf { it.isNotBlank() }
+        ?: return null
     val startMillis = parseEspnInstant(startIso) ?: return null
     val statusShort = status?.type?.shortDetail ?: status?.type?.name
     val minute = parseMinute(status?.displayClock)
@@ -253,15 +259,37 @@ private fun parseMinute(display: String?): Int? {
     return digits.toIntOrNull()
 }
 
-private fun parseEspnInstant(iso: String): Long? = try {
-    Instant.parse(iso).toEpochMilli()
-} catch (_: DateTimeParseException) {
-    null
+private fun parseEspnInstant(iso: String): Long? {
+    val s = iso.trim()
+    if (s.isEmpty()) return null
+    return try {
+        Instant.parse(s).toEpochMilli()
+    } catch (_: DateTimeParseException) {
+        try {
+            OffsetDateTime.parse(s).toInstant().toEpochMilli()
+        } catch (_: DateTimeParseException) {
+            try {
+                val normalized = if (s.length >= 10 && s[10] == ' ') {
+                    s.replaceFirst(" ", "T")
+                } else {
+                    s
+                }
+                Instant.parse(normalized).toEpochMilli()
+            } catch (_: DateTimeParseException) {
+                null
+            }
+        }
+    }
 }
 
 internal fun EspnEventDto.toMatchFromEvent(leagueSlug: String): Match? {
     val comp = competitions?.firstOrNull() ?: return null
-    return comp.toMatch(id, leagueSlug, espnLeagueDisplayNameForSlug(leagueSlug))
+    return comp.toMatch(
+        id,
+        leagueSlug,
+        espnLeagueDisplayNameForSlug(leagueSlug),
+        eventLevelDate = date,
+    )
 }
 
 internal fun EspnNewsArticleDto.toNewsArticle(leagueSlug: String): NewsArticle? {

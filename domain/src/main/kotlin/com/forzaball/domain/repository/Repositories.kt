@@ -4,6 +4,7 @@ import com.forzaball.domain.model.HomeMatchContent
 import com.forzaball.domain.model.Match
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.TeamNextMatch
+import com.forzaball.domain.model.TeamStandingSnapshot
 import com.forzaball.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
@@ -50,12 +51,25 @@ interface NewsRepository {
         favoriteTeamIds: List<String>,
         maxArticles: Int = 40,
     ): List<NewsArticle>
+
+    /** All ESPN news stories for a single league (no team filter). */
+    suspend fun loadNewsForDomesticLeague(leagueSlug: String?, maxArticles: Int): List<NewsArticle>
+}
+
+interface StandingsRepository {
+    /** Looks up [teamId] in the league table; returns null if missing or request fails. */
+    suspend fun getTeamStanding(leagueSlug: String, teamId: String): TeamStandingSnapshot?
 }
 
 interface MatchRepository {
+    /**
+     * @param scheduleLeagueSlugs Leagues used only for **`{league}/teams/{id}/schedule`** merges.
+     * When null, defaults to [favoriteLeagueSlugs]. Pass domestic-only on home to skip UCL schedule calls.
+     */
     suspend fun loadFavoriteHighlightAndLive(
         favoriteLeagueSlugs: List<String>,
         favoriteTeamIds: List<String>,
+        scheduleLeagueSlugs: List<String>? = null,
     ): HomeMatchContent
 
     /** Upcoming / live matches from scoreboards + team schedules, sorted by kickoff. */
@@ -65,13 +79,14 @@ interface MatchRepository {
     ): List<Match>
 
     /**
-     * Earliest upcoming or live fixture for the favorite team, merging
-     * `{domesticLeague}/teams/{id}/schedule` and `uefa.champions/teams/{id}/schedule` when applicable.
+     * Earliest upcoming or live fixture for the favorite team from **`{domesticLeague}/teams/{id}/schedule`**,
+     * optionally merged with **`uefa.champions/teams/{id}/schedule`** when [includeChampionsLeagueSchedule] is true.
      */
     suspend fun loadNextMatchForFavoriteTeam(
         domesticLeagueSlug: String?,
         teamId: String?,
         fallbackTeamDisplayName: String?,
+        includeChampionsLeagueSchedule: Boolean = true,
     ): TeamNextMatch?
 }
 

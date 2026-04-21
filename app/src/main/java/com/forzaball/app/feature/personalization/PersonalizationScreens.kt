@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -93,7 +94,14 @@ fun PersonalizationStep1Screen(
             domesticLeagueCatalog.forEach { league ->
                 val selected = league.id == selectedLeagueId
                 Row(
-                    modifier = Modifier.fillMaxWidth().clickable { onSelectLeague(league.id) }.padding(16.dp).border(1.dp, ForzaBallPrimary.copy(alpha = 0.1f), RoundedCornerShape(0.dp)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .border(1.dp, ForzaBallPrimary.copy(alpha = 0.12f), RoundedCornerShape(12.dp))
+                        .clickable { onSelectLeague(league.id) }
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AsyncImage(model = league.logoUrl, contentDescription = league.name, modifier = Modifier.size(48.dp), contentScale = ContentScale.Fit)
@@ -170,7 +178,17 @@ fun PersonalizationStep2Screen(
             clubs.forEach { club ->
                 val selected = club.id == selectedClubId
                 Row(
-                    modifier = Modifier.fillMaxWidth().clickable { onSelectClub(club.id) }.padding(12.dp).border(2.dp, if (selected) ForzaBallPrimary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp)).background(if (selected) ForzaBallPrimary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (selected) ForzaBallPrimary.copy(alpha = 0.12f) else Color.White)
+                        .border(
+                            width = 2.dp,
+                            color = if (selected) ForzaBallPrimary else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            shape = RoundedCornerShape(12.dp),
+                        )
+                        .clickable { onSelectClub(club.id) }
+                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AsyncImage(model = club.crestUrl, contentDescription = club.name, modifier = Modifier.size(40.dp))

@@ -53,4 +53,30 @@ class NewsRepositoryImpl(
             emptyList()
         }
     }
+
+    override suspend fun loadNewsForDomesticLeague(leagueSlug: String?, maxArticles: Int): List<NewsArticle> {
+        val slug = leagueSlug?.trim()?.takeIf { it.isNotEmpty() } ?: return emptyList()
+        val cap = maxArticles.coerceIn(1, 500)
+        return runCatching {
+            Timber.tag("EspnHome").d("GET site …/soccer/%s/news (maxArticles=%d)", slug, cap)
+            val envelope = espn.news(slug)
+            val rawCount = envelope.articles.orEmpty().size
+            val mapped = envelope.articles.orEmpty()
+                .mapNotNull { it.toNewsArticle(slug) }
+                .distinctBy { it.id }
+                .sortedByDescending { it.publishedAtMillis }
+            val articles = mapped.take(cap)
+            Timber.tag("EspnHome").d(
+                "…news %s rawArticles=%d mapped=%d returned=%d",
+                slug,
+                rawCount,
+                mapped.size,
+                articles.size,
+            )
+            articles
+        }.getOrElse { e ->
+            Timber.e(e, "loadNewsForDomesticLeague failed slug=%s", slug)
+            emptyList()
+        }
+    }
 }

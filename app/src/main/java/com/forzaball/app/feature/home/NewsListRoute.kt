@@ -32,36 +32,17 @@ import org.koin.androidx.compose.koinViewModel
 fun NewsListRoute(
     onBack: () -> Unit,
     onOpenArticle: (String, String) -> Unit,
+    /** When true, used as a main tab: no app bar or back affordance. */
+    embeddedInTab: Boolean = false,
     viewModel: NewsListViewModel = koinViewModel(),
 ) {
     val lazyItems = viewModel.newsPaging.collectAsLazyPagingItems()
     val refresh = lazyItems.loadState.refresh
     val append = lazyItems.loadState.append
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "News",
-                        fontWeight = FontWeight.Bold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-            )
-        },
-    ) { padding ->
+    val list: @Composable (Modifier) -> Unit = { listModifier ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = listModifier,
         ) {
             when (val state = refresh) {
                 is LoadState.Loading -> {
@@ -147,13 +128,44 @@ fun NewsListRoute(
                         verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            "No news yet — add favorite leagues in your profile.",
+                            "No news yet — choose your favorite team in your profile.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
             }
+        }
+    }
+
+    if (embeddedInTab) {
+        list(Modifier.fillMaxSize())
+    } else {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            "News",
+                            fontWeight = FontWeight.Bold,
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                )
+            },
+        ) { padding ->
+            list(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+            )
         }
     }
 }

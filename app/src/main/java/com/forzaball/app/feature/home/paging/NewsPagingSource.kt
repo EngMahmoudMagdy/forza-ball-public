@@ -9,22 +9,18 @@ private const val PAGE_SIZE = 20
 
 class NewsPagingSource(
     private val newsRepository: NewsRepository,
-    private val leagues: List<String>,
-    private val teams: List<String>,
+    private val domesticLeagueSlug: String?,
 ) : PagingSource<Int, NewsArticle>() {
 
     private var cached: List<NewsArticle>? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> = try {
-        if (leagues.isEmpty()) {
+        val slug = domesticLeagueSlug?.trim()?.takeIf { it.isNotEmpty() }
+        if (slug == null) {
             return LoadResult.Page(emptyList(), null, null)
         }
         if (cached == null) {
-            cached = newsRepository.loadNewsForPreferences(
-                favoriteLeagueSlugs = leagues,
-                favoriteTeamIds = teams,
-                maxArticles = 500,
-            )
+            cached = newsRepository.loadNewsForDomesticLeague(slug, maxArticles = 500)
         }
         val list = cached.orEmpty()
         val page = params.key ?: 0

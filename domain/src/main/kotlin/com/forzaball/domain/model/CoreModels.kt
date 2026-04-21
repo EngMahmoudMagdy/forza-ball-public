@@ -80,3 +80,26 @@ fun UserPreferences.leagueSlugsForEspnContent(): List<String> {
 fun UserPreferences.favoriteTeamIdsList(): List<String> =
     listOfNotNull(favoriteTeamId?.trim()?.takeIf { it.isNotEmpty() })
 
+/** Domestic leagues where we also surface UEFA Champions League standings/fixtures. */
+fun UserPreferences.shouldShowUclScores(): Boolean {
+    val d = favoriteTeamLeagueSlug?.trim()?.takeIf { it.isNotEmpty() } ?: return false
+    if (d == "usa.1" || d == "ksa.1") return false
+    if (d == "uefa.champions") return false
+    return true
+}
+
+/** Single-row standing for the favorite team in one competition. */
+data class TeamStandingSnapshot(
+    val leagueSlug: String,
+    val leagueDisplayName: String,
+    val teamName: String,
+    val position: Int,
+    val played: Int,
+    val wins: Int,
+    val draws: Int,
+    val losses: Int,
+    val points: Int,
+    val goalDifferenceDisplay: String?,
+    val recordSummary: String?,
+)
+

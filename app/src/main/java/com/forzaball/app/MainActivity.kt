@@ -306,7 +306,6 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                 onNavigateToSignUp = {
                     navController.navigate("signup")
                 },
-                onNavigateToNewsList = { navController.navigate("news_list") },
                 onNavigateToFixturesList = { navController.navigate("fixtures_list") },
                 onOpenNewsArticle = { url, _ ->
                     val enc = NavUrlCodec.encode(url)
