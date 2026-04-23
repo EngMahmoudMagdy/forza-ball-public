@@ -7,8 +7,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <!-- ForzaBall splash and theme -->
-    <color name="splash_background_color">#131f16</color>
+    <color name="splash_background_color">#0D1B2A</color>
     <color name="forzaball_primary">#29a847</color>
     <color name="forzaball_background_light">#f6f8f6</color>
-    <color name="forzaball_background_dark">#131f16</color>
+    <color name="forzaball_background_dark">#0D1B2A</color>
+    <!-- Navy behind adaptive icon (matches brand artboard) -->
+    <color name="launcher_icon_background">#0D1B2A</color>
 </resources>

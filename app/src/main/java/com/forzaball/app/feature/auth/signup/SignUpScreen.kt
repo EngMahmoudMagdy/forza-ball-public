@@ -40,11 +40,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.forzaball.app.R
 import com.forzaball.app.feature.auth.AuthValidation
 import com.forzaball.app.ui.theme.ForzaBallPrimary
-
-private const val LOGO_URL =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDD1kIUKKmC7wGGyD5FvJoLXpsUW-0zkYr_Z09vH8OO3TT3TTbusnAhtGq9TGF3H5gX0EEqrK4LhSY-FjZ-JlDWsPuSeOxiGWbbsFJXYn-74VFQ6FvGtFK_ABIfiYWY8kDxfIA8dVNh5rosv6oi99_D_CtdCB_62mnVSalHHOvIfg2osWbK5ZHeob0AAEIY0lKofsha4h5ybH9skxs40muMR_qNPif_Uavq-RUf5pWsy66kEJEi8IvSCTL9WDJl5plbDe29v6q2kz2L"
 
 @Composable
 fun SignUpScreen(
@@ -100,9 +98,9 @@ fun SignUpScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
-                    model = LOGO_URL,
+                    model = R.drawable.forzaball_brand,
                     contentDescription = "ForzaBall",
-                    modifier = Modifier.height(32.dp),
+                    modifier = Modifier.height(36.dp),
                 )
             }
         }

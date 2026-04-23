@@ -37,11 +37,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.forzaball.app.R
 import com.forzaball.app.ui.theme.ForzaBallBackgroundLight
 import com.forzaball.app.ui.theme.ForzaBallPrimary
-
-private const val LOGO_URL =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDnAMf2WJf5JZfqnPKqmmwyA--sggemUodIkYEY4L81swcoeK6W4Yi7Omw1ebFbvlV_52S0x9XXNpJ-tdTz-Kqihpd-9cIErkNKiGn1GOX7Qur8kzpAIFGMrt8P8vKYOJZ1RJVmvg7bvBPG9SDJtpCoV5z8vAUSuD8HwdFrqU7Up9vCguxIXW18nRqQIe9b6gGmRJiDUufpvhL8dDXYHpOvgqHVF-3K3NzJCTMvQhtf4U849q9-EOiJTQkrWlotV86RciNoaW39CXU3"
 
 @Composable
 fun OnboardingScreen(
@@ -67,17 +65,9 @@ fun OnboardingScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
-                    model = LOGO_URL,
-                    contentDescription = "ForzaBall Logo",
-                    modifier = Modifier.size(40.dp),
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = "ForzaBall",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    model = R.drawable.forzaball_brand,
+                    contentDescription = "ForzaBall",
+                    modifier = Modifier.height(40.dp),
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

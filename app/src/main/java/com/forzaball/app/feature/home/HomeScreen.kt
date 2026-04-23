@@ -79,11 +79,9 @@ import com.forzaball.app.feature.feeds.FeedPostDetailRoute
 import com.forzaball.app.feature.feeds.FeedViewModel
 import com.forzaball.app.feature.feeds.FeedsRoute
 import com.forzaball.app.core.shared_ui_components.SwipeRefreshSharedComponent
+import com.forzaball.app.R
 import com.forzaball.app.ui.theme.ForzaBallPrimary
 import org.koin.androidx.compose.koinViewModel
-
-private const val LOGO_URL =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCkAL2u94GltH0gb0jToC4o5aOD9YxRPw9NwKb1flAI-bCwrMMoOkHeV26eLvKLGFYBmnedNJCHIH2iaP2-YM6Jks4PM85oZZ-psd7wrCudFSy8o1zkCok8ETtOnWEb-PVq-jeayk33qCePTvmz8sOm_5_UiZZgBAQnSUD25LexPnQJhFN4saDpwL8f_27y4z6jELXkmQ-K6gx5cMcrEYXCF1e9LAn6GQQulXGX272kE055COHIQYvXBVy1y_xDcXIl67bEce_ztKId"
 
 @Composable
 fun HomeRoute(
@@ -305,8 +303,8 @@ private fun HomeTopBar(
                 contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
-                    model = LOGO_URL,
-                    contentDescription = "ForzaBall Logo",
+                    model = R.drawable.forzaball_brand,
+                    contentDescription = "ForzaBall",
                     modifier = Modifier.size(32.dp),
                     contentScale = ContentScale.Fit,
                 )
