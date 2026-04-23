@@ -54,6 +54,13 @@ interface NewsRepository {
 
     /** All ESPN news stories for a single league (no team filter). */
     suspend fun loadNewsForDomesticLeague(leagueSlug: String?, maxArticles: Int): List<NewsArticle>
+
+    /** News stories that reference [teamId] in their club tags, across relevant leagues. */
+    suspend fun loadNewsForSingleTeam(
+        leagueSlug: String,
+        teamId: String,
+        maxArticles: Int = 30,
+    ): List<NewsArticle>
 }
 
 interface StandingsRepository {
@@ -163,5 +170,11 @@ interface FeedRepository {
 
     /** Merges nickname, avatar, and favorite team fields into `users/{uid}`. */
     suspend fun syncUserProfilePreferences(preferences: UserPreferences)
+
+    /**
+     * Merges [UserPreferences.teamSearchHistory] from Firestore into local storage
+     * (signed-in users). Call after sign-in and when opening search.
+     */
+    suspend fun mergeTeamSearchHistoryFromRemote()
 }
 

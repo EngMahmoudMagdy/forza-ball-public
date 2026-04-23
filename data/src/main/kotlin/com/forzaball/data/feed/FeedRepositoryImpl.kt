@@ -1,11 +1,13 @@
 package com.forzaball.data.feed
 
+import com.forzaball.domain.model.TeamSearchHistoryEntry
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.model.favoriteTeamIdsList
 import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.domain.repository.FeedRepository
+import com.forzaball.domain.repository.PreferencesRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +24,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -31,6 +34,7 @@ import kotlin.math.max
 class FeedRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
+    private val preferencesRepository: PreferencesRepository,
 ) : FeedRepository {
 
     private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -622,7 +626,81 @@ class FeedRepositoryImpl(
         preferences.profilePhotoUrl?.takeIf { it.isNotBlank() }?.let { url ->
             data[FIELD_AVATAR_URL] = url
         }
+        data[FIELD_TEAM_SEARCH_HISTORY] = preferences.teamSearchHistory
+            .take(TEAM_SEARCH_HISTORY_MAX)
+            .map { e ->
+                mapOf(
+                    "teamId" to e.teamId,
+                    "leagueSlug" to e.leagueSlug,
+                    "teamName" to e.teamName,
+                    "leagueName" to e.leagueName,
+                    "teamCrestUrl" to (e.teamCrestUrl ?: ""),
+                    "searchedAtMillis" to e.searchedAtMillis,
+                )
+            }
         firestore.collection(COL_USERS).document(uid).set(data, SetOptions.merge()).await()
+    }
+
+    override suspend fun mergeTeamSearchHistoryFromRemote() {
+        val uid = auth.currentUser?.uid ?: return
+        val remote = runCatching {
+            val snap = firestore.collection(COL_USERS).document(uid).get(Source.DEFAULT).await()
+            if (!snap.exists()) return@runCatching emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val raw = snap.get(FIELD_TEAM_SEARCH_HISTORY) as? List<*> ?: return@runCatching emptyList()
+            raw.mapNotNull { item ->
+                (item as? Map<*, *>)?.let { m ->
+                    val sm = m.entries.associate { (k, v) -> k.toString() to v }
+                    teamSearchEntryFromFirestoreMap(sm)
+                }
+            }
+        }.getOrElse { e ->
+            Timber.tag(TAG).w(e, "mergeTeamSearchHistoryFromRemote read")
+            emptyList()
+        }
+        if (remote.isEmpty()) return
+        val local = preferencesRepository.observeUserPreferences().first()
+        val merged = mergeTeamSearchHistoryLists(local.teamSearchHistory, remote)
+        if (merged == local.teamSearchHistory) return
+        preferencesRepository.updateUserPreferences(local.copy(teamSearchHistory = merged))
+    }
+
+    private fun teamSearchEntryFromFirestoreMap(m: Map<String, Any?>): TeamSearchHistoryEntry? {
+        val teamId = m["teamId"]?.toString()?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val leagueSlug = m["leagueSlug"]?.toString()?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val teamName = m["teamName"]?.toString()?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val leagueName = m["leagueName"]?.toString().orEmpty()
+        val crest = m["teamCrestUrl"]?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+        val ts = when (val v = m["searchedAtMillis"]) {
+            is Number -> v.toLong()
+            else -> 0L
+        }
+        return TeamSearchHistoryEntry(
+            teamId = teamId,
+            leagueSlug = leagueSlug,
+            teamName = teamName,
+            leagueName = leagueName,
+            teamCrestUrl = crest,
+            searchedAtMillis = ts.takeIf { it > 0L } ?: System.currentTimeMillis(),
+        )
+    }
+
+    private fun mergeTeamSearchHistoryLists(
+        local: List<TeamSearchHistoryEntry>,
+        remote: List<TeamSearchHistoryEntry>,
+    ): List<TeamSearchHistoryEntry> {
+        val byKey = LinkedHashMap<String, TeamSearchHistoryEntry>()
+        fun key(e: TeamSearchHistoryEntry) = "${e.leagueSlug}|${e.teamId}"
+        (local + remote).forEach { e ->
+            val k = key(e)
+            val cur = byKey[k]
+            if (cur == null || e.searchedAtMillis > cur.searchedAtMillis) {
+                byKey[k] = e
+            }
+        }
+        return byKey.values
+            .sortedByDescending { it.searchedAtMillis }
+            .take(TEAM_SEARCH_HISTORY_MAX)
     }
 
     private fun sanitizeHandle(raw: String): String {
@@ -638,6 +716,7 @@ class FeedRepositoryImpl(
 
     companion object {
         private const val TAG = "FeedRepository"
+        private const val TEAM_SEARCH_HISTORY_MAX = 30
         private const val COL_USERS = "users"
         private const val COL_POSTS = "posts"
         private const val SUB_LIKES = "likes"
@@ -671,5 +750,6 @@ class FeedRepositoryImpl(
         private const val FIELD_FAVORITE_TEAM_ID = "favoriteTeamId"
         private const val FIELD_FAVORITE_TEAM_LEAGUE_SLUG = "favoriteTeamLeagueSlug"
         private const val FIELD_FAVORITE_TEAM_NAME = "favoriteTeamName"
+        private const val FIELD_TEAM_SEARCH_HISTORY = "teamSearchHistory"
     }
 }

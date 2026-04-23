@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import com.forzaball.app.notifications.FeedOpenRequest
 import com.forzaball.app.notifications.FeedPushConstants
 import com.forzaball.app.notifications.FeedPushFcmParser
@@ -26,6 +27,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.core.view.WindowInsetsCompat
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +46,8 @@ import com.forzaball.app.feature.home.HomeRoute
 import com.forzaball.app.feature.home.NavUrlCodec
 import com.forzaball.app.feature.home.NewsListRoute
 import com.forzaball.app.feature.home.NewsWebViewScreen
+import com.forzaball.app.feature.search.SearchRoute
+import com.forzaball.app.feature.search.TeamSearchProfileRoute
 import com.forzaball.app.notifications.FcmTokenRegistrationEffect
 import com.forzaball.app.notifications.FeedInAppNotificationBanner
 import com.forzaball.app.notifications.FeedNotificationBus
@@ -68,6 +73,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Lay out content between status bar and navigation/gesture bar (not behind system bars).
         WindowCompat.setDecorFitsSystemWindows(window, true)
+        // Ensure normal (non-immersive) mode — system bars stay visible.
+        @Suppress("DEPRECATION")
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            show(WindowInsetsCompat.Type.statusBars())
+            show(WindowInsetsCompat.Type.navigationBars())
+        }
         feedOpenRequestState.value = intent.extractFeedOpenRequest()
         setContent {
             val initialFeedOpen by feedOpenRequestState
@@ -260,6 +272,13 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                     navController.navigate("home") { popUpTo(0) { inclusive = true } }
                 }
             }
+            BackHandler {
+                if (state.step == 1) {
+                    navController.popBackStack()
+                } else {
+                    viewModel.previousStep()
+                }
+            }
             when (state.step) {
                 1 -> PersonalizationStep1Screen(
                     selectedLeagueId = state.selectedLeagueId,
@@ -307,6 +326,33 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                     navController.navigate("signup")
                 },
                 onNavigateToFixturesList = { navController.navigate("fixtures_list") },
+                onOpenNewsArticle = { url, _ ->
+                    val enc = NavUrlCodec.encode(url)
+                    navController.navigate("news_web/$enc")
+                },
+                onNavigateToSearch = { navController.navigate("search") },
+            )
+        }
+
+        composable("search") {
+            SearchRoute(
+                onBack = { navController.popBackStack() },
+                onOpenTeamProfile = { leagueSlug, teamId ->
+                    val encLeague = Uri.encode(leagueSlug)
+                    navController.navigate("team_search_profile/$encLeague/$teamId")
+                },
+            )
+        }
+
+        composable(
+            route = "team_search_profile/{leagueSlug}/{teamId}",
+            arguments = listOf(
+                navArgument("leagueSlug") { type = NavType.StringType },
+                navArgument("teamId") { type = NavType.StringType },
+            ),
+        ) {
+            TeamSearchProfileRoute(
+                onBack = { navController.popBackStack() },
                 onOpenNewsArticle = { url, _ ->
                     val enc = NavUrlCodec.encode(url)
                     navController.navigate("news_web/$enc")

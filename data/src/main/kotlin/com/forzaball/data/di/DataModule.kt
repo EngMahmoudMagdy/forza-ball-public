@@ -97,9 +97,9 @@ val dataModule = module {
     }
 
     single<SoccerTeamsRepository> { SoccerTeamsRepositoryImpl(get()) }
-    single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
+    single<PreferencesRepository> { PreferencesRepositoryImpl(get(), get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single<MatchRepository> { MatchRepositoryImpl(get()) }
     single<StandingsRepository> { StandingsRepositoryImpl(get()) }
-    single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
+    single<FeedRepository> { FeedRepositoryImpl(get(), get(), get()) }
 }

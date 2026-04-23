@@ -1,6 +1,5 @@
 package com.forzaball.app.feature.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -8,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.activity.compose.BackHandler
 import com.forzaball.app.feature.personalization.PersonalizationStep1Screen
 import com.forzaball.app.feature.personalization.PersonalizationStep2Screen
 
@@ -26,6 +25,13 @@ fun EditFavoritesOverlay(
         if (visible) viewModel.resetFromStorage()
     }
 
+    BackHandler(enabled = visible) {
+        when (state.step) {
+            1 -> onDismiss()
+            else -> viewModel.previousStep()
+        }
+    }
+
     LaunchedEffect(state.closed) {
         if (state.closed) {
             viewModel.clearClosed()
@@ -33,12 +39,7 @@ fun EditFavoritesOverlay(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.35f)),
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
             when (state.step) {
                 1 -> PersonalizationStep1Screen(
                     selectedLeagueId = state.selectedLeagueId,
@@ -60,6 +61,5 @@ fun EditFavoritesOverlay(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-        }
     }
 }

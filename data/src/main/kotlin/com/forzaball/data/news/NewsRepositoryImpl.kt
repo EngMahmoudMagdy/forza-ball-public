@@ -3,6 +3,7 @@ package com.forzaball.data.news
 import com.forzaball.data.network.EspnApiService
 import com.forzaball.data.network.toNewsArticle
 import com.forzaball.domain.model.NewsArticle
+import com.forzaball.domain.model.leagueSlugsForSingleTeamSearch
 import com.forzaball.domain.repository.NewsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -50,6 +51,40 @@ class NewsRepositoryImpl(
                 .take(maxArticles.coerceAtLeast(1))
         }.getOrElse { e ->
             Timber.e(e, "loadNewsForPreferences failed")
+            emptyList()
+        }
+    }
+
+    override suspend fun loadNewsForSingleTeam(
+        leagueSlug: String,
+        teamId: String,
+        maxArticles: Int,
+    ): List<NewsArticle> {
+        val tid = teamId.trim().takeIf { it.isNotEmpty() } ?: return emptyList()
+        val slugs = leagueSlugsForSingleTeamSearch(leagueSlug)
+        if (slugs.isEmpty()) return emptyList()
+        val cap = maxArticles.coerceIn(1, 200)
+        return runCatching {
+            val articles = coroutineScope {
+                slugs.map { slug ->
+                    async {
+                        runCatching { espn.news(slug) }
+                            .getOrElse { e ->
+                                Timber.w(e, "ESPN news failed for %s", slug)
+                                null
+                            }
+                            ?.articles.orEmpty()
+                            .mapNotNull { it.toNewsArticle(slug) }
+                    }
+                }.flatMap { it.await() }
+            }
+            articles
+                .filter { tid in it.clubIds }
+                .distinctBy { it.id }
+                .sortedByDescending { it.publishedAtMillis }
+                .take(cap)
+        }.getOrElse { e ->
+            Timber.e(e, "loadNewsForSingleTeam failed")
             emptyList()
         }
     }

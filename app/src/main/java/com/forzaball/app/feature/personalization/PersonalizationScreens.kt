@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,10 +45,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.composed
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.forzaball.app.ui.theme.ForzaBallPrimary
+
+/** Full-screen gradient used on league, team, and profile onboarding steps. */
+fun Modifier.personalizationPageBackground(): Modifier = composed {
+    background(
+        brush = Brush.verticalGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.background,
+                ForzaBallPrimary.copy(alpha = 0.09f),
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+            ),
+        ),
+    )
+}
 
 @Composable
 fun PersonalizationStep1Screen(
@@ -60,15 +76,9 @@ fun PersonalizationStep1Screen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.background,
-                        ForzaBallPrimary.copy(alpha = 0.09f),
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                    ),
-                ),
-            ),
+            .personalizationPageBackground()
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -148,15 +158,9 @@ fun PersonalizationStep2Screen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.background,
-                        ForzaBallPrimary.copy(alpha = 0.09f),
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                    ),
-                ),
-            ),
+            .personalizationPageBackground()
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -228,7 +232,14 @@ fun PersonalizationStep3Screen(
         focusedLabelColor = ForzaBallPrimary,
         cursorColor = ForzaBallPrimary,
     )
-    Column(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .personalizationPageBackground()
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+    ) {
+    Column(Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
             Text("Complete Your Profile", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), modifier = Modifier.weight(1f))
@@ -259,5 +270,6 @@ fun PersonalizationStep3Screen(
         Button(onClick = onFinish, modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp), colors = ButtonDefaults.buttonColors(containerColor = ForzaBallPrimary), shape = RoundedCornerShape(12.dp)) {
             Text("Finish", fontWeight = FontWeight.Bold)
         }
+    }
     }
 }

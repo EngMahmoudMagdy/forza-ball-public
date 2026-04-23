@@ -56,6 +56,17 @@ data class TeamNextMatch(
     val nextMatch: Match?,
 )
 
+/** A team the user opened from search; stored locally and synced to Firestore when signed in. */
+data class TeamSearchHistoryEntry(
+    val teamId: String,
+    /** ESPN site league slug (e.g. eng.1, uefa.champions) */
+    val leagueSlug: String,
+    val teamName: String,
+    val leagueName: String,
+    val teamCrestUrl: String?,
+    val searchedAtMillis: Long = System.currentTimeMillis(),
+)
+
 data class UserPreferences(
     val countryCode: String?,
     /** ESPN league slug the user picked the team from (domestic), e.g. eng.1 */
@@ -66,6 +77,7 @@ data class UserPreferences(
     val favoriteTeamName: String?,
     val nickname: String? = null,
     val profilePhotoUrl: String? = null,
+    val teamSearchHistory: List<TeamSearchHistoryEntry> = emptyList(),
 )
 
 /** Leagues used for scoreboards, news, and merged fixtures: domestic + UCL when domestic is not already UCL. */
@@ -79,6 +91,16 @@ fun UserPreferences.leagueSlugsForEspnContent(): List<String> {
 
 fun UserPreferences.favoriteTeamIdsList(): List<String> =
     listOfNotNull(favoriteTeamId?.trim()?.takeIf { it.isNotEmpty() })
+
+/** Leagues to query (scoreboard, news) when showing a team picked from this league. */
+fun leagueSlugsForSingleTeamSearch(leagueSlug: String): List<String> {
+    val s = leagueSlug.trim()
+    if (s.isEmpty()) return emptyList()
+    return buildList {
+        add(s)
+        if (s != "uefa.champions" && s != "usa.1" && s != "ksa.1") add("uefa.champions")
+    }.distinct()
+}
 
 /** Domestic leagues where we also surface UEFA Champions League standings/fixtures. */
 fun UserPreferences.shouldShowUclScores(): Boolean {

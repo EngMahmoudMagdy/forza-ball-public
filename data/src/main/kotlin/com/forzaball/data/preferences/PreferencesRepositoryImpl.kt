@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.repository.PreferencesRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
@@ -30,10 +31,12 @@ private object Keys {
     val FAVORITE_TEAM_NAME = stringPreferencesKey("favorite_team_name")
     val NICKNAME = stringPreferencesKey("nickname")
     val PROFILE_PHOTO_URL = stringPreferencesKey("profile_photo_url")
+    val TEAM_SEARCH_HISTORY_JSON = stringPreferencesKey("team_search_history_json")
 }
 
 class PreferencesRepositoryImpl(
     private val context: Context,
+    private val json: Json,
 ) : PreferencesRepository {
 
     override fun observeUserPreferences(): Flow<UserPreferences> {
@@ -59,6 +62,7 @@ class PreferencesRepositoryImpl(
             prefs[Keys.FAVORITE_TEAM_NAME] = preferences.favoriteTeamName.orEmpty()
             prefs[Keys.NICKNAME] = preferences.nickname.orEmpty()
             prefs[Keys.PROFILE_PHOTO_URL] = preferences.profilePhotoUrl.orEmpty()
+            prefs[Keys.TEAM_SEARCH_HISTORY_JSON] = teamSearchHistoryToJson(json, preferences.teamSearchHistory)
         }
     }
 
@@ -69,6 +73,8 @@ class PreferencesRepositoryImpl(
         val newTeamId = this[Keys.FAVORITE_TEAM_ID]?.takeIf { it.isNotBlank() }
         val newLeague = this[Keys.FAVORITE_TEAM_LEAGUE]?.takeIf { it.isNotBlank() }
         val newName = this[Keys.FAVORITE_TEAM_NAME]?.takeIf { it.isNotBlank() }
+        val historyJson = this[Keys.TEAM_SEARCH_HISTORY_JSON]
+        val history = teamSearchHistoryFromJson(json, historyJson)
         if (newTeamId != null) {
             return UserPreferences(
                 countryCode = country,
@@ -77,6 +83,7 @@ class PreferencesRepositoryImpl(
                 favoriteTeamName = newName,
                 nickname = nickname?.takeIf { it.isNotBlank() },
                 profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
+                teamSearchHistory = history,
             )
         }
         val legacyLeagues = this[Keys.FAVORITE_LEAGUES]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
@@ -88,6 +95,7 @@ class PreferencesRepositoryImpl(
             favoriteTeamName = null,
             nickname = nickname?.takeIf { it.isNotBlank() },
             profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
+            teamSearchHistory = history,
         )
     }
 }

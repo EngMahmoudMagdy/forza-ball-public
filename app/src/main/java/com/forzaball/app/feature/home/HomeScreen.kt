@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -99,6 +100,7 @@ fun HomeRoute(
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToFixturesList: () -> Unit = {},
     onOpenNewsArticle: (String, String) -> Unit = { _, _ -> },
+    onNavigateToSearch: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -141,6 +143,7 @@ fun HomeRoute(
         onViewAllNews = { selectedTab = 1 },
         onOpenNewsArticle = onOpenNewsArticle,
         onRefresh = { viewModel.processIntent(HomeIntent.Refresh()) },
+        onNavigateToSearch = onNavigateToSearch,
     )
 }
 
@@ -163,6 +166,7 @@ fun HomeScreen(
     onViewAllNews: () -> Unit,
     onOpenNewsArticle: (String, String) -> Unit,
     onRefresh: () -> Unit,
+    onNavigateToSearch: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val feedUi by feedViewModel.ui.collectAsState()
@@ -172,11 +176,13 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .safeDrawingPadding()
             .background(MaterialTheme.colorScheme.background),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             HomeTopBar(
                 title = homeTitleForTab(selectedTab),
+                onSearchClick = onNavigateToSearch,
             )
 
             Box(
@@ -277,7 +283,10 @@ private fun homeTitleForTab(tab: Int): String = when (tab) {
 }
 
 @Composable
-private fun HomeTopBar(title: String) {
+private fun HomeTopBar(
+    title: String,
+    onSearchClick: () -> Unit = {},
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -314,7 +323,7 @@ private fun HomeTopBar(title: String) {
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(
-                onClick = { },
+                onClick = onSearchClick,
                 modifier = Modifier.size(40.dp),
             ) {
                 Icon(

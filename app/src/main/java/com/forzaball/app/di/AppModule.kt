@@ -11,6 +11,8 @@ import com.forzaball.app.feature.home.ScoresViewModel
 import com.forzaball.app.feature.profile.EditFavoritesViewModel
 import com.forzaball.app.feature.profile.ProfileViewModel
 import com.forzaball.app.feature.personalization.PersonalizationViewModel
+import com.forzaball.app.feature.search.SearchViewModel
+import com.forzaball.app.feature.search.TeamSearchProfileViewModel
 import com.forzaball.app.feature.splash.SplashViewModel
 import com.forzaball.domain.diagnostics.HomeLoadTracer
 import com.forzaball.domain.repository.AuthRepository
@@ -38,8 +40,10 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { SplashViewModel(get(), get()) }
     viewModel { SignUpViewModel(get()) }
-    viewModel { SignInViewModel(get(), get()) }
+    viewModel { SignInViewModel(get(), get(), get()) }
     viewModel { PersonalizationViewModel(get(), get(), get()) }
     viewModel { EditFavoritesViewModel(get(), get(), get()) }
+    viewModel { SearchViewModel(get(), get(), get()) }
+    viewModel { TeamSearchProfileViewModel(get(), get(), get()) }
 }
 

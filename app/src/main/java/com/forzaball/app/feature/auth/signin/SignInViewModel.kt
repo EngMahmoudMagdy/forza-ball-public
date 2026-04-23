@@ -3,8 +3,10 @@ package com.forzaball.app.feature.auth.signin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.forzaball.domain.repository.AuthRepository
+import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.PreferencesRepository
 import com.forzaball.domain.repository.SignInResult
+import timber.log.Timber
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ data class SignInState(
 class SignInViewModel(
     private val authRepository: AuthRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val feedRepository: FeedRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SignInState())
@@ -49,6 +52,8 @@ class SignInViewModel(
     }
 
     private suspend fun navigateAfterSignIn() {
+        runCatching { feedRepository.mergeTeamSearchHistoryFromRemote() }
+            .onFailure { Timber.w(it, "mergeTeamSearchHistoryFromRemote") }
         val prefs = preferencesRepository.observeUserPreferences().first()
         val hasCompletedPersonalization = !prefs.favoriteTeamId.isNullOrBlank() &&
             !prefs.nickname.isNullOrBlank()

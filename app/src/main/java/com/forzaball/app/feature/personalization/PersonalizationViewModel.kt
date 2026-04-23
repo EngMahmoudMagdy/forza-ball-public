@@ -9,6 +9,7 @@ import com.forzaball.domain.repository.SoccerTeamsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -99,6 +100,8 @@ class PersonalizationViewModel(
         viewModelScope.launch {
             val s = _state.value
             val club = s.teamsForLeague.find { it.id == s.selectedClubId }
+            val existing = runCatching { preferencesRepository.observeUserPreferences().first() }
+                .getOrNull()
             val prefs = UserPreferences(
                 countryCode = null,
                 favoriteTeamLeagueSlug = s.selectedLeagueId,
@@ -106,6 +109,7 @@ class PersonalizationViewModel(
                 favoriteTeamName = club?.name,
                 nickname = s.nickname.takeIf { it.isNotBlank() },
                 profilePhotoUrl = s.profilePhotoUrl,
+                teamSearchHistory = existing?.teamSearchHistory.orEmpty(),
             )
             preferencesRepository.updateUserPreferences(prefs)
             runCatching { feedRepository.syncUserProfilePreferences(prefs) }
