@@ -121,6 +121,7 @@ tasks.named("preBuild").configure {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":shared:core-data"))
 
     implementation(libs.androidx.core.ktx)
 

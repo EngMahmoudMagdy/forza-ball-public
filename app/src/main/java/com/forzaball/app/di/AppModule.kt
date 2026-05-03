@@ -1,6 +1,9 @@
 package com.forzaball.app.di
 
 import com.forzaball.app.data.auth.AuthRepositoryImpl
+import com.forzaball.app.data.auth.AndroidSessionTokenStore
+import com.forzaball.app.data.auth.AndroidSessionUserStore
+import com.forzaball.app.data.auth.NoOpAuthRefreshApi
 import com.forzaball.app.feature.auth.signin.SignInViewModel
 import com.forzaball.app.feature.auth.signup.SignUpViewModel
 import com.forzaball.app.feature.feeds.FeedViewModel
@@ -18,6 +21,8 @@ import com.forzaball.domain.diagnostics.HomeLoadTracer
 import com.forzaball.domain.repository.AuthRepository
 import com.forzaball.domain.usecase.LoadHomeContentUseCase
 import com.google.firebase.auth.FirebaseAuth
+import com.forzaball.shared.auth.DefaultSessionOrchestrator
+import com.forzaball.shared.auth.SessionOrchestrator
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import timber.log.Timber
@@ -25,6 +30,10 @@ import timber.log.Timber
 val appModule = module {
     single { FirebaseAuth.getInstance() }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single { AndroidSessionTokenStore(get()) }
+    single { AndroidSessionUserStore(get()) }
+    single { NoOpAuthRefreshApi() }
+    single<SessionOrchestrator> { DefaultSessionOrchestrator(get(), get(), get()) }
     single {
         LoadHomeContentUseCase(
             matchRepository = get(),

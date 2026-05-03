@@ -16,8 +16,8 @@ android {
         applicationId = "com.forzaball.app"
         minSdk = 27
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,6 +49,9 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":shared:core-domain"))
+    implementation(project(":shared:core-auth"))
+    implementation(project(":shared:shared-ui-compose"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

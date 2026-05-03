@@ -23,3 +23,8 @@ rootProject.name = "ForzaBall"
 include(":app")
 include(":domain")
 include(":data")
+include(":shared:core-domain")
+include(":shared:core-auth")
+include(":shared:core-data")
+include(":shared:platform")
+include(":shared:shared-ui-compose")

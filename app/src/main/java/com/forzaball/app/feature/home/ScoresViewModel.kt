@@ -11,6 +11,9 @@ import com.forzaball.domain.model.shouldShowUclScores
 import com.forzaball.domain.repository.MatchRepository
 import com.forzaball.domain.repository.PreferencesRepository
 import com.forzaball.domain.repository.StandingsRepository
+import com.forzaball.shared.domain.model.ScoreContext
+import com.forzaball.shared.domain.model.normalizedLeagueSlug
+import com.forzaball.shared.domain.model.normalizedTeamId
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,8 +57,12 @@ class ScoresViewModel(
     }
 
     private suspend fun loadForPreferences(prefs: UserPreferences) {
-        val league = prefs.favoriteTeamLeagueSlug?.trim()?.takeIf { it.isNotEmpty() }
-        val teamId = prefs.favoriteTeamId?.trim()?.takeIf { it.isNotEmpty() }
+        val scoreContext = ScoreContext(
+            favoriteTeamLeagueSlug = prefs.favoriteTeamLeagueSlug,
+            favoriteTeamId = prefs.favoriteTeamId,
+        )
+        val league = scoreContext.normalizedLeagueSlug()
+        val teamId = scoreContext.normalizedTeamId()
         if (league == null || teamId == null) {
             _state.value = ScoresUiState()
             return

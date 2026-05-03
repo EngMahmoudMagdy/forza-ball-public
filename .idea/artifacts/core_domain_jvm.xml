@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="core-domain-jvm">
+    <output-path>$PROJECT_DIR$/shared/core-domain/build/libs</output-path>
+    <root id="archive" name="core-domain-jvm.jar">
+      <element id="module-output" name="ForzaBall.shared.core-domain.jvmMain" />
+    </root>
+  </artifact>
+</component>

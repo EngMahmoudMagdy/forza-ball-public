@@ -8,7 +8,7 @@ import com.forzaball.data.network.CurlLoggingInterceptor
 import com.forzaball.data.network.EspnApiService
 import com.forzaball.data.network.EspnTablesApiService
 import com.forzaball.data.news.NewsRepositoryImpl
-import com.forzaball.data.standings.StandingsRepositoryImpl
+import com.forzaball.data.standings.KmpStandingsRepositoryAdapter
 import com.forzaball.data.preferences.PreferencesRepositoryImpl
 import com.forzaball.data.soccer.SoccerTeamsRepositoryImpl
 import com.forzaball.domain.repository.FeedRepository
@@ -29,6 +29,8 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import com.forzaball.shared.data.standings.SharedStandingsRepository
+import com.forzaball.shared.data.standings.SharedStandingsRepositoryImpl
 
 val dataModule = module {
     single { FirebaseFirestore.getInstance() }
@@ -100,6 +102,7 @@ val dataModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get(), get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single<MatchRepository> { MatchRepositoryImpl(get()) }
-    single<StandingsRepository> { StandingsRepositoryImpl(get()) }
+    single<SharedStandingsRepository> { SharedStandingsRepositoryImpl() }
+    single<StandingsRepository> { KmpStandingsRepositoryAdapter(get()) }
     single<FeedRepository> { FeedRepositoryImpl(get(), get(), get()) }
 }

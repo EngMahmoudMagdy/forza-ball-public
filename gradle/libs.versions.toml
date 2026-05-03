@@ -9,6 +9,8 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 composeBom = "2026.02.01"
 coroutines = "1.10.2"
+kotlinxDatetime = "0.7.1"
+ktor = "3.3.1"
 coil = "2.7.0"
 retrofit = "3.0.0"
 okhttpLogging = "5.3.2"
@@ -29,6 +31,7 @@ sqlcipher = "4.5.7"
 navCompose = "2.9.7"
 accompanist = "0.36.0"
 chucker = "4.2.0"
+composeMultiplatform = "1.10.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +57,8 @@ androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compo
 # Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 # Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navCompose" }
@@ -68,6 +73,12 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
 chucker-no-op = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Paging
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
@@ -126,11 +137,13 @@ sqlcipher-android = { group = "net.zetetic", name = "android-database-sqlcipher"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-android-library = { id = "com.android.library"}
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin"}
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.4" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.6" }
-    ksp = { id = "com.google.devtools.ksp", version = "2.3.6" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.6" }
 

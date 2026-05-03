@@ -81,6 +81,7 @@ import com.forzaball.app.feature.feeds.FeedsRoute
 import com.forzaball.app.core.shared_ui_components.SwipeRefreshSharedComponent
 import com.forzaball.app.R
 import com.forzaball.app.ui.theme.ForzaBallPrimary
+import com.forzaball.shared.ui.KmpStatusCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -361,6 +362,13 @@ private fun HomeDashboardContent(
             modifier = Modifier.fillMaxSize(),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 16.dp),
         ) {
+        item {
+            KmpStatusCard(
+                title = "KMP Foundation",
+                body = "Shared domain/data/auth and Compose iOS host entrypoint are now wired.",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
         if (state.isLoading || state.favoriteClubMatch != null) {
         item {
             Column(modifier = Modifier.padding(16.dp)) {
