@@ -8,11 +8,21 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
+# Cursor IDE (local rules, agent docs, etc.)
+.cursor/
+# KMP rollout notes, checklists, and other planning docs (local only)
+docs/kmp-*.md
+docs/plans/
+/plans/
+# Loose planning filenames at repo root (optional local roadmaps)
+/plan.md
+/PLAN.md
+/ROADMAP.md
+# Gradle / Android — every module’s output directory (root, app, data, domain, shared/*, …)
+**/build/
 /captures
-/app/build
-/data/build
-/domain/build
 .externalNativeBuild
+# Kotlin incremental / metadata caches (K2, KMP)
+.kotlin/
 .cxx
 local.properties
