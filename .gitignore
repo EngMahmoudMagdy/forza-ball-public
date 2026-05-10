@@ -26,3 +26,6 @@ docs/plans/
 .kotlin/
 .cxx
 local.properties
+/forza_ball.jks
+# Release signing (passwords + keystore reference)
+/store.properties

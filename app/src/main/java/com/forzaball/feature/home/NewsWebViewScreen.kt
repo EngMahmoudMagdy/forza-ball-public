@@ -3,6 +3,7 @@ package com.forzaball.feature.home
 import android.content.Intent
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -85,7 +86,8 @@ fun NewsWebViewScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),

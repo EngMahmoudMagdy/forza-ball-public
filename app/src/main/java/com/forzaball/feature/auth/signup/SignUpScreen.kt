@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -80,7 +82,8 @@ fun SignUpScreen(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
+            .safeDrawingPadding()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState),
     ) {
@@ -98,7 +101,7 @@ fun SignUpScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
-                    model = R.drawable.forzaball_brand,
+                    model = R.drawable.app_logo,
                     contentDescription = "ForzaBall",
                     modifier = Modifier.height(36.dp),
                 )

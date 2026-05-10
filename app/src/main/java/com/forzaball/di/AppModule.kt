@@ -16,6 +16,9 @@ import com.forzaball.feature.profile.ProfileViewModel
 import com.forzaball.feature.personalization.PersonalizationViewModel
 import com.forzaball.feature.search.SearchViewModel
 import com.forzaball.feature.search.TeamSearchProfileViewModel
+import com.forzaball.data.preferences.ThemePreferencesRepository
+import com.forzaball.data.preferences.ThemePreferencesRepositoryImpl
+import com.forzaball.feature.notifications.NotificationsViewModel
 import com.forzaball.feature.splash.SplashViewModel
 import com.forzaball.domain.diagnostics.HomeLoadTracer
 import com.forzaball.domain.repository.AuthRepository
@@ -28,6 +31,7 @@ import org.koin.dsl.module
 import timber.log.Timber
 
 val appModule = module {
+    single<ThemePreferencesRepository> { ThemePreferencesRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single { AndroidSessionTokenStore(get()) }
@@ -54,5 +58,6 @@ val appModule = module {
     viewModel { EditFavoritesViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get()) }
     viewModel { TeamSearchProfileViewModel(get(), get(), get()) }
+    viewModel { NotificationsViewModel(get(), get()) }
 }
 

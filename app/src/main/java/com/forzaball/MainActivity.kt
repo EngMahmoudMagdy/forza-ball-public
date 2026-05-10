@@ -13,12 +13,20 @@ import com.forzaball.notifications.FeedPushFcmParser
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,7 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.core.view.WindowInsetsCompat
 import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,7 +42,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,6 +52,7 @@ import com.forzaball.feature.home.HomeRoute
 import com.forzaball.feature.home.NavUrlCodec
 import com.forzaball.feature.home.NewsListRoute
 import com.forzaball.feature.home.NewsWebViewScreen
+import com.forzaball.feature.notifications.NotificationsRoute
 import com.forzaball.feature.search.SearchRoute
 import com.forzaball.feature.search.TeamSearchProfileRoute
 import com.forzaball.notifications.FcmTokenRegistrationEffect
@@ -58,7 +65,10 @@ import com.forzaball.feature.personalization.PersonalizationStep2Screen
 import com.forzaball.feature.personalization.PersonalizationStep3Screen
 import com.forzaball.feature.personalization.PersonalizationViewModel
 import com.forzaball.feature.splash.SplashRoute
+import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.ui.theme.ForzaBallTheme
+import com.forzaball.ui.theme.ThemeMode
+import org.koin.android.ext.android.getKoin
 import org.koin.androidx.compose.koinViewModel
 import com.forzaball.R
 
@@ -68,22 +78,23 @@ class MainActivity : ComponentActivity() {
     private val feedOpenRequestState = mutableStateOf<FeedOpenRequest?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Use normal window (opaque system bars, not the splash/transparent window).
         setTheme(R.style.Theme_ForzaBall)
         super.onCreate(savedInstanceState)
-        // Lay out content between status bar and navigation/gesture bar (not behind system bars).
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-        // Ensure normal (non-immersive) mode — system bars stay visible.
+        enableEdgeToEdge()
         @Suppress("DEPRECATION")
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            show(WindowInsetsCompat.Type.statusBars())
-            show(WindowInsetsCompat.Type.navigationBars())
-        }
         feedOpenRequestState.value = intent.extractFeedOpenRequest()
         setContent {
             val initialFeedOpen by feedOpenRequestState
-            ForzaBallTheme {
+            val themeRepo: ThemePreferencesRepository = getKoin().get()
+            val themeMode by themeRepo.observeThemeMode().collectAsState(initial = ThemeMode.Dark)
+            val systemDark = isSystemInDarkTheme()
+            val useDarkTheme = when (themeMode) {
+                ThemeMode.Dark -> true
+                ThemeMode.Light -> false
+                ThemeMode.System -> systemDark
+            }
+            ForzaBallTheme(darkTheme = useDarkTheme) {
                 ForzaBallAppCompose(initialFeedOpen = initialFeedOpen)
             }
         }
@@ -144,6 +155,7 @@ private fun extractPostIdFromViewUri(uri: Uri): String? {
 fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
     val navController = rememberNavController()
     var bannerOpenRequest by remember { mutableStateOf<FeedOpenRequest?>(null) }
+    var notificationOpenRequest by remember { mutableStateOf<FeedOpenRequest?>(null) }
     val feedBanner by FeedNotificationBus.pending.collectAsState()
     val context = LocalContext.current
 
@@ -171,10 +183,14 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
-        FcmTokenRegistrationEffect()
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            FcmTokenRegistrationEffect()
 
-        NavHost(
+            NavHost(
             navController = navController,
             startDestination = "splash",
         ) {
@@ -319,6 +335,9 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                 initialFeedOpen = initialFeedOpen,
                 bannerOpenRequest = bannerOpenRequest,
                 onBannerOpenConsumed = { bannerOpenRequest = null },
+                notificationOpenRequest = notificationOpenRequest,
+                onNotificationOpenConsumed = { notificationOpenRequest = null },
+                onNavigateToNotifications = { navController.navigate("notifications") },
                 onNavigateToSignIn = {
                     navController.navigate("signin")
                 },
@@ -331,6 +350,16 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                     navController.navigate("news_web/$enc")
                 },
                 onNavigateToSearch = { navController.navigate("search") },
+            )
+        }
+
+        composable("notifications") {
+            NotificationsRoute(
+                onBack = { navController.popBackStack() },
+                onOpenPost = { req ->
+                    notificationOpenRequest = req
+                    navController.popBackStack()
+                },
             )
         }
 
@@ -390,26 +419,27 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                 onClose = { navController.popBackStack() },
             )
         }
-    }
+        }
 
-        feedBanner?.let { payload ->
-            FeedInAppNotificationBanner(
-                payload = payload,
-                onOpen = {
-                    FeedNotificationBus.clear()
-                    bannerOpenRequest = FeedOpenRequest(payload.postId, payload.commentId)
-                    navController.navigate("home") {
-                        launchSingleTop = true
-                    }
-                },
-                onDismiss = { FeedNotificationBus.clear() },
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .statusBarsPadding()
-                    .zIndex(1000f)
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-            )
+            feedBanner?.let { payload ->
+                FeedInAppNotificationBanner(
+                    payload = payload,
+                    onOpen = {
+                        FeedNotificationBus.clear()
+                        bannerOpenRequest = FeedOpenRequest(payload.postId, payload.commentId)
+                        navController.navigate("home") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onDismiss = { FeedNotificationBus.clear() },
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                        .zIndex(1000f)
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                )
+            }
         }
     }
 }

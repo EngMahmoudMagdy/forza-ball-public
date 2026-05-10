@@ -36,20 +36,12 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:438978112225:android:2632067f93443655d965a0",
+        "mobilesdk_app_id": "1:438978112225:android:ad31a7e466c7275ad965a0",
         "android_client_info": {
-          "package_name": "com.forzaball.app"
+          "package_name": "com.forzaball.pro"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "438978112225-pdm0hs5u6gqb633prjg7237bh89egbuk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.forzaball.app",
-            "certificate_hash": "99d9d086cda2aa34bf22c6edb4358b9f8380b753"
-          }
-        },
         {
           "client_id": "438978112225-r40etrts75q3srk8bkcsa9qaj57pbc29.apps.googleusercontent.com",
           "client_type": 3

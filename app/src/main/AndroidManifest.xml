@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name=".ForzaBallApp"
+        android:name="com.forzaball.ForzaBallApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,7 +22,7 @@
             android:resource="@drawable/ic_stat_forza" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.forzaball.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.ForzaBall.Splash">
@@ -67,7 +67,7 @@
 
         <!-- Firebase Cloud Messaging service stub -->
         <service
-            android:name=".notifications.ForzaFirebaseMessagingService"
+            android:name="com.forzaball.notifications.ForzaFirebaseMessagingService"
             android:directBootAware="true"
             android:exported="false">
             <intent-filter>

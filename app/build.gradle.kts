@@ -1,9 +1,19 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+}
+
+val storePropertiesFile = rootProject.file("store.properties")
+val storeProperties = Properties()
+val releaseSigningConfigured = storePropertiesFile.exists().also { exists ->
+    if (exists) {
+        storePropertiesFile.inputStream().use { storeProperties.load(it) }
+    }
 }
 
 android {
@@ -13,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.forzaball"
+        applicationId = "com.forzaball.pro"
         minSdk = 27
         targetSdk = 36
         versionCode = 2
@@ -22,8 +32,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            create("release") {
+                keyAlias = storeProperties.getProperty("keyAlias")
+                keyPassword = storeProperties.getProperty("keyPassword")
+                storePassword = storeProperties.getProperty("storePassword")
+                storeFile = rootProject.file(storeProperties.getProperty("storeFile")!!)
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (releaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -54,6 +78,7 @@ dependencies {
     implementation(project(":shared:shared-ui-compose"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)

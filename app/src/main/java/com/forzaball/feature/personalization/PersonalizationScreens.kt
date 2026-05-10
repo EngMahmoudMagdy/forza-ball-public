@@ -11,10 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,8 +76,7 @@ fun PersonalizationStep1Screen(
         modifier = modifier
             .fillMaxSize()
             .personalizationPageBackground()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .safeDrawingPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -108,7 +106,7 @@ fun PersonalizationStep1Screen(
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                         .border(1.dp, ForzaBallPrimary.copy(alpha = 0.12f), RoundedCornerShape(12.dp))
                         .clickable { onSelectLeague(league.id) }
                         .padding(16.dp),
@@ -159,8 +157,7 @@ fun PersonalizationStep2Screen(
         modifier = modifier
             .fillMaxSize()
             .personalizationPageBackground()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .safeDrawingPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -185,7 +182,9 @@ fun PersonalizationStep2Screen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (selected) ForzaBallPrimary.copy(alpha = 0.12f) else Color.White)
+                        .background(
+                            if (selected) ForzaBallPrimary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface,
+                        )
                         .border(
                             width = 2.dp,
                             color = if (selected) ForzaBallPrimary else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
@@ -236,8 +235,7 @@ fun PersonalizationStep3Screen(
         modifier = modifier
             .fillMaxSize()
             .personalizationPageBackground()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .safeDrawingPadding(),
     ) {
     Column(Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {

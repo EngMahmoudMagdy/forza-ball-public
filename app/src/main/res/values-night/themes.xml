@@ -6,12 +6,11 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
-        <item name="android:windowBackground">@color/forzaball_background_light</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:windowBackground">@color/forzaball_background_dark</item>
     </style>
 
-    <!-- Shown when app icon is clicked until Compose draws -->
     <style name="Theme.ForzaBall.Splash" parent="Theme.ForzaBall">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

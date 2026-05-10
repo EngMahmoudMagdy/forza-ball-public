@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.forzaball.R
-import com.forzaball.ui.theme.ForzaBallBackgroundLight
 import com.forzaball.ui.theme.ForzaBallPrimary
 
 @Composable
@@ -53,7 +53,8 @@ fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(ForzaBallBackgroundLight),
+            .safeDrawingPadding()
+            .background(MaterialTheme.colorScheme.background),
     ) {
         // Header
         Row(
@@ -65,7 +66,7 @@ fun OnboardingScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
-                    model = R.drawable.forzaball_brand,
+                    model = R.drawable.app_logo,
                     contentDescription = "ForzaBall",
                     modifier = Modifier.height(40.dp),
                 )

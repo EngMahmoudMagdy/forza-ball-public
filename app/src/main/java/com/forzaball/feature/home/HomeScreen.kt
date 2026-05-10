@@ -3,6 +3,7 @@ package com.forzaball.feature.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,6 +46,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +55,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,7 +69,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.ui.theme.ForzaBallTheme
+import com.forzaball.ui.theme.ThemeMode
 import com.forzaball.domain.model.Club
 import com.forzaball.feature.personalization.catalogLeagues
 import com.forzaball.feature.profile.EditFavoritesOverlay
@@ -82,7 +92,9 @@ import com.forzaball.core.shared_ui_components.SwipeRefreshSharedComponent
 import com.forzaball.R
 import com.forzaball.ui.theme.ForzaBallPrimary
 import com.forzaball.shared.ui.KmpStatusCard
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun HomeRoute(
@@ -95,6 +107,10 @@ fun HomeRoute(
     /** Opens a post from the global in-app banner (root overlay). */
     bannerOpenRequest: FeedOpenRequest? = null,
     onBannerOpenConsumed: () -> Unit = {},
+    /** Opens a post from the notifications list (after returning to home). */
+    notificationOpenRequest: FeedOpenRequest? = null,
+    onNotificationOpenConsumed: () -> Unit = {},
+    onNavigateToNotifications: () -> Unit = {},
     onNavigateToSignIn: () -> Unit = {},
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToFixturesList: () -> Unit = {},
@@ -124,6 +140,13 @@ fun HomeRoute(
         onBannerOpenConsumed()
     }
 
+    LaunchedEffect(notificationOpenRequest) {
+        val open = notificationOpenRequest ?: return@LaunchedEffect
+        selectedTab = 2
+        feedOverlayKey = open.overlayKey
+        onNotificationOpenConsumed()
+    }
+
     HomeScreen(
         state = state,
         selectedTab = selectedTab,
@@ -143,6 +166,7 @@ fun HomeRoute(
         onOpenNewsArticle = onOpenNewsArticle,
         onRefresh = { viewModel.processIntent(HomeIntent.Refresh()) },
         onNavigateToSearch = onNavigateToSearch,
+        onNavigateToNotifications = onNavigateToNotifications,
     )
 }
 
@@ -166,6 +190,7 @@ fun HomeScreen(
     onOpenNewsArticle: (String, String) -> Unit,
     onRefresh: () -> Unit,
     onNavigateToSearch: () -> Unit = {},
+    onNavigateToNotifications: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val feedUi by feedViewModel.ui.collectAsState()
@@ -175,13 +200,13 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .safeDrawingPadding()
             .background(MaterialTheme.colorScheme.background),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             HomeTopBar(
                 title = homeTitleForTab(selectedTab),
                 onSearchClick = onNavigateToSearch,
+                onNotificationsClick = onNavigateToNotifications,
             )
 
             Box(
@@ -285,10 +310,12 @@ private fun homeTitleForTab(tab: Int): String = when (tab) {
 private fun HomeTopBar(
     title: String,
     onSearchClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))
             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
             .border(1.dp, ForzaBallPrimary.copy(alpha = 0.1f), RoundedCornerShape(0.dp))
             .padding(16.dp),
@@ -304,7 +331,7 @@ private fun HomeTopBar(
                 contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
-                    model = R.drawable.forzaball_brand,
+                    model = R.drawable.app_logo,
                     contentDescription = "ForzaBall",
                     modifier = Modifier.size(32.dp),
                     contentScale = ContentScale.Fit,
@@ -332,7 +359,7 @@ private fun HomeTopBar(
                 )
             }
             IconButton(
-                onClick = { },
+                onClick = onNotificationsClick,
                 modifier = Modifier.size(40.dp),
             ) {
                 Icon(
@@ -818,6 +845,61 @@ private fun PlaceholderTabContent(title: String) {
 }
 
 @Composable
+private fun AppearanceSettingsCard(
+    modifier: Modifier = Modifier,
+) {
+    val themeRepo: ThemePreferencesRepository = koinInject()
+    val themeMode by themeRepo.observeThemeMode().collectAsState(initial = ThemeMode.Dark)
+    val scope = rememberCoroutineScope()
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = "Theme",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            ThemeMode.entries.forEach { mode ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .selectable(
+                            selected = themeMode == mode,
+                            onClick = { scope.launch { themeRepo.setThemeMode(mode) } },
+                        )
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = themeMode == mode,
+                        onClick = { scope.launch { themeRepo.setThemeMode(mode) } },
+                        colors = RadioButtonDefaults.colors(selectedColor = ForzaBallPrimary),
+                    )
+                    Text(
+                        text = mode.label,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun ProfileTabContent(
     authState: AuthState,
     userPreferences: UserPreferences,
@@ -832,6 +914,7 @@ private fun ProfileTabContent(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        AppearanceSettingsCard()
         when (authState) {
             is AuthState.SignedIn -> {
                 Text(
@@ -850,7 +933,7 @@ private fun ProfileTabContent(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 ) {
                     Column(
@@ -1058,7 +1141,7 @@ fun FavoriteMatchCard(match: Match) {
                             modifier = Modifier
                                 .size(56.dp)
                                 .clip(RoundedCornerShape(28.dp))
-                                .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.1f)),
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
                             contentAlignment = Alignment.Center,
                         ) {
                             AsyncImage(
@@ -1102,7 +1185,7 @@ fun FavoriteMatchCard(match: Match) {
                             modifier = Modifier
                                 .size(56.dp)
                                 .clip(RoundedCornerShape(28.dp))
-                                .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.1f)),
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
                             contentAlignment = Alignment.Center,
                         ) {
                             AsyncImage(
