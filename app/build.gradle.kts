@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.forzaball.app"
+    namespace = "com.forzaball"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.forzaball.app"
+        applicationId = "com.forzaball"
         minSdk = 27
         targetSdk = 36
         versionCode = 2

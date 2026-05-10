@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ForzaBall</string>
+    <string name="app_name">ForzaBall App</string>
     <string name="feed_notification_channel_name">Feed &amp; social</string>
     <string name="feed_notification_channel_description">New posts, comments, and reactions</string>
 </resources>
