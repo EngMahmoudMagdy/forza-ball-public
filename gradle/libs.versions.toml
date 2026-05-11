@@ -108,6 +108,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-functions = { group = "com.google.firebase", name = "firebase-functions" }
 google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 
 # Accompanist
