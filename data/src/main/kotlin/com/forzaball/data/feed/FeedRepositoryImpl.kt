@@ -5,6 +5,8 @@ import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.model.favoriteTeamIdsList
 import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.FeedComment
+import com.forzaball.domain.repository.FeedNotification
+import com.forzaball.domain.repository.FeedNotificationTypes
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.PreferencesRepository
@@ -94,6 +96,73 @@ class FeedRepositoryImpl(
             detachPostsListener()
             attachedUid = null
         }
+    }
+
+    override fun observeUserNotifications(): Flow<List<FeedNotification>> = callbackFlow {
+        var notifReg: ListenerRegistration? = null
+        var attachedUid: String? = null
+
+        fun detach() {
+            notifReg?.remove()
+            notifReg = null
+        }
+
+        fun attach(uid: String) {
+            if (uid == attachedUid && notifReg != null) return
+            detach()
+            attachedUid = uid
+            notifReg = firestore.collection(COL_USERS).document(uid).collection(SUB_NOTIFICATIONS)
+                .orderBy(FIELD_TIMESTAMP, Query.Direction.DESCENDING)
+                .limit(NOTIFICATIONS_LIMIT)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        Timber.tag(TAG).e(error, "notifications listener")
+                        trySend(emptyList())
+                        return@addSnapshotListener
+                    }
+                    val list = snapshot?.documents.orEmpty().mapNotNull { doc -> doc.toFeedNotification() }
+                    trySend(list)
+                }
+        }
+
+        val authListener = FirebaseAuth.AuthStateListener { fa ->
+            val uid = fa.currentUser?.uid
+            if (uid == null) {
+                detach()
+                attachedUid = null
+                trySend(emptyList())
+            } else {
+                attach(uid)
+            }
+        }
+        auth.addAuthStateListener(authListener)
+
+        awaitClose {
+            auth.removeAuthStateListener(authListener)
+            detach()
+            attachedUid = null
+        }
+    }
+
+    override suspend fun markNotificationRead(notificationId: String) {
+        val uid = auth.currentUser?.uid ?: return
+        firestore.collection(COL_USERS).document(uid).collection(SUB_NOTIFICATIONS).document(notificationId)
+            .update(NF_READ, true)
+            .await()
+    }
+
+    private fun com.google.firebase.firestore.DocumentSnapshot.toFeedNotification(): FeedNotification? {
+        val postId = getString(NF_POST_ID) ?: return null
+        return FeedNotification(
+            id = id,
+            type = getString(NF_TYPE).orEmpty(),
+            postId = postId,
+            commentId = getString(NF_COMMENT_ID)?.takeIf { it.isNotBlank() },
+            actorUserId = getString(NF_ACTOR_USER_ID).orEmpty(),
+            actorName = getString(NF_ACTOR_NAME).orEmpty(),
+            read = getBoolean(NF_READ) ?: false,
+            createdAtMillis = getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
+        )
     }
 
     private suspend fun buildFeedPostsFromDocuments(
@@ -482,7 +551,45 @@ class FeedRepositoryImpl(
             )
             tx.update(postRef, FIELD_COMMENT_COUNT, count + 1)
         }.await()
+        notifyPostAuthorOfComment(postRef, postId, newId, uid)
         newId
+    }
+
+    private suspend fun notifyPostAuthorOfComment(
+        postRef: com.google.firebase.firestore.DocumentReference,
+        postId: String,
+        commentId: String,
+        commenterUid: String,
+    ) {
+        try {
+            val postSnap = postRef.get(Source.DEFAULT).await()
+            val authorId = postSnap.getString(FIELD_USER_ID)?.takeIf { it.isNotBlank() } ?: return
+            if (authorId == commenterUid) return
+            val actorName = loadActorNameForNotification(commenterUid)
+            firestore.collection(COL_USERS).document(authorId).collection(SUB_NOTIFICATIONS).add(
+                mapOf(
+                    NF_TYPE to FeedNotificationTypes.COMMENT,
+                    NF_POST_ID to postId,
+                    NF_COMMENT_ID to commentId,
+                    NF_ACTOR_USER_ID to commenterUid,
+                    NF_ACTOR_NAME to actorName,
+                    NF_READ to false,
+                    FIELD_TIMESTAMP to FieldValue.serverTimestamp(),
+                ),
+            ).await()
+        } catch (e: Exception) {
+            Timber.tag(TAG).w(e, "notifyPostAuthorOfComment failed")
+        }
+    }
+
+    private suspend fun loadActorNameForNotification(uid: String): String {
+        val doc = runCatching {
+            firestore.collection(COL_USERS).document(uid).get(Source.DEFAULT).await()
+        }.getOrNull() ?: return "Someone"
+        return doc.getString(FIELD_DISPLAY_NAME)?.takeIf { it.isNotBlank() }
+            ?: doc.getString(FIELD_USERNAME)?.takeIf { it.isNotBlank() }
+            ?: doc.getString(FIELD_EMAIL)?.substringBefore("@")?.takeIf { it.isNotBlank() }
+            ?: "Someone"
     }
 
     override suspend fun likeComment(postId: String, commentId: String) {
@@ -719,6 +826,8 @@ class FeedRepositoryImpl(
         private const val TEAM_SEARCH_HISTORY_MAX = 30
         private const val COL_USERS = "users"
         private const val COL_POSTS = "posts"
+        private const val SUB_NOTIFICATIONS = "notifications"
+        private const val NOTIFICATIONS_LIMIT = 80L
         private const val SUB_LIKES = "likes"
         private const val SUB_DISLIKES = "dislikes"
         private const val SUB_COMMENTS = "comments"
@@ -751,5 +860,12 @@ class FeedRepositoryImpl(
         private const val FIELD_FAVORITE_TEAM_LEAGUE_SLUG = "favoriteTeamLeagueSlug"
         private const val FIELD_FAVORITE_TEAM_NAME = "favoriteTeamName"
         private const val FIELD_TEAM_SEARCH_HISTORY = "teamSearchHistory"
+
+        private const val NF_TYPE = "type"
+        private const val NF_POST_ID = "postId"
+        private const val NF_COMMENT_ID = "commentId"
+        private const val NF_ACTOR_USER_ID = "actorUserId"
+        private const val NF_ACTOR_NAME = "actorName"
+        private const val NF_READ = "read"
     }
 }

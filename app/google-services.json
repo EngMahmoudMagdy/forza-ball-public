@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:438978112225:android:2632067f93443655d965a0",
+        "mobilesdk_app_id": "1:438978112225:android:22c3f96bb0c2cbe7d965a0",
         "android_client_info": {
-          "package_name": "com.forzaball.app"
+          "package_name": "com.forzaball"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "438978112225-r40etrts75q3srk8bkcsa9qaj57pbc29.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAqT2xpitcSQY2qHkzVPua15j29xfR_UEA"
@@ -20,7 +25,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438978112225-r40etrts75q3srk8bkcsa9qaj57pbc29.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438978112225:android:ad31a7e466c7275ad965a0",
+        "android_client_info": {
+          "package_name": "com.forzaball.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438978112225-r40etrts75q3srk8bkcsa9qaj57pbc29.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqT2xpitcSQY2qHkzVPua15j29xfR_UEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438978112225-r40etrts75q3srk8bkcsa9qaj57pbc29.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

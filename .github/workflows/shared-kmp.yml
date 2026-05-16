@@ -1,0 +1,46 @@
+name: Shared KMP Checks
+
+on:
+  pull_request:
+    paths:
+      - "shared/**"
+      - "app/**"
+      - "data/**"
+      - "domain/**"
+      - "gradle/**"
+      - "*.kts"
+  push:
+    branches: [ main ]
+    paths:
+      - "shared/**"
+      - "app/**"
+      - "data/**"
+      - "domain/**"
+      - "gradle/**"
+      - "*.kts"
+
+jobs:
+  shared-kmp:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Validate Shared KMP modules
+        run: |
+          ./gradlew :shared:core-domain:compileKotlinJvm \
+            :shared:core-auth:compileKotlinJvm \
+            :shared:core-data:compileKotlinJvm \
+            :shared:shared-ui-compose:compileKotlinJvm
+
+      - name: Validate iOS framework tasks
+        run: |
+          ./gradlew :shared:shared-ui-compose:linkDebugFrameworkIosSimulatorArm64 \
+            :shared:core-data:linkDebugFrameworkIosSimulatorArm64 \
+            :shared:core-auth:linkDebugFrameworkIosSimulatorArm64

@@ -315,6 +315,39 @@ exports.onCommentLikeCreated = functions.firestore
     return null;
   });
 
+/**
+ * Deletes the caller’s Firestore profile (`users/{uid}`), drains `users/{uid}/notifications`,
+ * then deletes the Firebase Auth user. Uses Admin SDK so it is not blocked by client rules.
+ * Call from the account-delete web page or the app after the user is signed in.
+ */
+exports.deleteOwnAccount = functions.https.onCall(async (data, context) => {
+  if (!context.auth || !context.auth.uid) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign in is required.");
+  }
+  const uid = context.auth.uid;
+
+  try {
+    const notifRef = db.collection("users").doc(uid).collection("notifications");
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const snap = await notifRef.limit(500).get();
+      if (snap.empty) break;
+      const batch = db.batch();
+      snap.docs.forEach((d) => batch.delete(d.ref));
+      await batch.commit();
+    }
+
+    await db.collection("users").doc(uid).delete().catch(() => {});
+
+    await admin.auth().deleteUser(uid);
+    return { ok: true };
+  } catch (e) {
+    console.error("deleteOwnAccount failed", uid, e);
+    const msg = e && e.message ? String(e.message) : "Deletion failed";
+    throw new functions.https.HttpsError("internal", msg);
+  }
+});
+
 exports.onDislikeCreated = functions.firestore
   .document("posts/{postId}/dislikes/{dislikeUserId}")
   .onCreate(async (snap, context) => {

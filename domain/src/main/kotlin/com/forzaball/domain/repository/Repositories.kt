@@ -128,6 +128,23 @@ data class FeedComment(
     val createdAtMillis: Long,
 )
 
+/** In-app notification stored under `users/{uid}/notifications/{id}` in Firestore. */
+data class FeedNotification(
+    val id: String,
+    /** e.g. [FeedNotificationTypes.COMMENT]. */
+    val type: String,
+    val postId: String,
+    val commentId: String?,
+    val actorUserId: String,
+    val actorName: String,
+    val read: Boolean,
+    val createdAtMillis: Long,
+)
+
+object FeedNotificationTypes {
+    const val COMMENT = "comment"
+}
+
 interface FeedRepository {
     fun observeFeedPosts(): Flow<List<FeedPost>>
 
@@ -176,5 +193,10 @@ interface FeedRepository {
      * (signed-in users). Call after sign-in and when opening search.
      */
     suspend fun mergeTeamSearchHistoryFromRemote()
+
+    /** Live list of notifications for the signed-in user (newest first). Empty when signed out. */
+    fun observeUserNotifications(): Flow<List<FeedNotification>>
+
+    suspend fun markNotificationRead(notificationId: String)
 }
 
