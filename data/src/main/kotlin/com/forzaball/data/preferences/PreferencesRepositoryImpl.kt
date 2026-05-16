@@ -32,6 +32,7 @@ private object Keys {
     val NICKNAME = stringPreferencesKey("nickname")
     val PROFILE_PHOTO_URL = stringPreferencesKey("profile_photo_url")
     val PROFILE_PHOTO_THUMB_URL = stringPreferencesKey("profile_photo_thumb_url")
+    val PROFILE_PHOTO_CACHE_VERSION = stringPreferencesKey("profile_photo_cache_version")
     val TEAM_SEARCH_HISTORY_JSON = stringPreferencesKey("team_search_history_json")
 }
 
@@ -64,6 +65,7 @@ class PreferencesRepositoryImpl(
             prefs[Keys.NICKNAME] = preferences.nickname.orEmpty()
             prefs[Keys.PROFILE_PHOTO_URL] = preferences.profilePhotoUrl.orEmpty()
             prefs[Keys.PROFILE_PHOTO_THUMB_URL] = preferences.profilePhotoThumbUrl.orEmpty()
+            prefs[Keys.PROFILE_PHOTO_CACHE_VERSION] = preferences.profilePhotoCacheVersion.toString()
             prefs[Keys.TEAM_SEARCH_HISTORY_JSON] = teamSearchHistoryToJson(json, preferences.teamSearchHistory)
         }
     }
@@ -73,6 +75,7 @@ class PreferencesRepositoryImpl(
         val nickname = this[Keys.NICKNAME]
         val profilePhotoUrl = this[Keys.PROFILE_PHOTO_URL]
         val profilePhotoThumbUrl = this[Keys.PROFILE_PHOTO_THUMB_URL]
+        val profilePhotoCacheVersion = this[Keys.PROFILE_PHOTO_CACHE_VERSION]?.toLongOrNull() ?: 0L
         val newTeamId = this[Keys.FAVORITE_TEAM_ID]?.takeIf { it.isNotBlank() }
         val newLeague = this[Keys.FAVORITE_TEAM_LEAGUE]?.takeIf { it.isNotBlank() }
         val newName = this[Keys.FAVORITE_TEAM_NAME]?.takeIf { it.isNotBlank() }
@@ -87,6 +90,7 @@ class PreferencesRepositoryImpl(
                 nickname = nickname?.takeIf { it.isNotBlank() },
                 profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
                 profilePhotoThumbUrl = profilePhotoThumbUrl?.takeIf { it.isNotBlank() },
+                profilePhotoCacheVersion = profilePhotoCacheVersion,
                 teamSearchHistory = history,
             )
         }
@@ -100,6 +104,7 @@ class PreferencesRepositoryImpl(
             nickname = nickname?.takeIf { it.isNotBlank() },
             profilePhotoUrl = profilePhotoUrl?.takeIf { it.isNotBlank() },
             profilePhotoThumbUrl = profilePhotoThumbUrl?.takeIf { it.isNotBlank() },
+            profilePhotoCacheVersion = profilePhotoCacheVersion,
             teamSearchHistory = history,
         )
     }

@@ -69,6 +69,6 @@ val appModule = module {
     viewModel { TeamSearchProfileViewModel(get(), get(), get()) }
     viewModel { NotificationsViewModel(get(), get()) }
     viewModel { EditProfileViewModel(get(), get()) }
-    viewModel { UserProfileViewModel(get(), get()) }
+    viewModel { UserProfileViewModel(get(), get(), get()) }
 }
 

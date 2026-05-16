@@ -138,11 +138,93 @@ async function sendTokenDataAndNotification(token, data) {
   });
 }
 
+/** Permanently removes posts soft-deleted at least 30 days ago (and subcollections). */
+exports.purgeDeletedPosts = functions.pubsub
+  .schedule("every 24 hours")
+  .onRun(async () => {
+    const cutoffMs = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const cutoff = admin.firestore.Timestamp.fromMillis(cutoffMs);
+    const snap = await db
+      .collection("posts")
+      .where("isDeleted", "==", true)
+      .where("deletedAt", "<=", cutoff)
+      .limit(50)
+      .get();
+
+    for (const postDoc of snap.docs) {
+      try {
+        await deletePostTree(postDoc.ref);
+        console.log("purged post", postDoc.id);
+      } catch (err) {
+        console.error("purgeDeletedPosts failed", postDoc.id, err);
+      }
+    }
+    return null;
+  });
+
+/**
+ * Deletes a post document and all likes, dislikes, comments, and comment reactions.
+ * @param {FirebaseFirestore.DocumentReference} postRef
+ */
+async function deletePostTree(postRef) {
+  const batchSize = 400;
+  let batch = db.batch();
+  let opCount = 0;
+
+  async function commitIfNeeded(force = false) {
+    if (force && opCount === 0) return;
+    if (opCount >= batchSize || (force && opCount > 0)) {
+      await batch.commit();
+      batch = db.batch();
+      opCount = 0;
+    }
+  }
+
+  const likes = await postRef.collection("likes").listDocuments();
+  for (const ref of likes) {
+    batch.delete(ref);
+    opCount += 1;
+    await commitIfNeeded();
+  }
+
+  const dislikes = await postRef.collection("dislikes").listDocuments();
+  for (const ref of dislikes) {
+    batch.delete(ref);
+    opCount += 1;
+    await commitIfNeeded();
+  }
+
+  const commentsSnap = await postRef.collection("comments").get();
+  for (const commentDoc of commentsSnap.docs) {
+    const commentRef = commentDoc.ref;
+    const commentLikes = await commentRef.collection("commentLikes").listDocuments();
+    for (const ref of commentLikes) {
+      batch.delete(ref);
+      opCount += 1;
+      await commitIfNeeded();
+    }
+    const commentDislikes = await commentRef.collection("commentDislikes").listDocuments();
+    for (const ref of commentDislikes) {
+      batch.delete(ref);
+      opCount += 1;
+      await commitIfNeeded();
+    }
+    batch.delete(commentRef);
+    opCount += 1;
+    await commitIfNeeded();
+  }
+
+  batch.delete(postRef);
+  opCount += 1;
+  await commitIfNeeded(true);
+}
+
 exports.onPostCreated = functions.firestore
   .document("posts/{postId}")
   .onCreate(async (snap, context) => {
     const postId = context.params.postId;
     const post = snap.data() || {};
+    if (post.isDeleted === true) return null;
     const actorId = post.userId;
     const preview = twoLinePreview(post.text);
 
@@ -600,6 +682,10 @@ exports.postPage = functions.https.onRequest(async (req, res) => {
       return;
     }
     const post = postSnap.data() || {};
+    if (post.isDeleted === true) {
+      res.status(404).send(notFoundPageHtml());
+      return;
+    }
     const userId = String(post.userId || "");
     let author = {};
     if (userId) {

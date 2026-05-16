@@ -18,6 +18,8 @@
     <string name="section_language">Language</string>
     <string name="section_account">Account</string>
     <string name="edit_profile">Edit profile</string>
+    <string name="tap_edit_profile_photo">Change photo in Edit profile</string>
+    <string name="crop_photo">Crop photo</string>
     <string name="view_my_profile">View my profile</string>
     <string name="change_favorite_team">Change favorite team</string>
     <string name="favorite_league">Favorite league</string>
@@ -52,6 +54,7 @@
 
     <!-- Feed -->
     <string name="new_post">New post</string>
+    <string name="write_something">Write something…</string>
     <string name="sign_in_to_feed">Sign in to view and post on the feed.</string>
     <string name="post_options">Post options</string>
     <string name="save_post">Save post</string>
@@ -84,4 +87,10 @@
     <string name="close">Close</string>
     <string name="ok">OK</string>
     <string name="error_generic">Something went wrong</string>
+    <string name="character_count">%1$d / %2$d</string>
+    <string name="post_empty_error">Post cannot be empty</string>
+    <string name="post_too_long_error">Post must be 1000 characters or fewer</string>
+    <string name="comment_empty_error">Comment cannot be empty</string>
+    <string name="comment_too_long_error">Comment must be 1000 characters or fewer</string>
+    <string name="add_comment_placeholder">Add a comment…</string>
 </resources>

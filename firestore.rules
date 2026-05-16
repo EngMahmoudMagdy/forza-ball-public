@@ -38,17 +38,27 @@ service cloud.firestore {
       allow read: if true;
       // Must match client: userId must be the signed-in user (see FeedRepositoryImpl.createPost).
       allow create: if request.auth != null
-        && request.resource.data.userId == request.auth.uid;
-      // Author can edit; others may only change counters (likes/comments) on the same content.
-      allow update: if request.auth != null && (
-        request.auth.uid == resource.data.userId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.isDeleted == false;
+      // Author soft-delete; others may only change counters on active (non-deleted) posts.
+      allow update: if request.auth != null && resource.data.isDeleted != true && (
+        (
+          request.auth.uid == resource.data.userId
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.text == resource.data.text
+          && request.resource.data.timestamp == resource.data.timestamp
+          && request.resource.data.isDeleted == true
+          && request.resource.data.deletedAt is timestamp
+        )
         || (
           request.resource.data.userId == resource.data.userId
           && request.resource.data.text == resource.data.text
           && request.resource.data.timestamp == resource.data.timestamp
+          && request.resource.data.isDeleted == resource.data.isDeleted
         )
       );
-      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Hard delete is performed by Cloud Functions after retention period.
+      allow delete: if false;
 
       match /likes/{likeUserId} {
         allow read: if true;

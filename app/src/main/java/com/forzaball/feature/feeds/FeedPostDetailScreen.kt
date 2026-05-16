@@ -70,6 +70,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.forzaball.domain.model.FeedContentLimits
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.ui.theme.ForzaBallPrimary
@@ -368,26 +369,25 @@ private fun FeedPostDetailContent(
                     )
                 }
             }
+            val commentValidationError = FeedContentLimits.validateComment(draft)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
             ) {
-                OutlinedTextField(
+                FeedCommentTextField(
                     value = draft,
-                    onValueChange = { if (it.length <= 200) draft = it },
+                    onValueChange = { draft = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Add a comment…") },
+                    placeholder = stringResource(R.string.add_comment_placeholder),
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommentSendIconButton(
-                    enabled = draft.isNotBlank(),
+                    enabled = commentValidationError == null,
                     onClick = {
-                        val t = draft.trim()
-                        if (t.isEmpty()) return@CommentSendIconButton
-                        viewModel.addComment(post.id, t) { r ->
+                        viewModel.addComment(post.id, draft) { r ->
                             r.onSuccess { newId ->
                                 draft = ""
                                 pendingLocalFlashId = newId

@@ -1,5 +1,6 @@
 package com.forzaball.feature.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,7 +38,9 @@ import com.forzaball.R
 import com.forzaball.data.preferences.LocalePreferencesRepository
 import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.domain.model.UserPreferences
+import com.forzaball.domain.model.profileAvatarDisplayUrl
 import com.forzaball.domain.repository.AuthState
+import com.forzaball.ui.components.ProfileAvatarImage
 import com.forzaball.feature.personalization.catalogLeagues
 import com.forzaball.ui.locale.AppLocale
 import com.forzaball.ui.theme.ForzaBallPrimary
@@ -71,6 +76,40 @@ fun MoreSettingsScreen(
         when (authState) {
             is AuthState.SignedIn -> {
                 SettingsSection(title = stringResource(R.string.section_profile)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = onEditProfile)
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        ProfileAvatarImage(
+                            photoUrl = userPreferences.profilePhotoUrl,
+                            thumbUrl = userPreferences.profilePhotoThumbUrl,
+                            cacheVersion = userPreferences.profilePhotoCacheVersion,
+                            fallbackUserId = authState.uid,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape),
+                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = userPreferences.nickname?.takeIf { it.isNotBlank() }
+                                    ?: authState.email.orEmpty(),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            )
+                            if (userPreferences.profileAvatarDisplayUrl() != null) {
+                                Text(
+                                    text = stringResource(R.string.tap_edit_profile_photo),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
                     authState.email?.takeIf { it.isNotBlank() }?.let { email ->
                         Text(
                             text = stringResource(R.string.signed_in_as, email),

@@ -49,6 +49,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.forzaball.ui.components.ProfileAvatarImage
 import com.forzaball.ui.theme.ForzaBallPrimary
 
 /** Full-screen gradient used on league, team, and profile onboarding steps. */
@@ -222,6 +223,9 @@ fun PersonalizationStep3Screen(
     nickname: String,
     onNicknameChange: (String) -> Unit,
     profileImageUrl: String?,
+    profileImageThumbUrl: String? = null,
+    profilePhotoCacheVersion: Long = 0L,
+    profileUserId: String = "me",
     isUploadingPhoto: Boolean = false,
     onPickPhoto: () -> Unit,
     onBack: () -> Unit,
@@ -262,10 +266,12 @@ fun PersonalizationStep3Screen(
                     .clickable(onClick = onPickPhoto),
                 contentAlignment = Alignment.Center,
             ) {
-                if (profileImageUrl != null) {
-                    AsyncImage(
-                        model = profileImageUrl,
-                        contentDescription = "Profile photo",
+                if (profileImageUrl != null || profileImageThumbUrl != null) {
+                    ProfileAvatarImage(
+                        photoUrl = profileImageUrl,
+                        thumbUrl = profileImageThumbUrl,
+                        cacheVersion = profilePhotoCacheVersion,
+                        fallbackUserId = profileUserId,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
                     )

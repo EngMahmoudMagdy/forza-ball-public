@@ -24,6 +24,7 @@ data class PersonalizationState(
     val nickname: String = "",
     val profilePhotoUrl: String? = null,
     val profilePhotoThumbUrl: String? = null,
+    val profilePhotoCacheVersion: Long = 0L,
     val isUploadingPhoto: Boolean = false,
     val navigateToHome: Boolean = false,
 )
@@ -70,6 +71,7 @@ class PersonalizationViewModel(
                         isUploadingPhoto = false,
                         profilePhotoUrl = full,
                         profilePhotoThumbUrl = thumb,
+                        profilePhotoCacheVersion = System.currentTimeMillis(),
                     )
                 }
                 .onFailure { e ->
@@ -133,6 +135,7 @@ class PersonalizationViewModel(
                 nickname = s.nickname.takeIf { it.isNotBlank() },
                 profilePhotoUrl = s.profilePhotoUrl,
                 profilePhotoThumbUrl = s.profilePhotoThumbUrl,
+                profilePhotoCacheVersion = s.profilePhotoCacheVersion,
                 teamSearchHistory = existing?.teamSearchHistory.orEmpty(),
             )
             preferencesRepository.updateUserPreferences(prefs)

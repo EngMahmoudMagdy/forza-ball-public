@@ -46,8 +46,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.forzaball.R
+import com.forzaball.ui.components.ProfileAvatarImage
+import com.forzaball.domain.repository.AuthRepository
+import com.forzaball.domain.repository.AuthState
+import org.koin.compose.koinInject
 import com.forzaball.ui.theme.ForzaBallPrimary
 import org.koin.androidx.compose.koinViewModel
 
@@ -59,6 +62,9 @@ fun EditProfileRoute(
 ) {
     val ui by viewModel.ui.collectAsState()
     val snackbar = remember { SnackbarHostState() }
+    val authRepository: AuthRepository = koinInject()
+    val authState by authRepository.authState().collectAsState(initial = AuthState.Loading)
+    val uid = (authState as? AuthState.SignedIn)?.uid.orEmpty()
     val pickPhoto = rememberProfilePhotoPicker(onPhotoSelected = viewModel::uploadPhoto)
 
     LaunchedEffect(ui.errorMessage) {
@@ -105,17 +111,14 @@ fun EditProfileRoute(
                     .clickable(onClick = pickPhoto),
                 contentAlignment = Alignment.Center,
             ) {
-                val photo = ui.photoUrl ?: ui.thumbUrl
-                if (photo != null) {
-                    AsyncImage(
-                        model = photo,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
-                } else {
-                    Icon(Icons.Default.Person, null, tint = ForzaBallPrimary, modifier = Modifier.size(48.dp))
-                }
+                ProfileAvatarImage(
+                    photoUrl = ui.photoUrl,
+                    thumbUrl = ui.thumbUrl,
+                    cacheVersion = ui.photoCacheVersion,
+                    fallbackUserId = uid,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
                 if (ui.isUploadingPhoto) {
                     CircularProgressIndicator(modifier = Modifier.size(40.dp), color = ForzaBallPrimary)
                 } else {

@@ -124,6 +124,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.exifinterface:exifinterface:1.4.1")
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
     implementation(libs.google.play.services.auth)
 
     implementation(libs.accompanist.swiperefresh)

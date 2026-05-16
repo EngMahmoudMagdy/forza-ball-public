@@ -105,7 +105,9 @@ fun UserProfileRoute(
             ) {
                 Box {
                     ClickableProfileAvatar(
-                        imageUrl = profile?.avatarThumbUrl ?: profile?.avatarUrl,
+                        photoUrl = profile?.avatarUrl,
+                        thumbUrl = profile?.avatarThumbUrl,
+                        cacheVersion = if (ui.isOwnProfile) ui.localPhotoCacheVersion else 0L,
                         fallbackUserId = userId,
                         size = 72.dp,
                         onClick = {

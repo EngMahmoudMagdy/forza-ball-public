@@ -80,8 +80,18 @@ data class UserPreferences(
     val profilePhotoUrl: String? = null,
     /** Thumbnail profile photo URL for feed / comments. */
     val profilePhotoThumbUrl: String? = null,
+    /** Bumped on each upload so Coil refreshes cached avatars locally. */
+    val profilePhotoCacheVersion: Long = 0L,
     val teamSearchHistory: List<TeamSearchHistoryEntry> = emptyList(),
 )
+
+/** Best URL for list/avatar chips (thumb preferred). */
+fun UserPreferences.profileAvatarDisplayUrl(): String? =
+    profilePhotoThumbUrl?.takeIf { it.isNotBlank() } ?: profilePhotoUrl?.takeIf { it.isNotBlank() }
+
+/** Full-quality URL for profile header / fullscreen. */
+fun UserPreferences.profileAvatarFullUrl(): String? =
+    profilePhotoUrl?.takeIf { it.isNotBlank() } ?: profilePhotoThumbUrl?.takeIf { it.isNotBlank() }
 
 /** Leagues used for scoreboards, news, and merged fixtures: domestic + UCL when domestic is not already UCL. */
 fun UserPreferences.leagueSlugsForEspnContent(): List<String> {

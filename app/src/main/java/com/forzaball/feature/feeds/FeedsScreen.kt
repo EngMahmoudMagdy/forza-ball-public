@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.forzaball.core.shared_ui_components.SwipeRefreshSharedComponent
 import com.forzaball.ui.theme.ForzaBallPrimary
+import com.forzaball.domain.model.FeedContentLimits
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.domain.repository.FeedComment
 import com.forzaball.domain.repository.FeedPost
@@ -620,7 +621,8 @@ internal fun CreatePostOverlay(
     onSubmit: (String) -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
-    val canPost = text.isNotBlank() && text.length <= 500 && !isPosting
+    val validationError = FeedContentLimits.validatePost(text)
+    val canPost = validationError == null && !isPosting
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -668,21 +670,23 @@ internal fun CreatePostOverlay(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
+                FeedPostTextField(
                     value = text,
-                    onValueChange = { if (it.length <= 500) text = it },
+                    onValueChange = { text = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    placeholder = { Text("Write something…") },
+                    placeholder = stringResource(R.string.write_something),
                     minLines = 6,
                 )
-                Text(
-                    text = "${text.length}/500",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.End),
-                )
+                validationError?.let { err ->
+                    Text(
+                        text = err,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
             }
         }
     }
@@ -764,28 +768,28 @@ internal fun FeedCommentsBottomSheet(
                 )
             }
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OutlinedTextField(
-                        value = draft,
-                        onValueChange = { if (it.length <= 200) draft = it },
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("Add a comment…") },
-                        maxLines = 3,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    CommentSendIconButton(
-                        enabled = draft.isNotBlank(),
-                        onClick = {
-                            val t = draft.trim()
-                            if (t.isEmpty()) return@CommentSendIconButton
-                            viewModel.addComment(postId, t) { r ->
-                                r.onSuccess { draft = "" }
-                            }
-                        },
-                    )
+                val commentError = FeedContentLimits.validateComment(draft)
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Bottom,
+                    ) {
+                        FeedCommentTextField(
+                            value = draft,
+                            onValueChange = { draft = it },
+                            modifier = Modifier.weight(1f),
+                            placeholder = stringResource(R.string.add_comment_placeholder),
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        CommentSendIconButton(
+                            enabled = commentError == null,
+                            onClick = {
+                                viewModel.addComment(postId, draft) { r ->
+                                    r.onSuccess { draft = "" }
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }

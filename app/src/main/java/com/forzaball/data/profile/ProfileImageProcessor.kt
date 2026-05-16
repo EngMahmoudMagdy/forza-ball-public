@@ -19,12 +19,13 @@ object ProfileImageProcessor {
     private const val FULL_QUALITY = 85
     private const val THUMB_QUALITY = 75
 
-    fun process(context: Context, uri: Uri): ProcessedProfileImages {
-        val source = decodeSampled(context, uri, maxSide = 2048)
-        val oriented = applyExifOrientation(context, uri, source)
-        val squared = centerCropSquare(oriented)
-        if (squared !== oriented && oriented !== source) oriented.recycle()
-        if (source !== oriented && source !== squared) source.recycle()
+    /** Processes a square image from the crop screen (no auto center-crop). */
+    fun processCroppedImage(context: Context, croppedUri: Uri): ProcessedProfileImages {
+        val source = decodeSampled(context, croppedUri, maxSide = 2048)
+        val oriented = applyExifOrientation(context, croppedUri, source)
+        if (oriented !== source) source.recycle()
+        val squared = ensureSquare(oriented)
+        if (squared !== oriented) oriented.recycle()
         val full = scaleToMax(squared, FULL_MAX_PX)
         val thumb = scaleToMax(squared, THUMB_MAX_PX)
         squared.recycle()
@@ -33,6 +34,14 @@ object ProfileImageProcessor {
         full.recycle()
         thumb.recycle()
         return ProcessedProfileImages(fullBytes, thumbBytes)
+    }
+
+    private fun ensureSquare(source: Bitmap): Bitmap {
+        if (source.width == source.height) return source
+        val side = min(source.width, source.height)
+        val x = (source.width - side) / 2
+        val y = (source.height - side) / 2
+        return Bitmap.createBitmap(source, x, y, side, side)
     }
 
     private fun decodeSampled(context: Context, uri: Uri, maxSide: Int): Bitmap {
@@ -65,13 +74,6 @@ object ProfileImageProcessor {
         if (rotation == 0f) return bitmap
         val matrix = android.graphics.Matrix().apply { postRotate(rotation) }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
-
-    private fun centerCropSquare(source: Bitmap): Bitmap {
-        val side = min(source.width, source.height)
-        val x = (source.width - side) / 2
-        val y = (source.height - side) / 2
-        return Bitmap.createBitmap(source, x, y, side, side)
     }
 
     private fun scaleToMax(source: Bitmap, maxPx: Int): Bitmap {

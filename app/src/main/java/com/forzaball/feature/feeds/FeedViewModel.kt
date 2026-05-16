@@ -3,6 +3,7 @@ package com.forzaball.feature.feeds
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.forzaball.domain.model.FeedContentLimits
 import com.forzaball.domain.repository.AuthRepository
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.domain.repository.FeedPost
@@ -127,6 +128,11 @@ class FeedViewModel(
     }
 
     fun createPost(text: String, onDone: (Result<Unit>) -> Unit) {
+        FeedContentLimits.validatePost(text)?.let { message ->
+            _ui.update { it.copy(errorMessage = message) }
+            onDone(Result.failure(IllegalArgumentException(message)))
+            return
+        }
         viewModelScope.launch {
             _ui.update { it.copy(isPosting = true, errorMessage = null) }
             val result = feedRepository.createPost(text)
@@ -180,6 +186,11 @@ class FeedViewModel(
     fun observePost(postId: String): Flow<FeedPost?> = feedRepository.observePost(postId)
 
     fun addComment(postId: String, text: String, onDone: (Result<String>) -> Unit) {
+        FeedContentLimits.validateComment(text)?.let { message ->
+            _ui.update { it.copy(errorMessage = message) }
+            onDone(Result.failure(IllegalArgumentException(message)))
+            return
+        }
         viewModelScope.launch {
             val result = feedRepository.addComment(postId, text)
             result.onFailure { e ->

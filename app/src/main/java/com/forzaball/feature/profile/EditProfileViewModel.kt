@@ -17,6 +17,7 @@ data class EditProfileUiState(
     val nickname: String = "",
     val photoUrl: String? = null,
     val thumbUrl: String? = null,
+    val photoCacheVersion: Long = 0L,
     val isSaving: Boolean = false,
     val isUploadingPhoto: Boolean = false,
     val errorMessage: String? = null,
@@ -39,6 +40,7 @@ class EditProfileViewModel(
                         nickname = prefs.nickname.orEmpty(),
                         photoUrl = prefs.profilePhotoUrl,
                         thumbUrl = prefs.profilePhotoThumbUrl,
+                        photoCacheVersion = prefs.profilePhotoCacheVersion,
                     )
                 }
             }
@@ -68,7 +70,12 @@ class EditProfileViewModel(
             profileImageRepository.uploadProfilePhoto(uri)
                 .onSuccess { (full, thumb) ->
                     _ui.update {
-                        it.copy(isUploadingPhoto = false, photoUrl = full, thumbUrl = thumb)
+                        it.copy(
+                            isUploadingPhoto = false,
+                            photoUrl = full,
+                            thumbUrl = thumb,
+                            photoCacheVersion = System.currentTimeMillis(),
+                        )
                     }
                 }
                 .onFailure { e ->

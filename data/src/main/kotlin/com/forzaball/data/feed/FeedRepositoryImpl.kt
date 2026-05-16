@@ -1,6 +1,7 @@
 package com.forzaball.data.feed
 
 import com.forzaball.domain.model.TeamSearchHistoryEntry
+import com.forzaball.domain.model.FeedContentLimits
 import com.forzaball.domain.model.UserPreferences
 import com.forzaball.domain.model.UserPublicProfile
 import com.forzaball.domain.model.favoriteTeamIdsList
@@ -67,7 +68,7 @@ class FeedRepositoryImpl(
                         }
                         return@addSnapshotListener
                     }
-                    val docs = snapshot?.documents.orEmpty()
+                    val docs = snapshot?.documents.orEmpty().filterActivePosts()
                     ioScope.launch {
                         try {
                             val posts = buildFeedPostsFromDocuments(uid, docs)
@@ -165,6 +166,12 @@ class FeedRepositoryImpl(
             createdAtMillis = getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
         )
     }
+
+    private fun com.google.firebase.firestore.DocumentSnapshot.isPostDeleted(): Boolean =
+        getBoolean(FIELD_IS_DELETED) == true
+
+    private fun List<com.google.firebase.firestore.DocumentSnapshot>.filterActivePosts() =
+        filter { !it.isPostDeleted() }
 
     private suspend fun buildFeedPostsFromDocuments(
         uid: String,
@@ -301,7 +308,7 @@ class FeedRepositoryImpl(
                     trySend(null)
                     return@addSnapshotListener
                 }
-                if (snapshot == null || !snapshot.exists()) {
+                if (snapshot == null || !snapshot.exists() || snapshot.isPostDeleted()) {
                     trySend(null)
                     return@addSnapshotListener
                 }
@@ -346,8 +353,7 @@ class FeedRepositoryImpl(
         runCatching { ensureUserProfile() }
             .onFailure { Timber.tag(TAG).w(it, "ensureUserProfile before createPost") }
         val trimmed = text.trim()
-        require(trimmed.isNotEmpty()) { "Empty post" }
-        require(trimmed.length <= MAX_POST_CHARS) { "Too long" }
+        FeedContentLimits.validatePost(text)?.let { error(it) }
         val ref = firestore.collection(COL_POSTS).document()
         try {
             ref.set(
@@ -358,6 +364,7 @@ class FeedRepositoryImpl(
                     FIELD_LIKE_COUNT to 0,
                     FIELD_DISLIKE_COUNT to 0,
                     FIELD_COMMENT_COUNT to 0,
+                    FIELD_IS_DELETED to false,
                 ),
             ).await()
         } catch (e: FirebaseFirestoreException) {
@@ -381,7 +388,7 @@ class FeedRepositoryImpl(
         val dislikeRef = postRef.collection(SUB_DISLIKES).document(uid)
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
-            if (!post.exists()) return@runTransaction
+            if (!post.exists() || post.getBoolean(FIELD_IS_DELETED) == true) return@runTransaction
             val like = tx.get(likeRef)
             if (like.exists()) return@runTransaction
             var likeCount = post.getLong(FIELD_LIKE_COUNT) ?: 0L
@@ -409,7 +416,7 @@ class FeedRepositoryImpl(
         val likeRef = postRef.collection(SUB_LIKES).document(uid)
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
-            if (!post.exists()) return@runTransaction
+            if (!post.exists() || post.getBoolean(FIELD_IS_DELETED) == true) return@runTransaction
             val like = tx.get(likeRef)
             if (!like.exists()) return@runTransaction
             val current = post.getLong(FIELD_LIKE_COUNT) ?: 0L
@@ -425,7 +432,7 @@ class FeedRepositoryImpl(
         val likeRef = postRef.collection(SUB_LIKES).document(uid)
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
-            if (!post.exists()) return@runTransaction
+            if (!post.exists() || post.getBoolean(FIELD_IS_DELETED) == true) return@runTransaction
             val dislike = tx.get(dislikeRef)
             if (dislike.exists()) return@runTransaction
             var likeCount = post.getLong(FIELD_LIKE_COUNT) ?: 0L
@@ -453,7 +460,7 @@ class FeedRepositoryImpl(
         val dislikeRef = postRef.collection(SUB_DISLIKES).document(uid)
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
-            if (!post.exists()) return@runTransaction
+            if (!post.exists() || post.getBoolean(FIELD_IS_DELETED) == true) return@runTransaction
             val dislike = tx.get(dislikeRef)
             if (!dislike.exists()) return@runTransaction
             val current = post.getLong(FIELD_DISLIKE_COUNT) ?: 0L
@@ -590,14 +597,13 @@ class FeedRepositoryImpl(
     override suspend fun addComment(postId: String, text: String): Result<String> = runCatching {
         val uid = auth.currentUser?.uid ?: error("Not signed in")
         val trimmed = text.trim()
-        require(trimmed.isNotEmpty()) { "Empty comment" }
-        require(trimmed.length <= MAX_COMMENT_CHARS) { "Too long" }
+        FeedContentLimits.validateComment(text)?.let { error(it) }
         val postRef = firestore.collection(COL_POSTS).document(postId)
         val commentRef = postRef.collection(SUB_COMMENTS).document()
         val newId = commentRef.id
         firestore.runTransaction { tx ->
             val post = tx.get(postRef)
-            if (!post.exists()) error("Post missing")
+            if (!post.exists() || post.getBoolean(FIELD_IS_DELETED) == true) error("Post missing")
             val count = post.getLong(FIELD_COMMENT_COUNT) ?: 0L
             tx.set(
                 commentRef,
@@ -891,18 +897,13 @@ class FeedRepositoryImpl(
         val post = postRef.get(Source.DEFAULT).await()
         if (!post.exists()) error("Post not found")
         if (post.getString(FIELD_USER_ID) != uid) error("Not allowed")
-        val likes = postRef.collection(SUB_LIKES).get(Source.DEFAULT).await()
-        val dislikes = postRef.collection(SUB_DISLIKES).get(Source.DEFAULT).await()
-        val comments = postRef.collection(SUB_COMMENTS).get(Source.DEFAULT).await()
-        firestore.runBatch { batch ->
-            likes.documents.forEach { batch.delete(it.reference) }
-            dislikes.documents.forEach { batch.delete(it.reference) }
-            comments.documents.forEach { commentDoc ->
-                val commentRef = commentDoc.reference
-                batch.delete(commentRef)
-            }
-            batch.delete(postRef)
-        }.await()
+        if (post.isPostDeleted()) return@runCatching
+        postRef.update(
+            mapOf(
+                FIELD_IS_DELETED to true,
+                FIELD_DELETED_AT to FieldValue.serverTimestamp(),
+            ),
+        ).await()
     }
 
     override suspend fun savePost(postId: String): Result<Unit> = runCatching {
@@ -931,7 +932,7 @@ class FeedRepositoryImpl(
     ): Result<Unit> = runCatching {
         val uid = auth.currentUser?.uid ?: error("Not signed in")
         val postSnap = firestore.collection(COL_POSTS).document(postId).get(Source.DEFAULT).await()
-        if (!postSnap.exists()) error("Post not found")
+        if (!postSnap.exists() || postSnap.isPostDeleted()) error("Post not found")
         val postAuthorId = postSnap.getString(FIELD_USER_ID).orEmpty()
         val data = mutableMapOf<String, Any>(
             FIELD_POST_ID to postId,
@@ -962,7 +963,7 @@ class FeedRepositoryImpl(
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                val docs = snapshot?.documents.orEmpty()
+                val docs = snapshot?.documents.orEmpty().filterActivePosts()
                 ioScope.launch {
                     try {
                         trySend(buildFeedPostsFromDocuments(currentUid, docs))
@@ -1009,7 +1010,7 @@ class FeedRepositoryImpl(
                                     async {
                                         firestore.collection(COL_POSTS).document(id).get(Source.DEFAULT).await()
                                     }
-                                }.map { it.await() }.filter { it.exists() }
+                                }.map { it.await() }.filter { it.exists() && !it.isPostDeleted() }
                             }
                             trySend(buildFeedPostsFromDocuments(uid, docs))
                         } catch (e: Exception) {
@@ -1068,10 +1069,9 @@ class FeedRepositoryImpl(
         private const val SUB_COMMENT_DISLIKES = "commentDislikes"
         /** Global feed: recent posts visible to all signed-in users (`posts` read is public). */
         private const val GLOBAL_FEED_LIMIT = 80L
-        private const val MAX_POST_CHARS = 500
-        private const val MAX_COMMENT_CHARS = 200
-
         private const val FIELD_USER_ID = "userId"
+        private const val FIELD_IS_DELETED = "isDeleted"
+        private const val FIELD_DELETED_AT = "deletedAt"
         private const val FIELD_TEXT = "text"
         private const val FIELD_TIMESTAMP = "timestamp"
         private const val FIELD_LIKE_COUNT = "likeCount"

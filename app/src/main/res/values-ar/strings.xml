@@ -16,6 +16,8 @@
     <string name="section_language">اللغة</string>
     <string name="section_account">الحساب</string>
     <string name="edit_profile">تعديل الملف</string>
+    <string name="tap_edit_profile_photo">غيّر الصورة من تعديل الملف</string>
+    <string name="crop_photo">قص الصورة</string>
     <string name="view_my_profile">عرض ملفي</string>
     <string name="change_favorite_team">تغيير النادي المفضل</string>
     <string name="favorite_league">الدوري المفضل</string>
@@ -48,6 +50,7 @@
     <string name="no_saved_posts">لا توجد منشورات محفوظة</string>
 
     <string name="new_post">منشور جديد</string>
+    <string name="write_something">اكتب شيئاً…</string>
     <string name="sign_in_to_feed">سجّل الدخول لعرض الخلاصة والنشر.</string>
     <string name="post_options">خيارات المنشور</string>
     <string name="save_post">حفظ المنشور</string>
@@ -77,4 +80,10 @@
     <string name="close">إغلاق</string>
     <string name="ok">موافق</string>
     <string name="error_generic">حدث خطأ ما</string>
+    <string name="character_count">%1$d / %2$d</string>
+    <string name="post_empty_error">لا يمكن أن يكون المنشور فارغاً</string>
+    <string name="post_too_long_error">يجب ألا يتجاوز المنشور ١٠٠٠ حرف</string>
+    <string name="comment_empty_error">لا يمكن أن يكون التعليق فارغاً</string>
+    <string name="comment_too_long_error">يجب ألا يتجاوز التعليق ١٠٠٠ حرف</string>
+    <string name="add_comment_placeholder">أضف تعليقاً…</string>
 </resources>
