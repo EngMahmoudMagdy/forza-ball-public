@@ -241,6 +241,49 @@ class FeedViewModel(
         }
     }
 
+    fun toggleSavePost(post: FeedPost) {
+        viewModelScope.launch {
+            runCatching {
+                if (post.isSavedByUser) {
+                    feedRepository.unsavePost(post.id)
+                } else {
+                    feedRepository.savePost(post.id)
+                }
+            }.onFailure { e ->
+                Timber.tag(TAG).e(e, "toggleSavePost")
+                _ui.update { it.copy(errorMessage = e.message ?: "Couldn't update save") }
+            }
+        }
+    }
+
+    fun deletePost(postId: String, onDone: () -> Unit = {}) {
+        viewModelScope.launch {
+            feedRepository.deletePost(postId)
+                .onSuccess { onDone() }
+                .onFailure { e ->
+                    Timber.tag(TAG).e(e, "deletePost")
+                    _ui.update { it.copy(errorMessage = e.message ?: "Couldn't delete post") }
+                }
+        }
+    }
+
+    fun reportPost(
+        postId: String,
+        reasonId: String,
+        reasonLabel: String,
+        comment: String?,
+        onDone: () -> Unit = {},
+    ) {
+        viewModelScope.launch {
+            feedRepository.reportPost(postId, reasonId, reasonLabel, comment)
+                .onSuccess { onDone() }
+                .onFailure { e ->
+                    Timber.tag(TAG).e(e, "reportPost")
+                    _ui.update { it.copy(errorMessage = e.message ?: "Couldn't report post") }
+                }
+        }
+    }
+
     companion object {
         private const val TAG = "FeedViewModel"
     }

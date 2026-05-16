@@ -121,6 +121,9 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation("com.google.firebase:firebase-storage")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
     implementation(libs.google.play.services.auth)
 
     implementation(libs.accompanist.swiperefresh)

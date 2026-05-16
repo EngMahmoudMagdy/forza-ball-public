@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">فورزا بال</string>
+    <string name="feed_notification_channel_name">الخلاصة والتفاعل</string>
+    <string name="feed_notification_channel_description">منشورات وتعليقات وتفاعلات جديدة</string>
+
+    <string name="tab_home">الرئيسية</string>
+    <string name="tab_news">الأخبار</string>
+    <string name="tab_feeds">الخلاصة</string>
+    <string name="tab_scores">النتائج</string>
+    <string name="tab_more">المزيد</string>
+
+    <string name="settings_title">المزيد</string>
+    <string name="section_profile">الملف الشخصي</string>
+    <string name="section_club_preferences">تفضيلات النادي</string>
+    <string name="section_appearance">المظهر</string>
+    <string name="section_language">اللغة</string>
+    <string name="section_account">الحساب</string>
+    <string name="edit_profile">تعديل الملف</string>
+    <string name="view_my_profile">عرض ملفي</string>
+    <string name="change_favorite_team">تغيير النادي المفضل</string>
+    <string name="favorite_league">الدوري المفضل</string>
+    <string name="favorite_team">النادي المفضل</string>
+    <string name="none_selected">لم يُحدد</string>
+    <string name="theme">السمة</string>
+    <string name="theme_dark">داكن</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_system">حسب النظام</string>
+    <string name="language">اللغة</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="log_out">تسجيل الخروج</string>
+    <string name="log_in">تسجيل الدخول</string>
+    <string name="sign_up">إنشاء حساب</string>
+    <string name="signed_in_as">مسجّل الدخول: %1$s</string>
+    <string name="sign_in_prompt">سجّل الدخول للنشر في الخلاصة ومزامنة تفضيلاتك.</string>
+
+    <string name="profile_title">الملف الشخصي</string>
+    <string name="my_posts">منشوراتي</string>
+    <string name="saved_posts">المحفوظة</string>
+    <string name="edit">تعديل</string>
+    <string name="nickname">الاسم المستعار</string>
+    <string name="nickname_hint">سيظهر اسمك المستعار في لوحات المتصدرين.</string>
+    <string name="upload_photo">رفع صورة</string>
+    <string name="upload_photo_hint">أضف صورة ليتعرف عليك زملاؤك</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="no_posts_yet">لا توجد منشورات بعد</string>
+    <string name="no_saved_posts">لا توجد منشورات محفوظة</string>
+
+    <string name="new_post">منشور جديد</string>
+    <string name="sign_in_to_feed">سجّل الدخول لعرض الخلاصة والنشر.</string>
+    <string name="post_options">خيارات المنشور</string>
+    <string name="save_post">حفظ المنشور</string>
+    <string name="unsave_post">إلغاء الحفظ</string>
+    <string name="delete_post">حذف المنشور</string>
+    <string name="report_post">الإبلاغ عن المنشور</string>
+    <string name="confirm_delete_post">حذف هذا المنشور؟ لا يمكن التراجع.</string>
+    <string name="confirm_report_post">الإبلاغ عن هذا المنشور لفريقنا؟</string>
+    <string name="delete">حذف</string>
+    <string name="report">إبلاغ</string>
+    <string name="report_optional_comment">تفاصيل إضافية (اختياري)</string>
+    <string name="report_submitted">تم إرسال البلاغ. شكراً لك.</string>
+
+    <string name="report_reason_spam">مزعج أو مضلل</string>
+    <string name="report_reason_harassment">تحرش أو تنمر</string>
+    <string name="report_reason_hate">خطاب كراهية</string>
+    <string name="report_reason_violence">عنف أو محتوى خطير</string>
+    <string name="report_reason_misinformation">معلومات كاذبة</string>
+
+    <string name="personalization">التخصيص</string>
+    <string name="complete_profile">أكمل ملفك</string>
+    <string name="step_3_of_3">الخطوة ٣ من ٣</string>
+    <string name="finish">إنهاء</string>
+    <string name="loading">جاري التحميل…</string>
+    <string name="back">رجوع</string>
+
+    <string name="close">إغلاق</string>
+    <string name="ok">موافق</string>
+    <string name="error_generic">حدث خطأ ما</string>
+</resources>

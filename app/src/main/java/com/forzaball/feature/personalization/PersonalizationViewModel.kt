@@ -3,6 +3,8 @@ package com.forzaball.feature.personalization
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.forzaball.domain.model.UserPreferences
+import android.net.Uri
+import com.forzaball.data.profile.ProfileImageRepository
 import com.forzaball.domain.repository.FeedRepository
 import com.forzaball.domain.repository.PreferencesRepository
 import com.forzaball.domain.repository.SoccerTeamsRepository
@@ -21,6 +23,8 @@ data class PersonalizationState(
     val isLoadingTeams: Boolean = false,
     val nickname: String = "",
     val profilePhotoUrl: String? = null,
+    val profilePhotoThumbUrl: String? = null,
+    val isUploadingPhoto: Boolean = false,
     val navigateToHome: Boolean = false,
 )
 
@@ -28,6 +32,7 @@ class PersonalizationViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val soccerTeamsRepository: SoccerTeamsRepository,
     private val feedRepository: FeedRepository,
+    private val profileImageRepository: ProfileImageRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PersonalizationState())
@@ -54,6 +59,24 @@ class PersonalizationViewModel(
 
     fun setProfilePhotoUrl(url: String?) {
         _state.value = _state.value.copy(profilePhotoUrl = url)
+    }
+
+    fun uploadProfilePhoto(uri: Uri) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isUploadingPhoto = true)
+            profileImageRepository.uploadProfilePhoto(uri)
+                .onSuccess { (full, thumb) ->
+                    _state.value = _state.value.copy(
+                        isUploadingPhoto = false,
+                        profilePhotoUrl = full,
+                        profilePhotoThumbUrl = thumb,
+                    )
+                }
+                .onFailure { e ->
+                    Timber.w(e, "uploadProfilePhoto personalization")
+                    _state.value = _state.value.copy(isUploadingPhoto = false)
+                }
+        }
     }
 
     fun nextStep() {
@@ -109,6 +132,7 @@ class PersonalizationViewModel(
                 favoriteTeamName = club?.name,
                 nickname = s.nickname.takeIf { it.isNotBlank() },
                 profilePhotoUrl = s.profilePhotoUrl,
+                profilePhotoThumbUrl = s.profilePhotoThumbUrl,
                 teamSearchHistory = existing?.teamSearchHistory.orEmpty(),
             )
             preferencesRepository.updateUserPreferences(prefs)

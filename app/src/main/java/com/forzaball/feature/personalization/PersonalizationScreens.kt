@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -221,6 +222,8 @@ fun PersonalizationStep3Screen(
     nickname: String,
     onNicknameChange: (String) -> Unit,
     profileImageUrl: String?,
+    isUploadingPhoto: Boolean = false,
+    onPickPhoto: () -> Unit,
     onBack: () -> Unit,
     onFinish: () -> Unit,
     modifier: Modifier = Modifier,
@@ -251,12 +254,39 @@ fun PersonalizationStep3Screen(
         }
         Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
-                modifier = Modifier.size(128.dp).clip(CircleShape).background(ForzaBallPrimary.copy(alpha = 0.1f)).border(2.dp, ForzaBallPrimary.copy(alpha = 0.4f), CircleShape),
+                modifier = Modifier
+                    .size(128.dp)
+                    .clip(CircleShape)
+                    .background(ForzaBallPrimary.copy(alpha = 0.1f))
+                    .border(2.dp, ForzaBallPrimary.copy(alpha = 0.4f), CircleShape)
+                    .clickable(onClick = onPickPhoto),
                 contentAlignment = Alignment.Center,
             ) {
-                if (profileImageUrl != null) AsyncImage(model = profileImageUrl, contentDescription = "Profile photo", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                else Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(48.dp), tint = ForzaBallPrimary)
-                Icon(Icons.Default.Edit, contentDescription = "Edit photo", modifier = Modifier.align(Alignment.BottomEnd).size(32.dp).padding(4.dp).background(ForzaBallPrimary, CircleShape).padding(6.dp), tint = androidx.compose.ui.graphics.Color.White)
+                if (profileImageUrl != null) {
+                    AsyncImage(
+                        model = profileImageUrl,
+                        contentDescription = "Profile photo",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                } else {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(48.dp), tint = ForzaBallPrimary)
+                }
+                if (isUploadingPhoto) {
+                    CircularProgressIndicator(color = ForzaBallPrimary)
+                } else {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Edit photo",
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(32.dp)
+                            .padding(4.dp)
+                            .background(ForzaBallPrimary, CircleShape)
+                            .padding(6.dp),
+                        tint = androidx.compose.ui.graphics.Color.White,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text("Upload Photo", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))

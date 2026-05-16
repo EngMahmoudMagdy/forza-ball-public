@@ -1,5 +1,87 @@
 <resources>
-    <string name="app_name">ForzaBall App</string>
+    <string name="app_name">ForzaBall</string>
     <string name="feed_notification_channel_name">Feed &amp; social</string>
     <string name="feed_notification_channel_description">New posts, comments, and reactions</string>
+
+    <!-- Navigation -->
+    <string name="tab_home">Home</string>
+    <string name="tab_news">News</string>
+    <string name="tab_feeds">Feeds</string>
+    <string name="tab_scores">Scores</string>
+    <string name="tab_more">More</string>
+
+    <!-- More / Settings sections -->
+    <string name="settings_title">More</string>
+    <string name="section_profile">Profile</string>
+    <string name="section_club_preferences">Club preferences</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="section_language">Language</string>
+    <string name="section_account">Account</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="view_my_profile">View my profile</string>
+    <string name="change_favorite_team">Change favorite team</string>
+    <string name="favorite_league">Favorite league</string>
+    <string name="favorite_team">Favorite team</string>
+    <string name="none_selected">None selected</string>
+    <string name="theme">Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">Match system</string>
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="log_out">Log out</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="signed_in_as">Signed in as %1$s</string>
+    <string name="sign_in_prompt">Sign in to post on the feed and sync your preferences.</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="my_posts">My posts</string>
+    <string name="saved_posts">Saved posts</string>
+    <string name="edit">Edit</string>
+    <string name="nickname">Nickname</string>
+    <string name="nickname_hint">Your nickname will be visible on leaderboards.</string>
+    <string name="upload_photo">Upload photo</string>
+    <string name="upload_photo_hint">Add a photo so teammates can find you</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_posts_yet">No posts yet</string>
+    <string name="no_saved_posts">No saved posts</string>
+
+    <!-- Feed -->
+    <string name="new_post">New post</string>
+    <string name="sign_in_to_feed">Sign in to view and post on the feed.</string>
+    <string name="post_options">Post options</string>
+    <string name="save_post">Save post</string>
+    <string name="unsave_post">Unsave post</string>
+    <string name="delete_post">Delete post</string>
+    <string name="report_post">Report post</string>
+    <string name="confirm_delete_post">Delete this post? This cannot be undone.</string>
+    <string name="confirm_report_post">Report this post to our team?</string>
+    <string name="delete">Delete</string>
+    <string name="report">Report</string>
+    <string name="report_optional_comment">Add details (optional)</string>
+    <string name="report_submitted">Report submitted. Thank you.</string>
+
+    <!-- Report reasons -->
+    <string name="report_reason_spam">Spam or misleading</string>
+    <string name="report_reason_harassment">Harassment or bullying</string>
+    <string name="report_reason_hate">Hate speech</string>
+    <string name="report_reason_violence">Violence or dangerous content</string>
+    <string name="report_reason_misinformation">False information</string>
+
+    <!-- Personalization -->
+    <string name="personalization">Personalization</string>
+    <string name="complete_profile">Complete your profile</string>
+    <string name="step_3_of_3">Step 3 of 3</string>
+    <string name="finish">Finish</string>
+    <string name="loading">Loading…</string>
+    <string name="back">Back</string>
+
+    <!-- Common -->
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="error_generic">Something went wrong</string>
 </resources>

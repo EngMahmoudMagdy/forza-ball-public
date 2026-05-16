@@ -27,7 +27,12 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.forzaball.R
+import com.forzaball.feature.profile.ReportReasonCatalog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -85,6 +90,8 @@ fun FeedPostDetailRoute(
     onBack: () -> Unit,
     highlightCommentId: String? = null,
     currentUserId: String? = null,
+    onOpenUserProfile: (String) -> Unit = {},
+    onPostDeleted: () -> Unit = {},
 ) {
     var post by remember { mutableStateOf<FeedPost?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -134,6 +141,8 @@ fun FeedPostDetailRoute(
                     onBack = onBack,
                     highlightCommentId = highlightCommentId,
                     currentUserId = currentUserId,
+                    onOpenUserProfile = onOpenUserProfile,
+                    onPostDeleted = onPostDeleted,
                 )
             }
         }
@@ -148,8 +157,13 @@ private fun FeedPostDetailContent(
     onBack: () -> Unit,
     highlightCommentId: String?,
     currentUserId: String?,
+    onOpenUserProfile: (String) -> Unit,
+    onPostDeleted: () -> Unit,
 ) {
     val context = LocalContext.current
+    var showOptions by remember(post.id) { mutableStateOf(false) }
+    var showDeleteConfirm by remember(post.id) { mutableStateOf(false) }
+    var showReport by remember(post.id) { mutableStateOf(false) }
     var draft by rememberSaveable(post.id) { mutableStateOf("") }
     var comments by remember { mutableStateOf<List<FeedComment>>(emptyList()) }
     val listState = rememberLazyListState()
@@ -208,7 +222,7 @@ private fun FeedPostDetailContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { showOptions = true }) {
                         Icon(Icons.Default.MoreVert, contentDescription = null)
                     }
                 },
@@ -229,7 +243,10 @@ private fun FeedPostDetailContent(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
             ) {
                 item {
-                    PostDetailHeader(post = post)
+                    PostDetailHeader(
+                        post = post,
+                        onAuthorClick = { onOpenUserProfile(post.userId) },
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = post.text,
@@ -346,6 +363,7 @@ private fun FeedPostDetailContent(
                         },
                         canDelete = canDelete,
                         onDelete = { viewModel.deleteComment(post.id, c.id) },
+                        onAuthorClick = { onOpenUserProfile(c.userId) },
                         highlightOverlayAlpha = overlayAlpha,
                     )
                 }
@@ -380,10 +398,66 @@ private fun FeedPostDetailContent(
             }
         }
     }
+
+    if (showOptions) {
+        PostOptionsBottomSheet(
+            post = post,
+            isOwnPost = post.userId == currentUserId,
+            onDismiss = { showOptions = false },
+            onSaveToggle = { viewModel.toggleSavePost(post) },
+            onDelete = {
+                showOptions = false
+                showDeleteConfirm = true
+            },
+            onReport = {
+                showOptions = false
+                showReport = true
+            },
+        )
+    }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.delete_post)) },
+            text = { Text(stringResource(R.string.confirm_delete_post)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deletePost(post.id, onPostDeleted)
+                        showDeleteConfirm = false
+                    },
+                ) {
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (showReport) {
+        ReportPostDialog(
+            onDismiss = { showReport = false },
+            onConfirm = { reasonId, _, comment ->
+                val reason = ReportReasonCatalog.findById(reasonId) ?: return@ReportPostDialog
+                val label = context.getString(reason.labelRes)
+                viewModel.reportPost(post.id, reasonId, label, comment) {
+                    showReport = false
+                }
+            },
+        )
+    }
 }
 
 @Composable
-private fun PostDetailHeader(post: FeedPost) {
+private fun PostDetailHeader(
+    post: FeedPost,
+    onAuthorClick: () -> Unit = {},
+) {
     val avatarUrl = post.authorAvatarUrl ?: "$AVATAR_PLACEHOLDER${post.userId}"
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -394,11 +468,16 @@ private fun PostDetailHeader(post: FeedPost) {
             contentDescription = null,
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable(onClick = onAuthorClick),
             contentScale = ContentScale.Crop,
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onAuthorClick),
+        ) {
             Text(
                 text = post.authorName,
                 style = MaterialTheme.typography.titleMedium.copy(

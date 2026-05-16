@@ -2,6 +2,7 @@ package com.forzaball.data.feed
 
 import com.forzaball.domain.model.TeamSearchHistoryEntry
 import com.forzaball.domain.model.UserPreferences
+import com.forzaball.domain.model.UserPublicProfile
 import com.forzaball.domain.model.favoriteTeamIdsList
 import com.forzaball.domain.model.leagueSlugsForEspnContent
 import com.forzaball.domain.repository.FeedComment
@@ -172,6 +173,7 @@ class FeedRepositoryImpl(
         if (docs.isEmpty()) return emptyList()
         val userIds = docs.mapNotNull { it.getString(FIELD_USER_ID) }.distinct()
         val profiles = loadUserProfiles(userIds)
+        val savedIds = loadSavedPostIds(uid)
         return coroutineScope {
             docs.map { doc ->
                 async {
@@ -181,10 +183,28 @@ class FeedRepositoryImpl(
                         .collection(SUB_LIKES).document(uid).get(Source.DEFAULT).await()
                     val dislikeSnap = firestore.collection(COL_POSTS).document(doc.id)
                         .collection(SUB_DISLIKES).document(uid).get(Source.DEFAULT).await()
-                    toFeedPost(doc, profile, likeSnap.exists(), dislikeSnap.exists())
+                    toFeedPost(
+                        doc,
+                        profile,
+                        likeSnap.exists(),
+                        dislikeSnap.exists(),
+                        savedIds.contains(doc.id),
+                    )
                 }
             }.mapNotNull { it.await() }
         }
+    }
+
+    private suspend fun loadSavedPostIds(uid: String): Set<String> = runCatching {
+        firestore.collection(COL_USERS).document(uid).collection(SUB_SAVED_POSTS)
+            .get(Source.DEFAULT)
+            .await()
+            .documents
+            .map { it.id }
+            .toSet()
+    }.getOrElse { e ->
+        Timber.tag(TAG).w(e, "loadSavedPostIds")
+        emptySet()
     }
 
     private suspend fun loadUserProfiles(userIds: List<String>): Map<String, com.google.firebase.firestore.DocumentSnapshot> {
@@ -203,6 +223,7 @@ class FeedRepositoryImpl(
         userDoc: com.google.firebase.firestore.DocumentSnapshot?,
         liked: Boolean,
         disliked: Boolean = false,
+        saved: Boolean = false,
     ): FeedPost {
         val userId = doc.getString(FIELD_USER_ID).orEmpty()
         val (displayName, handle) = if (userDoc != null && userDoc.exists()) {
@@ -216,7 +237,7 @@ class FeedRepositoryImpl(
         } else {
             "User" to "user"
         }
-        val avatar = userDoc?.takeIf { it.exists() }?.getString(FIELD_AVATAR_URL)
+        val avatar = resolveAvatarThumb(userDoc)
         return FeedPost(
             id = doc.id,
             userId = userId,
@@ -229,7 +250,40 @@ class FeedRepositoryImpl(
             commentCount = (doc.getLong(FIELD_COMMENT_COUNT) ?: 0L).toInt(),
             isLikedByUser = liked,
             isDislikedByUser = disliked,
+            isSavedByUser = saved,
             createdAtMillis = doc.getTimestamp(FIELD_TIMESTAMP)?.toDate()?.time ?: 0L,
+        )
+    }
+
+    private fun resolveAvatarThumb(userDoc: com.google.firebase.firestore.DocumentSnapshot?): String? {
+        if (userDoc == null || !userDoc.exists()) return null
+        return userDoc.getString(FIELD_AVATAR_THUMB_URL)?.takeIf { it.isNotBlank() }
+            ?: userDoc.getString(FIELD_AVATAR_URL)?.takeIf { it.isNotBlank() }
+    }
+
+    private fun resolveAvatarFull(userDoc: com.google.firebase.firestore.DocumentSnapshot?): String? {
+        if (userDoc == null || !userDoc.exists()) return null
+        return userDoc.getString(FIELD_AVATAR_URL)?.takeIf { it.isNotBlank() }
+            ?: userDoc.getString(FIELD_AVATAR_THUMB_URL)?.takeIf { it.isNotBlank() }
+    }
+
+    private fun userDocToPublicProfile(
+        userId: String,
+        userDoc: com.google.firebase.firestore.DocumentSnapshot?,
+    ): UserPublicProfile? {
+        if (userDoc == null || !userDoc.exists()) return null
+        val displayName = userDoc.getString(FIELD_DISPLAY_NAME)?.takeIf { it.isNotBlank() }
+            ?: userDoc.getString(FIELD_USERNAME)?.takeIf { it.isNotBlank() }
+            ?: userDoc.getString(FIELD_EMAIL)?.substringBefore("@")?.ifBlank { null }
+            ?: "User"
+        val handle = userDoc.getString(FIELD_HANDLE)?.takeIf { it.isNotBlank() }
+            ?: sanitizeHandle(userDoc.getString(FIELD_EMAIL)?.substringBefore("@").orEmpty())
+        return UserPublicProfile(
+            userId = userId,
+            displayName = displayName,
+            handle = handle,
+            avatarUrl = resolveAvatarFull(userDoc),
+            avatarThumbUrl = resolveAvatarThumb(userDoc),
         )
     }
 
@@ -263,8 +317,15 @@ class FeedRepositoryImpl(
                             .collection(SUB_LIKES).document(uid).get(Source.DEFAULT).await()
                         val dislikeSnap = firestore.collection(COL_POSTS).document(postId)
                             .collection(SUB_DISLIKES).document(uid).get(Source.DEFAULT).await()
+                        val savedIds = loadSavedPostIds(uid)
                         trySend(
-                            toFeedPost(snapshot, profile, likeSnap.exists(), dislikeSnap.exists()),
+                            toFeedPost(
+                                snapshot,
+                                profile,
+                                likeSnap.exists(),
+                                dislikeSnap.exists(),
+                                savedIds.contains(postId),
+                            ),
                         )
                     } catch (e: Exception) {
                         Timber.tag(TAG).e(e, "observePost map")
@@ -471,7 +532,7 @@ class FeedRepositoryImpl(
             u.getString(FIELD_USERNAME)?.takeIf { n -> n.isNotBlank() }
                 ?: u.getString(FIELD_EMAIL)?.substringBefore("@")?.ifBlank { null }
         } ?: "User"
-        val avatar = profile?.takeIf { it.exists() }?.getString(FIELD_AVATAR_URL)
+        val avatar = resolveAvatarThumb(profile)
         val commentBase = firestore.collection(COL_POSTS).document(postId)
             .collection(SUB_COMMENTS).document(doc.id)
         val liked = runCatching {
@@ -733,6 +794,9 @@ class FeedRepositoryImpl(
         preferences.profilePhotoUrl?.takeIf { it.isNotBlank() }?.let { url ->
             data[FIELD_AVATAR_URL] = url
         }
+        preferences.profilePhotoThumbUrl?.takeIf { it.isNotBlank() }?.let { url ->
+            data[FIELD_AVATAR_THUMB_URL] = url
+        }
         data[FIELD_TEAM_SEARCH_HISTORY] = preferences.teamSearchHistory
             .take(TEAM_SEARCH_HISTORY_MAX)
             .map { e ->
@@ -821,11 +885,180 @@ class FeedRepositoryImpl(
         return s.ifBlank { "fan" }
     }
 
+    override suspend fun deletePost(postId: String): Result<Unit> = runCatching {
+        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val postRef = firestore.collection(COL_POSTS).document(postId)
+        val post = postRef.get(Source.DEFAULT).await()
+        if (!post.exists()) error("Post not found")
+        if (post.getString(FIELD_USER_ID) != uid) error("Not allowed")
+        val likes = postRef.collection(SUB_LIKES).get(Source.DEFAULT).await()
+        val dislikes = postRef.collection(SUB_DISLIKES).get(Source.DEFAULT).await()
+        val comments = postRef.collection(SUB_COMMENTS).get(Source.DEFAULT).await()
+        firestore.runBatch { batch ->
+            likes.documents.forEach { batch.delete(it.reference) }
+            dislikes.documents.forEach { batch.delete(it.reference) }
+            comments.documents.forEach { commentDoc ->
+                val commentRef = commentDoc.reference
+                batch.delete(commentRef)
+            }
+            batch.delete(postRef)
+        }.await()
+    }
+
+    override suspend fun savePost(postId: String): Result<Unit> = runCatching {
+        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        firestore.collection(COL_USERS).document(uid).collection(SUB_SAVED_POSTS).document(postId)
+            .set(
+                mapOf(
+                    FIELD_POST_ID to postId,
+                    FIELD_TIMESTAMP to FieldValue.serverTimestamp(),
+                ),
+            ).await()
+    }
+
+    override suspend fun unsavePost(postId: String): Result<Unit> = runCatching {
+        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        firestore.collection(COL_USERS).document(uid).collection(SUB_SAVED_POSTS).document(postId)
+            .delete()
+            .await()
+    }
+
+    override suspend fun reportPost(
+        postId: String,
+        reasonId: String,
+        reasonLabel: String,
+        optionalComment: String?,
+    ): Result<Unit> = runCatching {
+        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val postSnap = firestore.collection(COL_POSTS).document(postId).get(Source.DEFAULT).await()
+        if (!postSnap.exists()) error("Post not found")
+        val postAuthorId = postSnap.getString(FIELD_USER_ID).orEmpty()
+        val data = mutableMapOf<String, Any>(
+            FIELD_POST_ID to postId,
+            FIELD_POST_AUTHOR_ID to postAuthorId,
+            FIELD_REPORTER_USER_ID to uid,
+            FIELD_REPORT_REASON_ID to reasonId,
+            FIELD_REPORT_REASON_LABEL to reasonLabel,
+            FIELD_TIMESTAMP to FieldValue.serverTimestamp(),
+        )
+        optionalComment?.trim()?.takeIf { it.isNotEmpty() }?.let { data[FIELD_REPORT_COMMENT] = it }
+        firestore.collection(COL_POST_REPORTS).add(data).await()
+    }
+
+    override fun observePostsByUser(userId: String): Flow<List<FeedPost>> = callbackFlow {
+        val currentUid = auth.currentUser?.uid
+        if (currentUid == null) {
+            trySend(emptyList())
+            awaitClose { }
+            return@callbackFlow
+        }
+        val reg = firestore.collection(COL_POSTS)
+            .whereEqualTo(FIELD_USER_ID, userId)
+            .orderBy(FIELD_TIMESTAMP, Query.Direction.DESCENDING)
+            .limit(USER_POSTS_LIMIT)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Timber.tag(TAG).e(error, "observePostsByUser")
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                val docs = snapshot?.documents.orEmpty()
+                ioScope.launch {
+                    try {
+                        trySend(buildFeedPostsFromDocuments(currentUid, docs))
+                    } catch (e: Exception) {
+                        Timber.tag(TAG).e(e, "observePostsByUser emit")
+                        trySend(emptyList())
+                    }
+                }
+            }
+        awaitClose { reg.remove() }
+    }
+
+    override fun observeSavedPosts(): Flow<List<FeedPost>> = callbackFlow {
+        var savedReg: ListenerRegistration? = null
+        var attachedUid: String? = null
+
+        fun detach() {
+            savedReg?.remove()
+            savedReg = null
+        }
+
+        fun attach(uid: String) {
+            if (uid == attachedUid && savedReg != null) return
+            detach()
+            attachedUid = uid
+            savedReg = firestore.collection(COL_USERS).document(uid).collection(SUB_SAVED_POSTS)
+                .orderBy(FIELD_TIMESTAMP, Query.Direction.DESCENDING)
+                .limit(SAVED_POSTS_LIMIT)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        Timber.tag(TAG).e(error, "observeSavedPosts")
+                        trySend(emptyList())
+                        return@addSnapshotListener
+                    }
+                    val postIds = snapshot?.documents?.map { it.id }.orEmpty()
+                    ioScope.launch {
+                        try {
+                            if (postIds.isEmpty()) {
+                                trySend(emptyList())
+                                return@launch
+                            }
+                            val docs = coroutineScope {
+                                postIds.map { id ->
+                                    async {
+                                        firestore.collection(COL_POSTS).document(id).get(Source.DEFAULT).await()
+                                    }
+                                }.map { it.await() }.filter { it.exists() }
+                            }
+                            trySend(buildFeedPostsFromDocuments(uid, docs))
+                        } catch (e: Exception) {
+                            Timber.tag(TAG).e(e, "observeSavedPosts emit")
+                            trySend(emptyList())
+                        }
+                    }
+                }
+        }
+
+        val authListener = FirebaseAuth.AuthStateListener { fa ->
+            val uid = fa.currentUser?.uid
+            if (uid == null) {
+                detach()
+                attachedUid = null
+                trySend(emptyList())
+            } else {
+                attach(uid)
+            }
+        }
+        auth.addAuthStateListener(authListener)
+        awaitClose {
+            auth.removeAuthStateListener(authListener)
+            detach()
+        }
+    }
+
+    override fun observeUserPublicProfile(userId: String): Flow<UserPublicProfile?> = callbackFlow {
+        val reg = firestore.collection(COL_USERS).document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Timber.tag(TAG).e(error, "observeUserPublicProfile")
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+                trySend(userDocToPublicProfile(userId, snapshot))
+            }
+        awaitClose { reg.remove() }
+    }
+
     companion object {
         private const val TAG = "FeedRepository"
         private const val TEAM_SEARCH_HISTORY_MAX = 30
         private const val COL_USERS = "users"
         private const val COL_POSTS = "posts"
+        private const val COL_POST_REPORTS = "postReports"
+        private const val SUB_SAVED_POSTS = "savedPosts"
+        private const val USER_POSTS_LIMIT = 50L
+        private const val SAVED_POSTS_LIMIT = 50L
         private const val SUB_NOTIFICATIONS = "notifications"
         private const val NOTIFICATIONS_LIMIT = 80L
         private const val SUB_LIKES = "likes"
@@ -849,6 +1082,13 @@ class FeedRepositoryImpl(
         private const val FIELD_USERNAME = "username"
         private const val FIELD_EMAIL = "email"
         private const val FIELD_AVATAR_URL = "avatarUrl"
+        private const val FIELD_AVATAR_THUMB_URL = "avatarThumbUrl"
+        private const val FIELD_POST_ID = "postId"
+        private const val FIELD_POST_AUTHOR_ID = "postAuthorId"
+        private const val FIELD_REPORTER_USER_ID = "reporterUserId"
+        private const val FIELD_REPORT_REASON_ID = "reasonId"
+        private const val FIELD_REPORT_REASON_LABEL = "reasonLabel"
+        private const val FIELD_REPORT_COMMENT = "comment"
         private const val FIELD_JOINED_TIMESTAMP = "joinedTimestamp"
         private const val FIELD_FOLLOWER_COUNT = "followerCount"
         private const val FIELD_FOLLOWING_COUNT = "followingCount"

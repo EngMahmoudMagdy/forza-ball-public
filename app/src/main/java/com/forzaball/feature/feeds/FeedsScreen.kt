@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -68,6 +69,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.forzaball.R
+import com.forzaball.feature.profile.ReportReasonCatalog
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -89,12 +95,18 @@ fun FeedsRoute(
     viewModel: FeedViewModel = koinViewModel(),
     onOpenCreatePost: () -> Unit = {},
     onOpenPost: (String) -> Unit = {},
+    onOpenUserProfile: (String) -> Unit = {},
 ) {
     val ui by viewModel.ui.collectAsState()
     val authState by viewModel.authState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var commentPostId by rememberSaveable { mutableStateOf<String?>(null) }
+    var optionsPost by remember { mutableStateOf<FeedPost?>(null) }
+    var deleteConfirmPost by remember { mutableStateOf<FeedPost?>(null) }
+    var reportPost by remember { mutableStateOf<FeedPost?>(null) }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val currentUid = (authState as? AuthState.SignedIn)?.uid
 
     LaunchedEffect(ui.errorMessage) {
         val msg = ui.errorMessage ?: return@LaunchedEffect
@@ -138,16 +150,78 @@ fun FeedsRoute(
                 onSharePost = { sharePost(context, it) },
                 onOpenCreatePost = onOpenCreatePost,
                 onOpenComments = { commentPostId = it },
+                onOpenUserProfile = onOpenUserProfile,
+                onPostMore = { optionsPost = it },
             )
         }
 
         commentPostId?.let { postId ->
-            val uid = (authState as? AuthState.SignedIn)?.uid
             FeedCommentsBottomSheet(
                 postId = postId,
-                currentUserId = uid,
+                currentUserId = currentUid,
                 viewModel = viewModel,
                 onDismiss = { commentPostId = null },
+                onOpenUserProfile = onOpenUserProfile,
+            )
+        }
+
+        optionsPost?.let { post ->
+            PostOptionsBottomSheet(
+                post = post,
+                isOwnPost = post.userId == currentUid,
+                onDismiss = { optionsPost = null },
+                onSaveToggle = { viewModel.toggleSavePost(post) },
+                onDelete = {
+                    optionsPost = null
+                    deleteConfirmPost = post
+                },
+                onReport = {
+                    optionsPost = null
+                    reportPost = post
+                },
+            )
+        }
+
+        deleteConfirmPost?.let { post ->
+            AlertDialog(
+                onDismissRequest = { deleteConfirmPost = null },
+                title = { Text(stringResource(R.string.delete_post)) },
+                text = { Text(stringResource(R.string.confirm_delete_post)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.deletePost(post.id) {
+                                deleteConfirmPost = null
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(context.getString(R.string.delete))
+                                }
+                            }
+                        },
+                    ) {
+                        Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { deleteConfirmPost = null }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                },
+            )
+        }
+
+        reportPost?.let { post ->
+            ReportPostDialog(
+                onDismiss = { reportPost = null },
+                onConfirm = { reasonId, _, comment ->
+                    val reason = ReportReasonCatalog.findById(reasonId) ?: return@ReportPostDialog
+                    val label = context.getString(reason.labelRes)
+                    viewModel.reportPost(post.id, reasonId, label, comment) {
+                        reportPost = null
+                        scope.launch {
+                            snackbarHostState.showSnackbar(context.getString(R.string.report_submitted))
+                        }
+                    }
+                },
             )
         }
     }
@@ -165,6 +239,8 @@ private fun FeedsScreen(
     onSharePost: (String) -> Unit,
     onOpenCreatePost: () -> Unit,
     onOpenComments: (String) -> Unit,
+    onOpenUserProfile: (String) -> Unit,
+    onPostMore: (FeedPost) -> Unit,
 ) {
     val signedIn = authState is AuthState.SignedIn
 
@@ -271,6 +347,8 @@ private fun FeedsScreen(
                                 onOpenPost = { onOpenPost(post.id) },
                                 onShare = { onSharePost(post.id) },
                                 onComment = { onOpenComments(post.id) },
+                                onAuthorClick = { onOpenUserProfile(post.userId) },
+                                onMoreClick = { onPostMore(post) },
                             )
                         }
                     }
@@ -367,6 +445,8 @@ fun FeedPostCard(
     onOpenPost: () -> Unit,
     onShare: () -> Unit,
     onComment: () -> Unit,
+    onAuthorClick: () -> Unit = {},
+    onMoreClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var expanded by rememberSaveable(post.id) { mutableStateOf(false) }
@@ -393,11 +473,16 @@ fun FeedPostCard(
                     contentDescription = null,
                     modifier = Modifier
                         .size(44.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .clickable(onClick = onAuthorClick),
                     contentScale = ContentScale.Crop,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable(onClick = onAuthorClick),
+                ) {
                     Text(
                         text = post.authorName,
                         style = MaterialTheme.typography.titleSmall.copy(
@@ -419,7 +504,7 @@ fun FeedPostCard(
                     )
                 }
                 IconButton(
-                    onClick = { },
+                    onClick = onMoreClick,
                     modifier = Modifier.size(36.dp),
                 ) {
                     Icon(
@@ -610,6 +695,7 @@ internal fun FeedCommentsBottomSheet(
     currentUserId: String?,
     viewModel: FeedViewModel,
     onDismiss: () -> Unit,
+    onOpenUserProfile: (String) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var comments by remember { mutableStateOf<List<FeedComment>>(emptyList()) }
@@ -674,6 +760,7 @@ internal fun FeedCommentsBottomSheet(
                     },
                     canDelete = canDelete,
                     onDelete = { viewModel.deleteComment(postId, c.id) },
+                    onAuthorClick = { onOpenUserProfile(c.userId) },
                 )
             }
             item {
@@ -732,6 +819,7 @@ internal fun CommentRow(
     onToggleDislike: () -> Unit,
     canDelete: Boolean = false,
     onDelete: () -> Unit = {},
+    onAuthorClick: () -> Unit = {},
     /** 0 = normal; animated overlay alpha for notification / new-comment highlight. */
     highlightOverlayAlpha: Float = 0f,
 ) {
@@ -771,11 +859,16 @@ internal fun CommentRow(
                         contentDescription = null,
                         modifier = Modifier
                             .size(32.dp)
-                            .clip(CircleShape),
+                            .clip(CircleShape)
+                            .clickable(onClick = onAuthorClick),
                         contentScale = ContentScale.Crop,
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable(onClick = onAuthorClick),
+                    ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,

@@ -79,7 +79,10 @@ import com.forzaball.domain.model.Club
 import com.forzaball.feature.personalization.catalogLeagues
 import com.forzaball.feature.profile.EditFavoritesOverlay
 import com.forzaball.feature.profile.EditFavoritesViewModel
+import com.forzaball.feature.profile.EditProfileRoute
+import com.forzaball.feature.profile.MoreSettingsScreen
 import com.forzaball.feature.profile.ProfileViewModel
+import com.forzaball.feature.profile.UserProfileRoute
 import com.forzaball.domain.model.Match
 import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.TeamNextMatch
@@ -234,18 +237,24 @@ fun HomeScreen(
                         viewModel = feedViewModel,
                         onOpenCreatePost = { onFeedOverlayKeyChange("create") },
                         onOpenPost = { onFeedOverlayKeyChange("post:$it") },
+                        onOpenUserProfile = { onFeedOverlayKeyChange("profile:$it") },
                     )
                     3 -> ScoresTabContent(
                         scoresViewModel = scoresViewModel,
                         userPreferences = state.userPreferences,
                     )
-                    4 -> ProfileTabContent(
+                    4 -> MoreSettingsScreen(
                         authState = authState,
                         userPreferences = state.userPreferences,
-                        onLogout = onLogout,
+                        onEditProfile = { onFeedOverlayKeyChange("edit_profile") },
+                        onViewMyProfile = {
+                            val uid = (authState as? AuthState.SignedIn)?.uid ?: return@MoreSettingsScreen
+                            onFeedOverlayKeyChange("profile:$uid")
+                        },
+                        onEditFavorites = onShowEditFavorites,
                         onSignIn = onNavigateToSignIn,
                         onSignUp = onNavigateToSignUp,
-                        onEditFavorites = onShowEditFavorites,
+                        onLogout = onLogout,
                     )
                     else -> PlaceholderTabContent(
                         title = homeTitleForTab(selectedTab),
@@ -280,19 +289,36 @@ fun HomeScreen(
                     )
                 }
             }
+            "edit_profile" -> {
+                EditProfileRoute(onBack = { onFeedOverlayKeyChange(null) })
+            }
             else -> {
                 val key = feedOverlayKey
-                if (key != null && key.startsWith("post:")) {
-                    val open = FeedOpenRequest.fromOverlayKey(key)
-                    if (open != null) {
-                        val uid = (authState as? AuthState.SignedIn)?.uid
-                        FeedPostDetailRoute(
-                            postId = open.postId,
-                            highlightCommentId = open.highlightCommentId,
-                            currentUserId = uid,
-                            viewModel = feedViewModel,
+                when {
+                    key != null && key.startsWith("profile:") -> {
+                        val userId = key.removePrefix("profile:")
+                        UserProfileRoute(
+                            userId = userId,
                             onBack = { onFeedOverlayKeyChange(null) },
+                            onEditProfile = { onFeedOverlayKeyChange("edit_profile") },
+                            onOpenPost = { onFeedOverlayKeyChange("post:$it") },
+                            onOpenUserProfile = { onFeedOverlayKeyChange("profile:$it") },
                         )
+                    }
+                    key != null && key.startsWith("post:") -> {
+                        val open = FeedOpenRequest.fromOverlayKey(key)
+                        if (open != null) {
+                            val uid = (authState as? AuthState.SignedIn)?.uid
+                            FeedPostDetailRoute(
+                                postId = open.postId,
+                                highlightCommentId = open.highlightCommentId,
+                                currentUserId = uid,
+                                viewModel = feedViewModel,
+                                onBack = { onFeedOverlayKeyChange(null) },
+                                onOpenUserProfile = { onFeedOverlayKeyChange("profile:$it") },
+                                onPostDeleted = { onFeedOverlayKeyChange(null) },
+                            )
+                        }
                     }
                 }
             }
@@ -305,7 +331,7 @@ private fun homeTitleForTab(tab: Int): String = when (tab) {
     1 -> "News"
     2 -> "Feeds"
     3 -> "Scores"
-    4 -> "Profile"
+    4 -> "More"
     else -> "ForzaBall"
 }
 
@@ -1049,7 +1075,7 @@ private fun HomeBottomNavigation(
             Triple(Icons.AutoMirrored.Filled.Article, "News", 1),
             Triple(Icons.Default.RssFeed, "Feeds", 2),
             Triple(Icons.Default.SportsSoccer, "Scores", 3),
-            Triple(Icons.Default.Person, "Profile", 4),
+            Triple(Icons.Default.Person, "More", 4),
         )
         tabs.forEach { (icon, label, index) ->
             NavigationBarItem(

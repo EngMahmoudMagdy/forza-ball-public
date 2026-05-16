@@ -16,8 +16,14 @@ import com.forzaball.feature.profile.ProfileViewModel
 import com.forzaball.feature.personalization.PersonalizationViewModel
 import com.forzaball.feature.search.SearchViewModel
 import com.forzaball.feature.search.TeamSearchProfileViewModel
+import com.forzaball.data.preferences.LocalePreferencesRepository
+import com.forzaball.data.preferences.LocalePreferencesRepositoryImpl
 import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.data.preferences.ThemePreferencesRepositoryImpl
+import com.forzaball.data.profile.ProfileImageRepository
+import com.forzaball.feature.profile.EditProfileViewModel
+import com.forzaball.feature.profile.UserProfileViewModel
+import com.google.firebase.storage.FirebaseStorage
 import com.forzaball.feature.notifications.NotificationsViewModel
 import com.forzaball.feature.splash.SplashViewModel
 import com.forzaball.domain.diagnostics.HomeLoadTracer
@@ -32,7 +38,10 @@ import timber.log.Timber
 
 val appModule = module {
     single<ThemePreferencesRepository> { ThemePreferencesRepositoryImpl(get()) }
+    single<LocalePreferencesRepository> { LocalePreferencesRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
+    single { FirebaseStorage.getInstance() }
+    single { ProfileImageRepository(get(), get(), get(), get(), get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single { AndroidSessionTokenStore(get()) }
     single { AndroidSessionUserStore(get()) }
@@ -54,10 +63,12 @@ val appModule = module {
     viewModel { SplashViewModel(get(), get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { SignInViewModel(get(), get(), get()) }
-    viewModel { PersonalizationViewModel(get(), get(), get()) }
+    viewModel { PersonalizationViewModel(get(), get(), get(), get()) }
     viewModel { EditFavoritesViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get()) }
     viewModel { TeamSearchProfileViewModel(get(), get(), get()) }
     viewModel { NotificationsViewModel(get(), get()) }
+    viewModel { EditProfileViewModel(get(), get()) }
+    viewModel { UserProfileViewModel(get(), get()) }
 }
 

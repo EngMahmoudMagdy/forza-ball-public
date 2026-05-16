@@ -76,7 +76,10 @@ data class UserPreferences(
     /** Display name at selection time (profile / UI). */
     val favoriteTeamName: String?,
     val nickname: String? = null,
+    /** Full-quality profile photo URL (Firebase Storage). */
     val profilePhotoUrl: String? = null,
+    /** Thumbnail profile photo URL for feed / comments. */
+    val profilePhotoThumbUrl: String? = null,
     val teamSearchHistory: List<TeamSearchHistoryEntry> = emptyList(),
 )
 

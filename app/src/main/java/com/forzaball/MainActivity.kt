@@ -312,13 +312,20 @@ fun ForzaBallAppCompose(initialFeedOpen: FeedOpenRequest? = null) {
                     onNext = viewModel::nextStep,
                 )
 
-                3 -> PersonalizationStep3Screen(
-                    nickname = state.nickname,
-                    onNicknameChange = viewModel::setNickname,
-                    profileImageUrl = state.profilePhotoUrl,
-                    onBack = viewModel::previousStep,
-                    onFinish = viewModel::finish,
-                )
+                3 -> {
+                    val pickPhoto = com.forzaball.feature.profile.rememberProfilePhotoPicker(
+                        onPhotoSelected = viewModel::uploadProfilePhoto,
+                    )
+                    PersonalizationStep3Screen(
+                        nickname = state.nickname,
+                        onNicknameChange = viewModel::setNickname,
+                        profileImageUrl = state.profilePhotoUrl,
+                        isUploadingPhoto = state.isUploadingPhoto,
+                        onPickPhoto = pickPhoto,
+                        onBack = viewModel::previousStep,
+                        onFinish = viewModel::finish,
+                    )
+                }
 
                 else -> PersonalizationStep1Screen(
                     selectedLeagueId = state.selectedLeagueId,

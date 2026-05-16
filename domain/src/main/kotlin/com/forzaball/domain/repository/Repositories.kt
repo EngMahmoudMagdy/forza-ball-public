@@ -6,6 +6,7 @@ import com.forzaball.domain.model.NewsArticle
 import com.forzaball.domain.model.TeamNextMatch
 import com.forzaball.domain.model.TeamStandingSnapshot
 import com.forzaball.domain.model.UserPreferences
+import com.forzaball.domain.model.UserPublicProfile
 import kotlinx.coroutines.flow.Flow
 
 /** Result of sign-up with email/password or Google. */
@@ -112,6 +113,7 @@ data class FeedPost(
     val commentCount: Int,
     val isLikedByUser: Boolean,
     val isDislikedByUser: Boolean,
+    val isSavedByUser: Boolean = false,
     val createdAtMillis: Long,
 )
 
@@ -198,5 +200,25 @@ interface FeedRepository {
     fun observeUserNotifications(): Flow<List<FeedNotification>>
 
     suspend fun markNotificationRead(notificationId: String)
+
+    suspend fun deletePost(postId: String): Result<Unit>
+
+    suspend fun savePost(postId: String): Result<Unit>
+
+    suspend fun unsavePost(postId: String): Result<Unit>
+
+    /** Persists a report for admin review in `postReports`. */
+    suspend fun reportPost(
+        postId: String,
+        reasonId: String,
+        reasonLabel: String,
+        optionalComment: String?,
+    ): Result<Unit>
+
+    fun observePostsByUser(userId: String): Flow<List<FeedPost>>
+
+    fun observeSavedPosts(): Flow<List<FeedPost>>
+
+    fun observeUserPublicProfile(userId: String): Flow<UserPublicProfile?>
 }
 
