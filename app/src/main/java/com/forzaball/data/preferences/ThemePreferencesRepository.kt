@@ -34,5 +34,6 @@ class ThemePreferencesRepositoryImpl(
         context.themeDataStore.edit { prefs ->
             prefs[ThemeKeys.MODE] = mode.storageKey
         }
+        AppSettingsCache.themeMode = mode
     }
 }

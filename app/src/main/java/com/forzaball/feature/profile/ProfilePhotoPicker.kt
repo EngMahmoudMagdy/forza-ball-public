@@ -3,6 +3,7 @@ package com.forzaball.feature.profile
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,6 +51,13 @@ fun rememberProfilePhotoPicker(
                     cropShape = CropImageView.CropShape.RECTANGLE,
                     allowRotation = true,
                     allowFlipping = true,
+                    initialCropWindowPaddingRatio = 0.12f,
+                    activityBackgroundColor = Color.BLACK,
+                    toolbarColor = Color.BLACK,
+                    toolbarTitleColor = Color.WHITE,
+                    toolbarBackButtonColor = Color.WHITE,
+                    toolbarTintColor = Color.WHITE,
+                    activityMenuIconColor = Color.WHITE,
                     outputCompressFormat = Bitmap.CompressFormat.JPEG,
                     outputCompressQuality = 95,
                 ),

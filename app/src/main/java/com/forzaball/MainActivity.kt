@@ -65,6 +65,7 @@ import com.forzaball.feature.personalization.PersonalizationStep2Screen
 import com.forzaball.feature.personalization.PersonalizationStep3Screen
 import com.forzaball.feature.personalization.PersonalizationViewModel
 import com.forzaball.feature.splash.SplashRoute
+import com.forzaball.data.preferences.AppSettingsCache
 import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.ui.theme.ForzaBallTheme
 import com.forzaball.ui.theme.ThemeMode
@@ -87,7 +88,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val initialFeedOpen by feedOpenRequestState
             val themeRepo: ThemePreferencesRepository = getKoin().get()
-            val themeMode by themeRepo.observeThemeMode().collectAsState(initial = ThemeMode.Dark)
+            val themeMode by themeRepo.observeThemeMode().collectAsState(initial = AppSettingsCache.themeMode)
             val systemDark = isSystemInDarkTheme()
             val useDarkTheme = when (themeMode) {
                 ThemeMode.Dark -> true

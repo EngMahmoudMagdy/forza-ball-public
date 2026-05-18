@@ -5,7 +5,9 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.forzaball.data.di.dataModule
+import com.forzaball.data.preferences.AppSettingsCache
 import com.forzaball.data.preferences.LocalePreferencesRepository
+import com.forzaball.data.preferences.ThemePreferencesRepository
 import com.forzaball.di.appModule
 import com.forzaball.domain.di.domainModule
 import com.forzaball.notifications.AppForegroundTracker
@@ -40,10 +42,12 @@ class ForzaBallApp : Application() {
         }
 
         val localeRepo: LocalePreferencesRepository by inject()
+        val themeRepo: ThemePreferencesRepository by inject()
         runBlocking {
-            val locale = localeRepo.observeLocale().first()
+            AppSettingsCache.locale = localeRepo.observeLocale().first()
+            AppSettingsCache.themeMode = themeRepo.observeThemeMode().first()
             AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(locale.languageTag),
+                LocaleListCompat.forLanguageTags(AppSettingsCache.locale.languageTag),
             )
         }
     }

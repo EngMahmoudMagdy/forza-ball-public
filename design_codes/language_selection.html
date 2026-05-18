@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Emerald Pitch - Language Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#14532d",
+                        "on-primary-container": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#fecaca",
+                        "secondary-fixed-dim": "#cbd5e1",
+                        "background": "#131f16",
+                        "inverse-primary": "#29a847",
+                        "tertiary-dim": "#00d4eb",
+                        "surface-dim": "#0e160f",
+                        "primary-fixed": "#dcfce7",
+                        "on-surface-variant": "#c2d1c5",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#28412e",
+                        "surface-container-low": "#1a2a1e",
+                        "on-tertiary-container": "#fecaca",
+                        "primary-dim": "#74ed82",
+                        "tertiary": "#ef4444",
+                        "surface-bright": "#223226",
+                        "error-container": "#7f1d1d",
+                        "tertiary-container": "#991b1b",
+                        "primary-container": "#1a6b2d",
+                        "surface-container-highest": "#33513a",
+                        "error": "#ef4444",
+                        "surface-variant": "#1e293b",
+                        "error-dim": "#d53d18",
+                        "outline-variant": "#29a8471a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#991b1b",
+                        "surface-tint": "#29a847",
+                        "primary": "#29a847",
+                        "on-primary-fixed-variant": "#166534",
+                        "surface-container": "#1e3123",
+                        "on-surface": "#f0fdf4",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#1e293b",
+                        "on-tertiary-fixed": "#7f1d1d",
+                        "on-secondary-container": "#cbd5e1",
+                        "on-secondary-fixed-variant": "#334155",
+                        "inverse-on-surface": "#131f16",
+                        "surface": "#131f16",
+                        "primary-fixed-dim": "#bbf7d0",
+                        "on-background": "#f0fdf4",
+                        "on-secondary-fixed": "#0f172a",
+                        "secondary-fixed": "#e2e8f0",
+                        "inverse-surface": "#f0fdf4",
+                        "secondary": "#334155",
+                        "on-error-container": "#fca5a5",
+                        "secondary-dim": "#6fe9a1",
+                        "surface-container-lowest": "#0b120c",
+                        "tertiary-fixed": "#fee2e2",
+                        "outline": "#4a5d4e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pitch-gradient {
+            background: linear-gradient(180deg, rgba(41, 168, 71, 0.1) 0%, transparent 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen overflow-hidden">
+<!-- Top App Bar -->
+<header class="fixed top-0 z-50 w-full flex items-center justify-between px-6 py-4 bg-[#131f16] dark:bg-[#131f16] shadow-sm bg-gradient-to-b from-[#29a8471a] to-transparent">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-contrast studio portrait of a modern professional athlete against a deep emerald background. The lighting is dramatic and moody, with sharp highlights that emphasize athletic features. The overall aesthetic is editorial and premium, fitting the high-performance sports brand identity of Emerald Pitch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBz7EWISFsg04aPLXurzsXamsddDPEN1EOG2-rm7s9uSJM3kTkzdVdoXag6TbdM_JgQTrkNvuX9RRkYz9SJeuyO_0xe7lf-LgBB7jLP-Cp2iY8FbPRjLkNXMd7iwFwR4OOrW5kkycNa0KKl7Ybu_e6YaejqCx_os_AOQ9lmKrrpiXjHv54vh_jxl3g2dtuIUwRaG8EvHLy-MqiQAtS3DHTn5tfThmqTmhS4DWI_fhD9xNiSVzbB0JFPYPqPE6kvAdFT_9EgzUIloH7"/>
+</div>
+<h1 class="text-xl font-black italic text-[#29a847] tracking-widest uppercase font-['Inter']">EMERALD PITCH</h1>
+</div>
+<button class="text-slate-400 hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Background Content (Profile Screen Mockup) -->
+<main class="pt-24 pb-32 px-6 max-w-lg mx-auto opacity-40">
+<div class="space-y-8">
+<div class="text-center">
+<div class="relative inline-block">
+<div class="w-24 h-24 rounded-full border-4 border-primary p-1 bg-surface-container">
+<img class="w-full h-full object-cover rounded-full" data-alt="Detailed close-up profile of a male football fan wearing high-tech athletic apparel. The scene is lit by green arena floodlights casting atmospheric shadows. Sharp focus, professional photography style, dark emerald and black color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc9Shhv1qHbM4MNNifwHfBEttvkLIA8taQRUc-q7GIvnVgcMOq90Xv9JuAa_gxkEBidIWhvNBo7Dp0sTxZpZQY7BqebqeZtRGXEMLMlkLNqMEqthtCGKUI_WhXyuHLgxbwMjJnbD32UGTXBzfxd302b2Cc3WVw2S4jPDAC5XG-cWI18pQPCGt2k9uCudbIuJtSruzZXTDRvlHIcEvI35EhRpy34B2NbZSO02Rt5cHq1T2yu8dGkpHLu_JeM3VJzMZ7GAV9ymFfSghI"/>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full border-2 border-surface">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</div>
+</div>
+<h2 class="mt-4 text-2xl font-black italic tracking-tight">ALEX MERCER</h2>
+<p class="text-xs font-bold uppercase tracking-[0.05em] text-slate-500">Premium Member Since 2023</p>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="settings">settings</span>
+<span class="font-bold">Account Settings</span>
+</div>
+<span class="material-symbols-outlined text-slate-500" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+<span class="font-bold">Notifications</span>
+</div>
+<span class="material-symbols-outlined text-slate-500" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between border-2 border-primary/20 bg-primary/5">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="language">language</span>
+<span class="font-bold">App Language</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-primary uppercase">English (UK)</span>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Disabled Visual state) -->
+<nav class="fixed bottom-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-[#131f16]/80 backdrop-blur-md border-t border-[#29a8471a] opacity-40">
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] mt-1">News</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" data-icon="dynamic_feed">dynamic_feed</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] mt-1">Feeds</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] mt-1">Scores</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#29a847] font-bold">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] mt-1">Profile</span>
+</div>
+</nav>
+<!-- BOTTOM SHEET OVERLAY -->
+<div class="fixed inset-0 z-[60] bg-surface-lowest/80 backdrop-blur-sm transition-opacity">
+<!-- Bottom Sheet -->
+<div class="absolute bottom-0 left-0 right-0 max-w-xl mx-auto bg-surface-container rounded-t-[2.5rem] border-t border-primary/20 shadow-2xl flex flex-col max-h-[751px]">
+<!-- Handle -->
+<div class="w-full flex justify-center py-4">
+<div class="w-12 h-1.5 bg-surface-container-highest rounded-full"></div>
+</div>
+<!-- Header -->
+<div class="px-8 pb-4 pt-2">
+<h3 class="text-xl font-black italic text-primary uppercase tracking-wider">Select Language</h3>
+<p class="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500 mt-1">Personalize your broadcast experience</p>
+</div>
+<!-- List -->
+<div class="flex-1 overflow-y-auto px-4 pb-12">
+<div class="space-y-1">
+<!-- English (UK) - Selected -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl bg-primary/10 border border-primary/20 text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="translate">translate</span>
+</div>
+<span class="font-bold tracking-tight text-lg">English (UK)</span>
+</div>
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm font-bold" data-icon="check">check</span>
+</div>
+</button>
+<!-- English (US) -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">English (US)</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+<!-- Spanish -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">Spanish</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+<!-- Portuguese -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">Portuguese</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+<!-- Italian -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">Italian</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+<!-- German -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">German</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+<!-- French -->
+<button class="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-high text-on-surface group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-xl" data-icon="language">language</span>
+</div>
+<span class="font-bold tracking-tight text-lg">French</span>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-highest group-hover:border-primary/50 transition-colors"></div>
+</button>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="p-6 bg-surface-container-high border-t border-primary/10 rounded-t-3xl">
+<button class="w-full py-4 bg-primary text-white font-black italic uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                    Confirm Selection
+                </button>
+</div>
+</div>
+</div>
+</body></html>

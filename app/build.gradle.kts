@@ -48,7 +48,8 @@ android {
             if (releaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -130,9 +131,9 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.accompanist.systemuicontroller)
 
-    // Security & Integrity
+    // Security
     implementation(libs.androidx.security.crypto)
-    implementation(libs.google.play.integrity)
+    implementation("com.google.android.gms:play-services-base:18.9.0")
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)

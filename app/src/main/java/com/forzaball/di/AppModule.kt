@@ -58,7 +58,7 @@ val appModule = module {
     viewModel { NewsListViewModel(get(), get()) }
     viewModel { FixturesListViewModel(get(), get()) }
     viewModel { ScoresViewModel(get(), get(), get()) }
-    viewModel { FeedViewModel(get(), get()) }
+    viewModel { FeedViewModel(get(), get(), get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { SplashViewModel(get(), get()) }
     viewModel { SignUpViewModel(get()) }

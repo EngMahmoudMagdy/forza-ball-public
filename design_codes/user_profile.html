@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#14532d",
+                    "on-primary-container": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#fecaca",
+                    "secondary-fixed-dim": "#cbd5e1",
+                    "background": "#131f16",
+                    "inverse-primary": "#29a847",
+                    "tertiary-dim": "#00d4eb",
+                    "surface-dim": "#0e160f",
+                    "primary-fixed": "#dcfce7",
+                    "on-surface-variant": "#c2d1c5",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#28412e",
+                    "surface-container-low": "#1a2a1e",
+                    "on-tertiary-container": "#fecaca",
+                    "primary-dim": "#74ed82",
+                    "tertiary": "#ef4444",
+                    "surface-bright": "#223226",
+                    "error-container": "#7f1d1d",
+                    "tertiary-container": "#991b1b",
+                    "primary-container": "#1a6b2d",
+                    "surface-container-highest": "#33513a",
+                    "error": "#ef4444",
+                    "surface-dim": "#0e160f",
+                    "outline-variant": "#29a8471a",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#991b1b",
+                    "surface-tint": "#29a847",
+                    "primary": "#29a847",
+                    "on-primary-fixed-variant": "#166534",
+                    "surface-container": "#1e3123",
+                    "on-surface": "#f0fdf4",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#1e293b",
+                    "on-tertiary-fixed": "#7f1d1d",
+                    "on-secondary-container": "#cbd5e1",
+                    "on-secondary-fixed-variant": "#334155",
+                    "inverse-on-surface": "#131f16",
+                    "surface": "#131f16",
+                    "primary-fixed-dim": "#bbf7d0",
+                    "on-background": "#f0fdf4",
+                    "on-secondary-fixed": "#0f172a",
+                    "secondary-fixed": "#e2e8f0",
+                    "inverse-surface": "#f0fdf4",
+                    "secondary": "#334155",
+                    "on-error-container": "#fca5a5",
+                    "secondary-dim": "#6fe9a1",
+                    "surface-container-lowest": "#0b120c",
+                    "tertiary-fixed": "#fee2e2",
+                    "outline": "#4a5d4e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-pitch-glow {
+            background: radial-gradient(circle at center, rgba(41, 168, 71, 0.15) 0%, transparent 70%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#131f16] shadow-sm flex items-center justify-between px-6 py-4 w-full bg-gradient-to-b from-[#29a8471a] to-transparent">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="A close-up professional portrait of a stylish young man with a focused expression, set against a dark, moody background with subtle green rim lighting. The lighting reflects the Emerald Pitch aesthetic, with high contrast and sharp details. The atmosphere is sophisticated and athletic, mirroring the premium sports broadcast style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5Jt0i7Ntnkjp3iA2mvEuT6PELfzudwlTj6nat5aFb44in5qk4Z3R50zWl7qt4_KbNFmRhf_w7DkqlLBU4wCSziS7EPmrmcwcruzThuVS7e8l5hElqjetT5q-zPLpQJzpF9Pe5UvsqEsGJ5PS4H-ngTsIvUnakjSOwUrmbvYphOEm6X9Gi3VH9JRaurkOAjKBrGzh1NCOdFUFiGZjTR5PeAJW7pDEV6w0sfVIKQgiEbpcqMYMeQ6FzM04Kp8rG-LfIEZx7yq1FOg-I"/>
+</div>
+<h1 class="text-xl font-['Inter'] font-black italic tracking-widest uppercase text-[#29a847]">EMERALD PITCH</h1>
+</div>
+<button class="text-[#29a847] hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-4 max-w-2xl mx-auto">
+<!-- Profile Hero Section -->
+<section class="flex flex-col items-center mb-10 relative">
+<div class="absolute -top-12 inset-x-0 h-64 bg-pitch-glow -z-10"></div>
+<div class="relative group">
+<div class="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-surface-container-highest shadow-xl">
+<div class="w-full h-full rounded-full overflow-hidden border-4 border-surface">
+<img alt="MarcusV_9 Profile" class="w-full h-full object-cover" data-alt="A high-resolution profile photograph of a male sports fan in his late 20s, captured with professional studio lighting that emphasizes deep shadows and vibrant green highlights. He is looking confidently at the camera. The background is a dark charcoal with a soft emerald glow, maintaining the floodlit stadium arena aesthetic of Emerald Pitch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfOUunirBcDzK0FQkrMpzJ8ty3ZDB0q4ga3a9VwT6Bua8sgMy2YFVm_qDJ3PWE0auxBe-faPhflHMirLU8dpLCfZ474cKLV8V7kvx2C3cDrKUnuWZYv7tKotwSPSzSto2a9aU8A_A5YSygrWYiQd-9NOWblejQtVl0KQv6aLE9vuDmtnamruAEomcPAUFOmzDfijQxG9UOCFtdUxVhpytohsRnqpvGYtNfVWUplFkjDmdut3BfcIwm4GOfdyMjN5CM8MvcHp-9gMUT"/>
+</div>
+</div>
+<button class="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-lg border-2 border-surface active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="mt-6 text-center">
+<h2 class="text-2xl font-black italic tracking-tight text-on-surface">MarcusV_9</h2>
+<p class="text-on-surface-variant font-medium text-sm mt-1">marcus.v@example.com</p>
+</div>
+<button class="mt-8 w-full py-4 bg-primary text-on-primary font-black italic uppercase tracking-widest rounded-xl shadow-[0_8px_20px_-6px_rgba(41,168,71,0.4)] active:scale-[0.98] transition-all hover:brightness-110">
+                Edit Profile
+            </button>
+</section>
+<!-- Bento Settings Grid -->
+<section class="space-y-3">
+<h3 class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant px-2 mb-4">Account Settings</h3>
+<div class="grid grid-cols-1 gap-3">
+<!-- Club Preference (Bento Style) -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div>
+<span class="block text-sm font-bold text-on-surface">Club Preference</span>
+<span class="block text-[10px] font-bold uppercase tracking-wider text-primary mt-0.5">Real Madrid CF</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Appearance & Language Row -->
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container rounded-2xl p-4 flex flex-col justify-between aspect-square hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="palette">palette</span>
+</div>
+<div>
+<span class="block text-sm font-bold text-on-surface">Appearance</span>
+<span class="text-[10px] text-on-surface-variant font-medium">Dark Mode</span>
+</div>
+</div>
+<div class="bg-surface-container rounded-2xl p-4 flex flex-col justify-between aspect-square hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</div>
+<div>
+<span class="block text-sm font-bold text-on-surface">Language</span>
+<span class="text-[10px] text-on-surface-variant font-medium">English (US)</span>
+</div>
+</div>
+</div>
+<h3 class="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant px-2 mt-6 mb-2">Legal &amp; Support</h3>
+<!-- Legal Items -->
+<div class="bg-surface-container rounded-2xl overflow-hidden">
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="policy">policy</span>
+<span class="text-sm font-bold text-on-surface">Privacy Policy</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="open_in_new">open_in_new</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="description">description</span>
+<span class="text-sm font-bold text-on-surface">Terms &amp; Conditions</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="open_in_new">open_in_new</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-tertiary/10 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="logout">logout</span>
+<span class="text-sm font-bold text-tertiary">Logout</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Version Info -->
+<div class="mt-12 text-center">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/40">Emerald Pitch v2.4.0-pro</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#131f16]/80 backdrop-blur-md border-t border-[#29a8471a] shadow-lg">
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#29a847] transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] font-['Inter'] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#29a847] transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] font-['Inter'] mt-1">News</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#29a847] transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dynamic_feed">dynamic_feed</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] font-['Inter'] mt-1">Feeds</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-[#29a847] transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] font-['Inter'] mt-1">Scores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#29a847] font-bold active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] font-bold uppercase tracking-[0.05em] font-['Inter'] mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

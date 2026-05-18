@@ -9,9 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.forzaball.domain.repository.FeedRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import org.koin.compose.koinInject
 import timber.log.Timber
 
@@ -37,15 +35,15 @@ fun FcmTokenRegistrationEffect(
                     Timber.tag(TAG).d("skip FCM registration (signed out)")
                     return@launch
                 }
-                runCatching {
-                    FirebaseMessaging.getInstance().subscribeToTopic(FEED_BROADCAST_TOPIC).await()
-                }.onFailure { Timber.tag(TAG).w(it, "subscribeToTopic") }
-
-                runCatching {
-                    val token = FirebaseMessaging.getInstance().token.await()
-                    feedRepository.saveMessagingToken(token)
+                val appContext = activity.applicationContext
+                FcmRegistrar.subscribeFeedTopic(appContext)
+                val registered = FcmRegistrar.registerToken(
+                    context = appContext,
+                    saveToken = { token -> feedRepository.saveMessagingToken(token) },
+                )
+                if (registered) {
                     Timber.tag(TAG).i("FCM token registered in Firestore")
-                }.onFailure { Timber.tag(TAG).w(it, "saveMessagingToken") }
+                }
             }
         }
         activity.lifecycle.addObserver(observer)

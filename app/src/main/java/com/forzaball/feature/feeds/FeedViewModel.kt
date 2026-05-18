@@ -1,5 +1,6 @@
 package com.forzaball.feature.feeds
 
+import android.app.Application
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,8 +9,7 @@ import com.forzaball.domain.repository.AuthRepository
 import com.forzaball.domain.repository.AuthState
 import com.forzaball.domain.repository.FeedPost
 import com.forzaball.domain.repository.FeedRepository
-import com.forzaball.notifications.FEED_BROADCAST_TOPIC
-import com.google.firebase.messaging.FirebaseMessaging
+import com.forzaball.notifications.FcmRegistrar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 data class FeedUiState(
@@ -32,6 +31,7 @@ data class FeedUiState(
 )
 
 class FeedViewModel(
+    private val application: Application,
     private val feedRepository: FeedRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
@@ -72,19 +72,19 @@ class FeedViewModel(
                 if (signedIn) {
                     runCatching { feedRepository.ensureUserProfile() }
                         .onFailure { Timber.tag(TAG).w(it, "ensureUserProfile") }
-                    runCatching {
-                        FirebaseMessaging.getInstance().subscribeToTopic(FEED_BROADCAST_TOPIC)
-                    }.onFailure { Timber.tag(TAG).w(it, "subscribe feed topic") }
                     viewModelScope.launch {
-                        runCatching {
-                            val token = FirebaseMessaging.getInstance().token.await()
-                            feedRepository.saveMessagingToken(token)
-                        }.onFailure { Timber.tag(TAG).w(it, "save FCM token") }
+                        val context = application.applicationContext
+                        FcmRegistrar.subscribeFeedTopic(context)
+                        FcmRegistrar.registerToken(
+                            context = context,
+                            saveToken = { feedRepository.saveMessagingToken(it) },
+                            force = becameSignedIn,
+                        )
                     }
                 } else {
-                    runCatching {
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic(FEED_BROADCAST_TOPIC)
-                    }.onFailure { Timber.tag(TAG).w(it, "unsubscribe feed topic") }
+                    viewModelScope.launch {
+                        FcmRegistrar.unsubscribeFeedTopic(application.applicationContext)
+                    }
                 }
             }
         }

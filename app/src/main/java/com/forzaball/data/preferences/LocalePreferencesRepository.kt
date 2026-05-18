@@ -36,6 +36,7 @@ class LocalePreferencesRepositoryImpl(
         context.localeDataStore.edit { prefs ->
             prefs[LocaleKeys.LANGUAGE] = locale.storageKey
         }
+        AppSettingsCache.locale = locale
         AppCompatDelegate.setApplicationLocales(
             LocaleListCompat.forLanguageTags(locale.languageTag),
         )
